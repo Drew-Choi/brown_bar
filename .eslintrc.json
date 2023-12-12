@@ -1,3 +1,22 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals", "eslint:recommended", "plugin:react/recommended", "plugin:@tanstack/eslint-plugin-query/recommended"],
+  "plugins": ["react", "@tanstack/query"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "no-undef": "off",
+    "react/no-unescaped-entities": "off"
+    // "@typescript-eslint/no-explicit-any": "off",
+    // "@typescript-eslint/no-non-null-assertion": "off",
+    // "@tanstack/query/exhaustive-deps": "error",
+    // "@tanstack/query/prefer-query-object-syntax": "error"
+  }
 }
