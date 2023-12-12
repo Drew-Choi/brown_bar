@@ -4,7 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React from 'react';
 
-const ReactQueryProvider = ({ children }: { children: React.ReactNode }) => {
+const ThemeProviderCustom = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
@@ -13,4 +13,4 @@ const ReactQueryProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default ReactQueryProvider;
+export default ThemeProviderCustom;
