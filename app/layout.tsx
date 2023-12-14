@@ -1,15 +1,28 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Crimson_Text } from 'next/font/google';
+
 import './globals.css';
-import ReactQueryProvider from '@/providers/ReactQueryProvider';
+
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import ThemeProviderCustom from '@/providers/ReactQueryProvider';
 
-const inter = Inter({ subsets: ['latin'] });
+import Header from '@/app/Header';
+
+import Footer from './Footer';
+import { Box, Container } from '@mui/material';
+import ReactQueryProvider from '@/providers/ReactQueryProvider';
+import ThemeProviderCustom from '@/asset/muiTheme/ThemeProviderCustom';
+import Nav from './Nav';
+
+const crimson_Text = Crimson_Text({
+  weight: ['400', '600', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'The Brown Bar',
@@ -19,9 +32,26 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={crimson_Text.className}>
         <ReactQueryProvider>
-          <ThemeProviderCustom>{children}</ThemeProviderCustom>
+          <ThemeProviderCustom>
+            {/* 레이아웃 */}
+            <Container
+              maxWidth="md"
+              sx={{
+                height: '100vh',
+                padding: { xs: 0, sm: 0, md: 0, lg: 0, xl: 0 },
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              {/* 고정헤더 */}
+              <Header pathName={''} />
+              <Box flex="11">{children}</Box>
+              <Nav />
+              <Footer />
+            </Container>
+          </ThemeProviderCustom>
         </ReactQueryProvider>
       </body>
     </html>
