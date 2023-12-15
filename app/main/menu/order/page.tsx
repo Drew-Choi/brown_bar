@@ -69,7 +69,7 @@ const data = [
     optionArr: [],
   },
 ];
-const Menu = () => {
+const Order = () => {
   return (
     <MainContainer>
       <Container
@@ -85,11 +85,11 @@ const Menu = () => {
         }}
       >
         {data.map((el, index) => (
-          <MenuLineLayout data={el} key={index} />
+          <MenuLineLayout data={el} key={index} changeOrderList={true} />
         ))}
       </Container>
     </MainContainer>
   );
 };
 
-export default Menu;
+export default Order;

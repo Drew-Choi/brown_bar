@@ -14,6 +14,7 @@ const FooterContainer = styled('footer')(({ theme, flex }: { theme?: Theme; flex
   height: 'fit-content',
   color: COLORS.text.disabled,
   padding: '0px 10px',
+  boxSizing: 'border-box',
   fontSize: '8px',
   [theme!.breakpoints.up('sm')]: {
     fontSize: '10px',

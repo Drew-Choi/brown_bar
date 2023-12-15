@@ -1,15 +1,15 @@
 'use client';
 import React from 'react';
-import { styled } from '@mui/material';
 import { COLORS } from '@/asset/style';
 import Image from 'next/image';
-import { Theme, Typography } from '@mui/material';
+import { Theme, Typography, styled } from '@mui/material';
 import ButtonBack from '@/components/buttons/ButtonBack';
 import { usePathname } from 'next/navigation';
 
 const HeaderContainer = styled('header')(({ flex }: { flex: string }) => ({
   flex: flex,
   position: 'relative',
+  boxSizing: 'border-box',
   width: '100%',
   display: 'flex',
   justifyContent: 'space-between',
@@ -45,12 +45,12 @@ const Tag = styled('div')(({ theme, skeleton }: { skeleton: boolean; theme?: The
   },
 }));
 
-const SubText = styled('span')(({ theme }) => ({
-  fontSize: '6vw',
-  [theme!.breakpoints.up('md')]: {
-    fontSize: '54px',
-  },
-}));
+const SubText = styled('span')<{ fontSize?: string; mdFontSize?: string }>`
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '6vw')};
+  @media screen and (min-width: 900px) {
+    font-size: ${({ mdFontSize }) => (mdFontSize ? mdFontSize : '54px')};
+  }
+`;
 
 export const Header = ({ flex = '1' }: { flex?: string }) => {
   const pathName = usePathname();
@@ -70,6 +70,10 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             {pathName === '/main/menu' ? (
               <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
                 Menu | <SubText>{`위스키`}</SubText>
+              </Typography>
+            ) : pathName === '/main/menu/order' || pathName === '/main/menu/order/final' ? (
+              <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
+                Order | <SubText fontSize="8vw" mdFontSize="72px">{`T 5`}</SubText>
               </Typography>
             ) : (
               <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">

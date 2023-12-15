@@ -2,20 +2,27 @@
 import ButtonWide from '@/components/buttons/ButtonWide';
 import { Container, Typography, styled } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-const MainContainer = styled('main')`
+const MainContainer = styled('main')<{ intro: boolean }>`
   position: relative;
   width: 100%;
   top: 50%;
   transform: translateY(-50%);
+  opacity: ${({ intro }) => (intro ? '1' : '0')};
+  transition: 2s opacity ease;
 `;
 
 const Main = () => {
   const router = useRouter();
+  const [intro, setIntro] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIntro(true);
+  }, []);
 
   return (
-    <MainContainer>
+    <MainContainer intro={intro}>
       <Container
         sx={{
           position: 'relative',

@@ -1,8 +1,9 @@
-import React from 'react';
-import { Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography } from '@mui/material';
 import { COLORS } from '@/asset/style';
-import { FaPlus } from 'react-icons/fa6';
+import { FaPlus, FaMinus } from 'react-icons/fa6';
 import Selector from '../Selector';
+import OnTheRock from '../svg/OnTheRock';
 
 interface MenuLineProps {
   data: {
@@ -11,9 +12,12 @@ interface MenuLineProps {
     price: number;
     optionArr?: { label: string; value: string | number | boolean }[];
   };
+  changeOrderList?: boolean;
 }
 
-const MenuLineLayout = ({ data }: MenuLineProps) => {
+const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
+  const [optionValue, setOptionValue] = useState<string>('');
+
   return (
     <div
       style={{
@@ -25,33 +29,93 @@ const MenuLineLayout = ({ data }: MenuLineProps) => {
       }}
     >
       <div style={{ marginBottom: '5px' }}>
-        <Typography color="text.secondary" gutterBottom={true} fontWeight={400} fontSize="15px">
+        <Typography
+          marginBottom={changeOrderList ? '8px' : '0'}
+          color="text.secondary"
+          gutterBottom={true}
+          fontWeight={400}
+          sx={{ fontSize: { xs: '4vw', md: '36px' } }}
+        >
           {data?.name}
         </Typography>
-        <Typography color="text.secondary" fontWeight={400} fontSize="12px">
-          - {data?.desc}
-        </Typography>
+        {!changeOrderList && (
+          <Typography
+            color="text.secondary"
+            fontWeight={400}
+            sx={{ fontSize: { xs: '3.2vw', md: '30px' } }}
+          >
+            - {data?.desc}
+          </Typography>
+        )}
       </div>
       <div
         style={{
           display: 'flex',
           justifyContent:
-            data?.optionArr && data?.optionArr?.length !== 0 ? 'space-between' : 'right',
+            (data?.optionArr && data?.optionArr?.length !== 0) || changeOrderList
+              ? 'space-between'
+              : 'right',
           alignItems: 'center',
         }}
       >
-        {data?.optionArr && data?.optionArr?.length !== 0 && (
-          <Selector optionArr={data?.optionArr} />
+        {data?.optionArr && !changeOrderList && data?.optionArr?.length !== 0 && (
+          <Selector
+            optionArr={data?.optionArr}
+            onChangeEvent={(e) => setOptionValue(e.target.value)}
+          />
         )}
 
-        <Typography color="text.secondary" minWidth="30vw" textAlign="right">
-          {data?.price.toLocaleString('ko-KR')} ₩
+        {data && changeOrderList && (
+          <Box
+            width="fit-content"
+            position="relative"
+            color="text.secondary"
+            display="flex"
+            alignItems="flex-start"
+            gap="7px"
+            marginLeft="10px"
+          >
+            <FaPlus size="7%" />
+
+            <Box position="absolute" width="7vw" height="7vw" borderRadius="50%" left="11%">
+              <Typography
+                // bgcolor="blue"
+                position="absolute"
+                left="50%"
+                color="text.primary"
+                fontWeight="700"
+                fontSize="5vw"
+                sx={{ transform: 'translateX(-50%)' }}
+              >
+                {'10'}
+              </Typography>
+            </Box>
+            <OnTheRock size="15%" />
+
+            <FaMinus size="7%" />
+          </Box>
+        )}
+
+        <Typography
+          color="text.secondary"
+          minWidth="30vw"
+          textAlign="right"
+          sx={{ fontSize: { xs: '5vw', md: '36px' } }}
+        >
+          {(data?.price + Number(optionValue)).toLocaleString('ko-KR')} ₩
         </Typography>
       </div>
-      <FaPlus
-        color={COLORS.text.secondary}
-        style={{ position: 'absolute', fontSize: '20px', top: '10px', right: '10px' }}
-      />
+      {!changeOrderList ? (
+        <FaPlus
+          color={COLORS.text.secondary}
+          style={{ position: 'absolute', fontSize: '20px', top: '10px', right: '10px' }}
+        />
+      ) : (
+        <FaMinus
+          color={COLORS.text.secondary}
+          style={{ position: 'absolute', fontSize: '20px', top: '10px', right: '10px' }}
+        />
+      )}
     </div>
   );
 };

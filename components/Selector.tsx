@@ -4,6 +4,7 @@ import React from 'react';
 interface SelectorProps {
   optionArr: { label: string; value: string | number | boolean }[];
   width?: string;
+  onChangeEvent?: React.ChangeEventHandler<HTMLSelectElement> | undefined;
 }
 
 const Selector = ({
@@ -12,6 +13,7 @@ const Selector = ({
     { label: '샘플2', value: 1200 },
   ],
   width = '40%',
+  onChangeEvent,
 }: SelectorProps) => {
   return (
     <select
@@ -23,6 +25,7 @@ const Selector = ({
         border: 'none',
         color: COLORS.text.secondary,
       }}
+      onChange={onChangeEvent}
     >
       {optionArr?.map((el, index) => (
         <option value={String(el.value)} key={index}>

@@ -1,21 +1,40 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Container, styled } from '@mui/material';
 import Image from 'next/image';
 import Light from '@/components/svg/Light';
+import { useRouter } from 'next/navigation';
 
-const MainContainer = styled('main')(() => ({
-  position: 'absolute',
-  zIndex: '999',
-  bgcolor: 'black',
-  width: '100%',
-  height: '100vh',
-  top: '0',
-}));
+const MainContainer = styled('main')<{ intro: boolean }>`
+  position: absolute;
+  z-index: 999;
+  background-color: black;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  opacity: ${({ intro }) => (intro ? '1' : '0')};
+  transition: 2s opacity ease;
+`;
 
 const Screen = () => {
+  const [intro, setIntro] = useState<boolean>(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const time = setTimeout(() => {
+      setIntro(false);
+    }, 1000);
+    const timeTwo = setTimeout(() => {
+      router.push('/main');
+    }, 2000);
+    return () => {
+      clearTimeout(time);
+      clearTimeout(timeTwo);
+    };
+  }, [router]);
+
   return (
-    <MainContainer>
+    <MainContainer intro={intro}>
       <Image
         style={{
           position: 'absolute',
