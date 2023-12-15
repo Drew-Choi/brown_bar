@@ -16,6 +16,7 @@ import { Box, Container } from '@mui/material';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
 import ThemeProviderCustom from '@/asset/muiTheme/ThemeProviderCustom';
 import Nav from './Nav';
+import Screen from './page';
 
 const crimson_Text = Crimson_Text({
   weight: ['400', '600', '700'],
@@ -39,17 +40,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Container
               maxWidth="md"
               sx={{
+                position: 'relative',
                 height: '100vh',
                 padding: { xs: 0, sm: 0, md: 0, lg: 0, xl: 0 },
                 display: 'flex',
                 flexDirection: 'column',
+                justifyContent: 'space-between',
               }}
             >
               {/* 고정헤더 */}
-              <Header pathName={''} />
-              <Box flex="11">{children}</Box>
-              <Nav />
-              <Footer />
+              <Header flex="1" />
+              <Box flex="5">{children}</Box>
+              <Nav flex="1" />
+              <Footer flex="0.5" />
             </Container>
           </ThemeProviderCustom>
         </ReactQueryProvider>

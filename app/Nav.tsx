@@ -2,6 +2,7 @@
 import { COLORS } from '@/asset/style';
 import { Box, styled } from '@mui/material';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import React from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 
@@ -11,7 +12,7 @@ const BottomNavContainer = styled('nav')(({ flex }: { flex: string }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'flex-end',
-  padding: '0 20px',
+  padding: '10px 20px',
   gap: '20px',
 }));
 
@@ -21,6 +22,10 @@ const ImageWrap = styled('div')`
 `;
 
 const BottomNav = ({ flex = '1' }: { flex?: string }) => {
+  const pathName = usePathname();
+
+  if (pathName === '/') return;
+
   return (
     <BottomNavContainer flex={flex}>
       <ImageWrap>
@@ -33,7 +38,9 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
         />
       </ImageWrap>
       <Box flex="1.8" textAlign="right">
-        <BiSolidFoodMenu size="30%" color={COLORS.info} />
+        {pathName !== '/' && pathName !== '/main' && (
+          <BiSolidFoodMenu size="32%" color={COLORS.info} />
+        )}
       </Box>
     </BottomNavContainer>
   );

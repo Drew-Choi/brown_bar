@@ -4,7 +4,8 @@ import { styled } from '@mui/material';
 import { COLORS } from '@/asset/style';
 import Image from 'next/image';
 import { Theme, Typography } from '@mui/material';
-import { FaArrowLeft } from 'react-icons/fa6';
+import ButtonBack from '@/components/buttons/ButtonBack';
+import { usePathname } from 'next/navigation';
 
 const HeaderContainer = styled('header')(({ flex }: { flex: string }) => ({
   flex: flex,
@@ -31,6 +32,7 @@ const LeftWrap = styled('div')`
 
 const Tag = styled('div')(({ theme, skeleton }: { skeleton: boolean; theme?: Theme }) => ({
   position: 'relative',
+  display: 'flex',
   backgroundColor: skeleton ? COLORS.background.default : COLORS.background.paper,
   width: '100%',
   height: 'auto',
@@ -43,18 +45,37 @@ const Tag = styled('div')(({ theme, skeleton }: { skeleton: boolean; theme?: The
   },
 }));
 
-export const Header = ({ pathName, flex = '1' }: { pathName: string; flex?: string }) => {
+const SubText = styled('span')(({ theme }) => ({
+  fontSize: '6vw',
+  [theme!.breakpoints.up('md')]: {
+    fontSize: '54px',
+  },
+}));
+
+export const Header = ({ flex = '1' }: { flex?: string }) => {
+  const pathName = usePathname();
+
+  if (pathName === '/') return;
+
   return (
     <HeaderContainer flex={flex}>
       <LeftWrap>
-        <FaArrowLeft color={COLORS.info} size="10%" style={{ marginLeft: '10px' }} />
-        {pathName === '/' ? (
+        {pathName !== '/main' && pathName !== '/' ? <ButtonBack /> : <ButtonBack skeleton={true} />}
+        {pathName === '/main' || pathName === '/' ? (
           <Tag skeleton={true}>
-            <Typography fontSize="inherit">|</Typography>
+            <Typography fontSize="inherit">tag</Typography>
           </Tag>
         ) : (
           <Tag skeleton={false}>
-            <Typography fontSize="inherit">tag</Typography>
+            {pathName === '/main/menu' ? (
+              <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
+                Menu | <SubText>{`위스키`}</SubText>
+              </Typography>
+            ) : (
+              <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
+                | <SubText>{``}</SubText>
+              </Typography>
+            )}
           </Tag>
         )}
       </LeftWrap>

@@ -1,107 +1,75 @@
 'use client';
-import { Button, Container, Typography, styled } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
+import { Box, Typography, Container, styled } from '@mui/material';
+import Image from 'next/image';
+import Light from '@/components/svg/Light';
 
-const MainContainer = styled('main')`
-  position: relative;
-  width: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-`;
+const MainContainer = styled('main')(() => ({
+  position: 'absolute',
+  zIndex: '999',
+  bgcolor: 'black',
+  width: '100%',
+  height: '100vh',
+  top: '0',
+}));
 
-export default function Home() {
+const Screen = () => {
   return (
     <MainContainer>
-      <Container
+      <Image
+        style={{
+          position: 'absolute',
+          display: 'block',
+          top: '0',
+          left: '50%',
+          transform: 'translateX(-50%)',
+        }}
+        src="/img/lightHead.png"
+        width={50}
+        height={50}
+        alt="조명"
+      />
+      <Light
+        style={{
+          position: 'absolute',
+          left: '51%',
+          transform: 'translateX(-50%)',
+          zIndex: '990',
+          top: '25px',
+        }}
+      />
+      <Box
         sx={{
-          position: 'relative',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           width: '100%',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '20px',
+          textShadow: '0 0 1px #FFFFFF, 0 0 6px #ffffff',
         }}
       >
-        <Button
-          color="warning"
-          variant="contained"
-          sx={{
-            fontWeight: '700',
-            fontSize: { xs: '11vw', md: '100px' },
-            textTransform: 'none',
-            flexDirection: 'column',
-            width: '80%',
-            padding: '7% 2%',
-            boxSizing: 'border-box',
-            borderRadius: '20px',
-          }}
+        <Typography
+          textAlign="center"
+          fontSize={40}
+          fontWeight={700}
+          color="text.secondary"
+          zIndex="10"
         >
-          <Typography fontSize="inherit" fontWeight={700} lineHeight={1}>
-            MENU
-          </Typography>
-          <Typography
-            sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}
-            fontWeight={700}
-            alignSelf="center"
-          >
-            메뉴판
-          </Typography>
-        </Button>
-        <Button
-          color="warning"
-          variant="contained"
-          sx={{
-            fontWeight: '700',
-            fontSize: { xs: '7.2vw', md: '65px' },
-            textTransform: 'none',
-            flexDirection: 'column',
-            width: '80%',
-            padding: '8% 2%',
-            boxSizing: 'border-box',
-            borderRadius: '20px',
-          }}
+          The Brown Bar
+        </Typography>
+        <Typography
+          textAlign="center"
+          fontSize={24}
+          fontWeight={400}
+          fontStyle="italic"
+          color="text.secondary"
+          zIndex="10"
         >
-          <Typography fontSize="inherit" fontWeight={700} lineHeight={1.3}>
-            FINDING MY TASTE
-          </Typography>
-          <Typography
-            sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}
-            fontWeight={700}
-            alignSelf="center"
-          >
-            내 취향 찾기
-          </Typography>
-        </Button>
-        <Button
-          color="warning"
-          variant="contained"
-          sx={{
-            fontWeight: '700',
-            fontSize: { xs: '8vw', md: '72px' },
-            textTransform: 'none',
-            flexDirection: 'column',
-            width: '80%',
-            padding: '8% 2%',
-            boxSizing: 'border-box',
-            borderRadius: '20px',
-          }}
-        >
-          <Typography fontSize="inherit" fontWeight={700} lineHeight={1.2}>
-            ABOUT ALCOHOL
-          </Typography>
-          <Typography
-            sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}
-            fontWeight={700}
-            alignSelf="center"
-          >
-            술에 대하여
-          </Typography>
-        </Button>
-      </Container>
+          - Guide -
+        </Typography>
+      </Box>
     </MainContainer>
   );
-}
+};
 
-// ----
+export default Screen;
