@@ -1,5 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
+import { COLORS } from '@/asset/style';
 
 interface MenuLineProps {
   data: {
@@ -15,9 +16,9 @@ const FianlLineLayout = ({ data }: MenuLineProps) => {
     <div
       style={{
         position: 'relative',
-        backgroundColor: 'rgba(169, 84, 24, 0.09)',
+        backgroundColor: COLORS.divider,
         borderRadius: '10px',
-        border: '1px solid #773D14',
+        // border: '1px solid #773D14',
         padding: '5px 10px',
       }}
     >

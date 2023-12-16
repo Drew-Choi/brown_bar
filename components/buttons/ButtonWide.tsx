@@ -9,6 +9,8 @@ interface ButtonWideProps {
   fontSize?: FontSizeSx;
   fontWeight?: FontWeightCrimson;
   borderRadius?: string;
+  justifyContent?: string;
+  display?: string;
   onClickEvent?: () => void;
 }
 
@@ -20,6 +22,8 @@ const ButtonWide = ({
   flexDirection = 'column',
   fontSize = '11vw',
   fontWeight = '700',
+  justifyContent = 'center',
+  display = 'flex',
   onClickEvent,
 }: ButtonWideProps) => {
   return (
@@ -28,6 +32,7 @@ const ButtonWide = ({
       color="warning"
       variant="contained"
       sx={{
+        display: display,
         fontWeight: fontWeight,
         fontSize: fontSize,
         textTransform: 'none',
@@ -36,6 +41,7 @@ const ButtonWide = ({
         padding: padding,
         boxSizing: 'border-box',
         borderRadius: borderRadius,
+        justifyContent: justifyContent,
       }}
     >
       {children}

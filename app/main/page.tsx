@@ -52,7 +52,11 @@ const Main = () => {
           </Typography>
         </ButtonWide>
 
-        <ButtonWide fontSize={{ xs: '7.2vw', md: '65px' }} padding="8% 2%">
+        <ButtonWide
+          fontSize={{ xs: '7.2vw', md: '65px' }}
+          padding="8% 2%"
+          onClickEvent={() => router.push('/main/find')}
+        >
           <Typography fontSize="inherit" fontWeight={700} lineHeight={1.3}>
             FINDING MY TASTE
           </Typography>

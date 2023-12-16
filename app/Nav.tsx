@@ -61,7 +61,11 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
           pathName !== '/main/menu' &&
           pathName !== '/main/menu/order' &&
           pathName !== '/main/menu/order/final' && (
-            <BiSolidFoodMenu size="32%" color={COLORS.info} />
+            <BiSolidFoodMenu
+              size="32%"
+              color={COLORS.info}
+              onClick={() => router.push('/main/menu')}
+            />
           )}
         {pathName === '/main/menu' && (
           <Box sx={{ position: 'relative' }} onClick={() => router.push('/main/menu/order')}>

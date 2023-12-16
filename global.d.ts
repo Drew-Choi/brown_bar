@@ -1,3 +1,5 @@
+import { FONTWEIGHT } from './constant/NUMBERS';
+
 declare global {
   type FontSizeSx = string | { xs?: string; sm?: string; md?: string; lg?: string; xl?: string };
 

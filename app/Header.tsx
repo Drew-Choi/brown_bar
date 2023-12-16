@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Theme, Typography, styled } from '@mui/material';
 import ButtonBack from '@/components/buttons/ButtonBack';
 import { usePathname } from 'next/navigation';
+import Selector from '@/components/Selector';
 
 const HeaderContainer = styled('header')(({ flex }: { flex: string }) => ({
   flex: flex,
@@ -61,15 +62,40 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
     <HeaderContainer flex={flex}>
       <LeftWrap>
         {pathName !== '/main' && pathName !== '/' ? <ButtonBack /> : <ButtonBack skeleton={true} />}
-        {pathName === '/main' || pathName === '/' ? (
+        {pathName === '/main/find' || pathName === '/main' || pathName === '/' ? (
           <Tag skeleton={true}>
             <Typography fontSize="inherit">tag</Typography>
           </Tag>
         ) : (
           <Tag skeleton={false}>
             {pathName === '/main/menu' ? (
-              <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
-                Menu | <SubText>{`위스키`}</SubText>
+              <Typography
+                fontSize="inherit"
+                color="text.primary"
+                fontWeight={700}
+                padding="0 10px"
+                sx={{ display: 'flex', alignItems: 'center' }}
+                width="100%"
+                gap="10px"
+              >
+                Menu |{' '}
+                <Selector
+                  optionArr={[
+                    { label: '위스키', value: 'wh' },
+                    { label: '버번', value: 'a' },
+                    { label: '브랜디', value: 'b' },
+                    { label: '와인', value: 'w' },
+                    { label: '칵테일', value: 'c' },
+                    { label: '데킬라', value: 't' },
+                    { label: '럼', value: 'r' },
+                  ]}
+                  fontWeight="600"
+                  width="45%"
+                  height="70%"
+                  padding="5px"
+                  fontSize="4.5vw"
+                  mdFontSize="35px"
+                />
               </Typography>
             ) : pathName === '/main/menu/order' || pathName === '/main/menu/order/final' ? (
               <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
