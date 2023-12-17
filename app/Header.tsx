@@ -4,7 +4,7 @@ import { COLORS } from '@/asset/style';
 import Image from 'next/image';
 import { Theme, Typography, styled } from '@mui/material';
 import ButtonBack from '@/components/buttons/ButtonBack';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import Selector from '@/components/Selector';
 
 const HeaderContainer = styled('header')(({ flex }: { flex: string }) => ({
@@ -55,6 +55,9 @@ const SubText = styled('span')<{ fontSize?: string; mdFontSize?: string }>`
 
 export const Header = ({ flex = '1' }: { flex?: string }) => {
   const pathName = usePathname();
+  const useClass = useSearchParams().get('class');
+  const choice = useSearchParams().get('choice');
+  const sectionName = useSearchParams().get('section_name');
 
   if (pathName === '/') return;
 
@@ -67,7 +70,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             <Typography fontSize="inherit">tag</Typography>
           </Tag>
         ) : (
-          <Tag skeleton={false}>
+          <Tag skeleton={false} sx={{ justifyContent: useClass && !choice ? 'center' : 'left' }}>
             {pathName === '/main/menu' ? (
               <Typography
                 fontSize="inherit"
@@ -100,6 +103,46 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             ) : pathName === '/main/menu/order' || pathName === '/main/menu/order/final' ? (
               <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
                 Order | <SubText fontSize="8vw" mdFontSize="72px">{`T 5`}</SubText>
+              </Typography>
+            ) : pathName === '/main/find/category' ||
+              pathName === '/main/find/category/recommend' ||
+              pathName === '/main/find/category/recommend/section' ? (
+              <Typography
+                // sx={{ fontSize: { xs: '6.5vw', md: '58px' } }}
+                fontSize="inherit"
+                color="text.primary"
+                fontWeight={700}
+                padding="0 5px"
+                lineHeight={choice && !sectionName ? '0.8' : choice && sectionName ? '0.6' : '1.5'}
+                paddingLeft={choice ? '10%' : '0'}
+              >
+                {useClass === 'OldWater'
+                  ? `${useClass.slice(0, 3)} ${useClass.slice(3)}`
+                  : useClass}
+
+                {choice && (
+                  <>
+                    <br />
+                    <SubText fontSize="4.5vw" mdFontSize="40px">
+                      {choice === 'MaltWhiskey'
+                        ? `${choice.slice(0, 4)} ${choice.slice(4)}`
+                        : choice === 'AmericanWhiskey'
+                          ? `${choice.slice(0, 8)} ${choice.slice(8)}`
+                          : choice === 'BrandyCognac'
+                            ? `${choice.slice(0, 6)} & ${choice.slice(6)}`
+                            : choice}
+                    </SubText>
+                  </>
+                )}
+
+                {sectionName && (
+                  <>
+                    <br />
+                    <SubText sx={{ fontWeight: '600' }} fontSize="3vw" mdFontSize="27px">
+                      : {sectionName}
+                    </SubText>
+                  </>
+                )}
               </Typography>
             ) : (
               <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">

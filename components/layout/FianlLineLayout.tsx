@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { COLORS } from '@/asset/style';
+import ContentBox from './ContentBox';
 
 interface MenuLineProps {
   data: {
@@ -13,15 +14,7 @@ interface MenuLineProps {
 
 const FianlLineLayout = ({ data }: MenuLineProps) => {
   return (
-    <div
-      style={{
-        position: 'relative',
-        backgroundColor: COLORS.divider,
-        borderRadius: '10px',
-        // border: '1px solid #773D14',
-        padding: '5px 10px',
-      }}
-    >
+    <ContentBox sx={{ border: 'none', backgroundColor: 'divider' }}>
       <div style={{ marginBottom: '5px' }}>
         <Typography
           color="text.secondary"
@@ -63,7 +56,7 @@ const FianlLineLayout = ({ data }: MenuLineProps) => {
           {data?.price.toLocaleString('ko-KR')} ₩
         </Typography>
       </div>
-    </div>
+    </ContentBox>
   );
 };
 

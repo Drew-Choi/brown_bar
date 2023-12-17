@@ -78,7 +78,7 @@ const Fianl = () => {
             flexDirection: 'column',
             gap: '10px',
             padding: '10px 10px',
-            height: '50vh',
+            height: '49vh',
           }}
         >
           {data?.map((el, index) => <FianlLineLayout key={index} data={el} />)}

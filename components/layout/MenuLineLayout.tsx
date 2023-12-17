@@ -4,6 +4,7 @@ import { COLORS } from '@/asset/style';
 import { FaPlus, FaMinus } from 'react-icons/fa6';
 import Selector from '../Selector';
 import OnTheRock from '../svg/OnTheRock';
+import ContentBox from './ContentBox';
 
 interface MenuLineProps {
   data: {
@@ -19,15 +20,7 @@ const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
   const [optionValue, setOptionValue] = useState<string>('');
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        backgroundColor: 'rgba(169, 84, 24, 0.09)',
-        borderRadius: '10px',
-        border: '1px solid #773D14',
-        padding: '5px 10px',
-      }}
-    >
+    <ContentBox>
       <div style={{ marginBottom: '5px' }}>
         <Typography
           marginBottom={changeOrderList ? '8px' : '0'}
@@ -116,7 +109,7 @@ const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
           style={{ position: 'absolute', fontSize: '20px', top: '10px', right: '10px' }}
         />
       )}
-    </div>
+    </ContentBox>
   );
 };
 

@@ -35,14 +35,14 @@ const Find = () => {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '10px',
-          padding: '30px',
+          padding: '10px 30px',
         }}
       >
         <ButtonWide
-          onClickEvent={() => router.push('/main/menu')}
+          onClickEvent={() => router.push('/main/find/category?class=Beginner')}
           flexDirection="row"
           justifyContent="space-around"
-          padding="2%"
+          padding="5% 2%"
         >
           <ImageWrap>
             <Image
@@ -55,22 +55,33 @@ const Find = () => {
           </ImageWrap>
           <Box position="relative" width="100%">
             <Box position="relative" width="fit-content" margin="auto" marginBottom="5px">
-              <Typography textAlign="right" fontSize="7vw" fontWeight="700" lineHeight="1">
+              <Typography
+                textAlign="right"
+                fontWeight="700"
+                lineHeight="1"
+                sx={{ fontSize: { xs: '8vw', md: '72px' } }}
+              >
                 Beginner
               </Typography>
-              <Typography textAlign="right" fontSize="4vw" fontWeight="600">
+              <Typography
+                textAlign="right"
+                fontWeight="600"
+                sx={{ fontSize: { xs: '4vw', md: '36px' } }}
+              >
                 초심자
               </Typography>
             </Box>
-            <Typography fontSize="3.5vw">(40도의 도수가 힘들다)</Typography>
+            <Typography sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}>
+              (40도의 도수가 힘들다)
+            </Typography>
           </Box>
         </ButtonWide>
 
         <ButtonWide
-          onClickEvent={() => router.push('/main/menu')}
+          onClickEvent={() => router.push('/main/find/category?class=Explorer')}
           flexDirection="row"
           justifyContent="space-around"
-          padding="2%"
+          padding="5% 2%"
         >
           <ImageWrap>
             <Image
@@ -83,42 +94,63 @@ const Find = () => {
           </ImageWrap>
           <Box position="relative" width="100%">
             <Box position="relative" width="fit-content" margin="auto" marginBottom="5px">
-              <Typography textAlign="right" fontSize="7vw" fontWeight="700" lineHeight="1">
+              <Typography
+                textAlign="right"
+                fontWeight="700"
+                lineHeight="1"
+                sx={{ fontSize: { xs: '8vw', md: '72px' } }}
+              >
                 Explorer
               </Typography>
-              <Typography textAlign="right" fontSize="4vw" fontWeight="600">
+              <Typography
+                textAlign="right"
+                fontWeight="600"
+                sx={{ fontSize: { xs: '4vw', md: '36px' } }}
+              >
                 탐험가
               </Typography>
             </Box>
-            <Typography fontSize="3.5vw">(40도 이상 적응완료)</Typography>
+            <Typography sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}>
+              (40도 이상 적응완료)
+            </Typography>
           </Box>
         </ButtonWide>
 
         <ButtonWide
-          onClickEvent={() => router.push('/main/menu')}
+          onClickEvent={() => router.push('/main/find/category?class=OldWater')}
           flexDirection="row"
           justifyContent="space-around"
-          padding="2%"
+          padding="5% 2%"
         >
           <ImageWrap>
             <Image
               src="/img/old_water_icon.png"
               width={70}
               height={70}
-              alt="초심자아이콘"
+              alt="고인물아이콘"
               style={{ width: '70%', height: 'auto', objectFit: 'contain' }}
             />
           </ImageWrap>
           <Box position="relative" width="100%">
             <Box position="relative" width="fit-content" margin="auto" marginBottom="5px">
-              <Typography textAlign="right" fontSize="7vw" fontWeight="700" lineHeight="1">
+              <Typography
+                textAlign="right"
+                sx={{ fontSize: { xs: '8vw', md: '72px' } }}
+                fontWeight="700"
+                lineHeight="1"
+              >
                 Old Water
               </Typography>
-              <Typography textAlign="right" fontSize="4vw" fontWeight="600">
+              <Typography
+                textAlign="right"
+                fontSize="4vw"
+                fontWeight="600"
+                sx={{ fontSize: { xs: '4vw', md: '36px' } }}
+              >
                 고인물
               </Typography>
             </Box>
-            <Typography fontSize="3.5vw">(46도~60도)</Typography>
+            <Typography sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}>(46도~60도)</Typography>
           </Box>
         </ButtonWide>
       </Container>
