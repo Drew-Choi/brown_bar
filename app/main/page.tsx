@@ -69,7 +69,11 @@ const Main = () => {
           </Typography>
         </ButtonWide>
 
-        <ButtonWide fontSize={{ xs: '8vw', md: '72px' }} padding="8% 2%">
+        <ButtonWide
+          fontSize={{ xs: '8vw', md: '72px' }}
+          padding="8% 2%"
+          onClickEvent={() => router.push('/main/about')}
+        >
           <Typography fontSize="inherit" fontWeight={700} lineHeight={1.2}>
             ABOUT ALCOHOL
           </Typography>

@@ -4,7 +4,7 @@ import { COLORS } from '@/asset/style';
 import Image from 'next/image';
 import { Theme, Typography, styled } from '@mui/material';
 import ButtonBack from '@/components/buttons/ButtonBack';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import Selector from '@/components/Selector';
 
 const HeaderContainer = styled('header')(({ flex }: { flex: string }) => ({
@@ -58,6 +58,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
   const useClass = useSearchParams().get('class');
   const choice = useSearchParams().get('choice');
   const sectionName = useSearchParams().get('section_name');
+  const { idx } = useParams();
 
   if (pathName === '/') return;
 
@@ -65,7 +66,10 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
     <HeaderContainer flex={flex}>
       <LeftWrap>
         {pathName !== '/main' && pathName !== '/' ? <ButtonBack /> : <ButtonBack skeleton={true} />}
-        {pathName === '/main/find' || pathName === '/main' || pathName === '/' ? (
+        {pathName === '/main/find' ||
+        pathName === '/main' ||
+        pathName === '/' ||
+        pathName === '/main/about' ? (
           <Tag skeleton={true}>
             <Typography fontSize="inherit">tag</Typography>
           </Tag>
@@ -106,9 +110,9 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
               </Typography>
             ) : pathName === '/main/find/category' ||
               pathName === '/main/find/category/recommend' ||
-              pathName === '/main/find/category/recommend/section' ? (
+              pathName === '/main/find/category/recommend/section' ||
+              pathName === `/main/menu/detail/${idx}` ? (
               <Typography
-                // sx={{ fontSize: { xs: '6.5vw', md: '58px' } }}
                 fontSize="inherit"
                 color="text.primary"
                 fontWeight={700}

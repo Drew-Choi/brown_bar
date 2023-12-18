@@ -8,6 +8,7 @@ import React from 'react';
 
 const MainContainer = styled('main')`
   position: relative;
+  box-sizing: border-box;
   width: 100%;
   padding: 20px 30px;
   top: 50%;
@@ -24,12 +25,12 @@ const data = [
   { class: 'oldwater', section: '몰라1', idx: 7 },
   { class: 'oldwater', section: '몰라2', idx: 8 },
   { class: 'oldwater', section: '몰라3', idx: 9 },
-  // { class: 'oldwater', section: '몰라1', idx: 7 },
-  // { class: 'oldwater', section: '몰라2', idx: 8 },
-  // { class: 'oldwater', section: '몰라3', idx: 9 },
-  // { class: 'oldwater', section: '몰라1', idx: 7 },
-  // { class: 'oldwater', section: '몰라2', idx: 8 },
-  // { class: 'oldwater', section: '몰라3', idx: 9 },
+  { class: 'oldwater', section: '몰라1', idx: 7 },
+  { class: 'oldwater', section: '몰라2', idx: 8 },
+  { class: 'oldwater', section: '몰라3', idx: 9 },
+  { class: 'oldwater', section: '몰라1', idx: 7 },
+  { class: 'oldwater', section: '몰라2', idx: 8 },
+  { class: 'oldwater', section: '몰라3', idx: 9 },
 ];
 
 const Recommend = ({ searchParams }: { searchParams: { class: string; choice: string } }) => {
@@ -88,11 +89,11 @@ const Recommend = ({ searchParams }: { searchParams: { class: string; choice: st
         </Box>
 
         <Box display="flex" flexDirection="column" gap="10px" maxHeight="25vh" overflow="scroll">
-          {data?.map((el) =>
+          {data?.map((el, index) =>
             userClass?.toLocaleLowerCase() === el.class ? (
               <ButtonWide
                 padding="3%"
-                key={el.idx}
+                key={index}
                 onClickEvent={() =>
                   router.push(
                     `/main/find/category/recommend/section?class=${userClass}&choice=${choice}&section=${el.idx}&section_name=${el.section}`,

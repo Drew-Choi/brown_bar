@@ -35,7 +35,11 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
 
   return (
     <BottomNavContainer flex={flex}>
-      {pathName === '/main/menu' && (
+      {(pathName === '/main/menu' ||
+        pathName === '/main/menu/order' ||
+        pathName === '/main/menu/order/final' ||
+        pathName === '/main/find/category/recommend' ||
+        pathName === '/main/find/category/recommend/section') && (
         <Cork
           sx={{
             position: 'absolute',
@@ -46,7 +50,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
         />
       )}
 
-      <ImageWrap>
+      <ImageWrap onClick={() => router.push('/main')}>
         <Image
           src="/img/bottom_icon.png"
           width={121}
