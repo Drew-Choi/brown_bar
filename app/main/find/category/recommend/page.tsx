@@ -88,7 +88,7 @@ const Recommend = ({ searchParams }: { searchParams: { class: string; choice: st
           </ContentBox>
         </Box>
 
-        <Box display="flex" flexDirection="column" gap="10px" maxHeight="25vh" overflow="scroll">
+        <Box display="flex" flexDirection="column" maxHeight="26vh" overflow="scroll" gap="5px">
           {data?.map((el, index) =>
             userClass?.toLocaleLowerCase() === el.class ? (
               <ButtonWide

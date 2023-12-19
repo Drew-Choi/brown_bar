@@ -8,7 +8,7 @@ import React from 'react';
 const data = {
   name: 'BB&R',
   price: 13000,
-  desc: '좋은 술 입니다.좋은 술 입니다.좋은 술 입니다.좋은 술 입니다.좋은 술 입니다.좋은 술 입니다.좋은 술 입니다.좋은 술 입니다.좋은 술 입니다.좋은 술 입니다.좋은',
+  desc: '좋은 술 입니다.좋은 술 입니다.좋은 술 입니다.좋은 ',
   class: 'Beginner',
   chice: 'MaltWhiskey',
   sectionIdx: 1,
@@ -41,11 +41,11 @@ const Detail = ({
         color="text.secondary"
         marginBottom="5px"
         textAlign="center"
-        sx={{ fontSize: { xs: '6vw' } }}
+        sx={{ fontSize: { xs: '6vw', md: '54px' } }}
       >
         {data.name}
       </Typography>
-      <Box width="65%" margin="auto">
+      <Box width="50%" margin="auto">
         <Box
           sx={{
             position: 'relative',
@@ -54,7 +54,7 @@ const Detail = ({
             overflow: 'hidden',
             borderRadius: '10px',
             border: `0.5px solid ${COLORS.info}`,
-            marginBottom: '5px',
+            marginBottom: '10px',
           }}
         >
           <Image
@@ -75,8 +75,8 @@ const Detail = ({
           />
         </Box>
       </Box>
-      <ContentBox>
-        <Typography fontSize="15px" color="text.secondary">
+      <ContentBox sx={{ maxHeight: '32vh', overflow: 'scroll' }}>
+        <Typography sx={{ fontSize: { xs: '4vw', md: '36px' } }} color="text.secondary">
           {data.desc}
         </Typography>
       </ContentBox>

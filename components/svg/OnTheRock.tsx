@@ -1,5 +1,4 @@
-import { Box } from '@mui/material';
-import React, { CSSProperties } from 'react';
+import React from 'react';
 
 const OnTheRock = ({ size = '20%' }: { size?: string }) => {
   return (

@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Container, styled } from '@mui/material';
+import { Box, Typography, styled } from '@mui/material';
 import Image from 'next/image';
 import Light from '@/components/svg/Light';
 import { useRouter } from 'next/navigation';
@@ -23,10 +23,10 @@ const Screen = () => {
   useEffect(() => {
     const time = setTimeout(() => {
       setIntro(false);
-    }, 1000);
+    }, 500);
     const timeTwo = setTimeout(() => {
       router.push('/main');
-    }, 2000);
+    }, 1500);
     return () => {
       clearTimeout(time);
       clearTimeout(timeTwo);

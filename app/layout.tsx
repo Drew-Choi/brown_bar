@@ -16,7 +16,6 @@ import { Box, Container } from '@mui/material';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
 import ThemeProviderCustom from '@/asset/muiTheme/ThemeProviderCustom';
 import Nav from './Nav';
-import Screen from './page';
 
 const crimson_Text = Crimson_Text({
   weight: ['400', '600', '700'],

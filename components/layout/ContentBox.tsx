@@ -1,5 +1,5 @@
-import { styled } from '@mui/material';
-import React, { CSSProperties, ReactNode } from 'react';
+import { SxProps, styled } from '@mui/material';
+import React, { ReactNode } from 'react';
 
 const ContentBoxLayout = styled('div')`
   position: relative;
@@ -9,7 +9,7 @@ const ContentBoxLayout = styled('div')`
   padding: 5px 10px;
 `;
 
-export const ContentBox = ({ children, sx }: { children?: ReactNode; sx?: CSSProperties }) => {
+export const ContentBox = ({ children, sx }: { children?: ReactNode; sx?: SxProps }) => {
   return <ContentBoxLayout sx={{ ...sx }}>{children}</ContentBoxLayout>;
 };
 

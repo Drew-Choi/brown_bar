@@ -1,6 +1,5 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { COLORS } from '@/asset/style';
 import ContentBox from './ContentBox';
 
 interface MenuLineProps {

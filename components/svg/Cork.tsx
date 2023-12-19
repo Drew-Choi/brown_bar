@@ -1,5 +1,5 @@
-import { styled, keyframes } from '@mui/material';
-import React, { CSSProperties } from 'react';
+import { styled, keyframes, SxProps } from '@mui/material';
+import React from 'react';
 
 const action = keyframes`
   0% {
@@ -17,7 +17,7 @@ const Container = styled('div')`
   animation: ${action} 1s ease-out infinite;
 `;
 
-const Cork = ({ sx }: { sx?: CSSProperties }) => {
+const Cork = ({ sx }: { sx?: SxProps }) => {
   return (
     <Container sx={{ ...sx }}>
       <svg

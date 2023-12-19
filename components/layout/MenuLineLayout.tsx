@@ -72,7 +72,6 @@ const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
 
             <Box position="absolute" width="7vw" height="7vw" borderRadius="50%" left="11%">
               <Typography
-                // bgcolor="blue"
                 position="absolute"
                 left="50%"
                 color="text.primary"

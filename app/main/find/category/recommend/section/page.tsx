@@ -59,7 +59,7 @@ const MainContainer = styled('main')`
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  max-height: 58.5vh;
+  max-height: 57.5vh;
   padding: 20px;
   overflow: scroll;
 `;

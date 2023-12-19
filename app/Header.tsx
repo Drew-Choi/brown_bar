@@ -55,10 +55,13 @@ const SubText = styled('span')<{ fontSize?: string; mdFontSize?: string }>`
 
 export const Header = ({ flex = '1' }: { flex?: string }) => {
   const pathName = usePathname();
-  const useClass = useSearchParams().get('class');
-  const choice = useSearchParams().get('choice');
-  const sectionName = useSearchParams().get('section_name');
-  const { idx } = useParams();
+  const search = useSearchParams();
+  const useClass = search.get('class');
+  const choice = search.get('choice');
+  const sectionName = search.get('section_name');
+  const eng = search.get('eng');
+  const kor = search.get('kor');
+  const { idx, about_idx } = useParams();
 
   if (pathName === '/') return;
 
@@ -111,30 +114,36 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             ) : pathName === '/main/find/category' ||
               pathName === '/main/find/category/recommend' ||
               pathName === '/main/find/category/recommend/section' ||
-              pathName === `/main/menu/detail/${idx}` ? (
+              pathName === `/main/menu/detail/${idx}` ||
+              pathName === `/main/about/detail/${about_idx}` ? (
               <Typography
-                fontSize="inherit"
+                sx={{ fontSize: eng && kor ? { xs: '6vw', md: '54px' } : 'inherit' }}
                 color="text.primary"
                 fontWeight={700}
                 padding="0 5px"
-                lineHeight={choice && !sectionName ? '0.8' : choice && sectionName ? '0.6' : '1.5'}
-                paddingLeft={choice ? '10%' : '0'}
+                lineHeight={
+                  choice && !sectionName
+                    ? '0.8'
+                    : choice && sectionName
+                      ? '0.6'
+                      : eng && kor
+                        ? '1'
+                        : '1.5'
+                }
+                paddingLeft={choice ? '10%' : eng ? '5%' : '0'}
               >
-                {useClass === 'OldWater'
-                  ? `${useClass.slice(0, 3)} ${useClass.slice(3)}`
-                  : useClass}
+                {useClass &&
+                  (useClass === 'OldWater'
+                    ? `${useClass.slice(0, 3)} ${useClass.slice(3)}`
+                    : useClass)}
 
                 {choice && (
                   <>
                     <br />
-                    <SubText fontSize="4.5vw" mdFontSize="40px">
-                      {choice === 'MaltWhiskey'
-                        ? `${choice.slice(0, 4)} ${choice.slice(4)}`
-                        : choice === 'AmericanWhiskey'
-                          ? `${choice.slice(0, 8)} ${choice.slice(8)}`
-                          : choice === 'BrandyCognac'
-                            ? `${choice.slice(0, 6)} & ${choice.slice(6)}`
-                            : choice}
+                    <SubText fontSize="3.5vw" mdFontSize="31px">
+                      {choice === '브랜디 꼬냑 류'
+                        ? `${choice.slice(0, 3)} & ${choice.slice(3)}`
+                        : choice}
                     </SubText>
                   </>
                 )}
@@ -144,6 +153,16 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
                     <br />
                     <SubText sx={{ fontWeight: '600' }} fontSize="3vw" mdFontSize="27px">
                       : {sectionName}
+                    </SubText>
+                  </>
+                )}
+
+                {eng && kor && (
+                  <>
+                    {eng === 'BrandyCognac' ? `${eng.slice(0, 5)} & ${eng.slice(5)}` : eng}
+                    <br />
+                    <SubText fontSize="3.5vw" mdFontSize="31px">
+                      {kor === '브랜디꼬냑' ? `${kor.slice(0, 3)} & ${kor.slice(3)}` : kor}
                     </SubText>
                   </>
                 )}
