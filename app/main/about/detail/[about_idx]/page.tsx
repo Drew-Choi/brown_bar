@@ -1,6 +1,12 @@
 'use client';
-import { styled } from '@mui/material';
+import ContentBox from '@/components/layout/ContentBox';
+import ImageLayout from '@/components/layout/ImageLayout';
+import { Box, Typography, styled } from '@mui/material';
 import React from 'react';
+
+const data = {
+  content: '좋습니다. 좋습니다. 좋습니다. 좋습니다. 좋습니다.',
+};
 
 const MainContainer = styled('main')`
   position: relative;
@@ -16,7 +22,35 @@ const AboutDetail = ({
   searchParams: { kor: string; eng: string };
   params: { about_idx: string };
 }) => {
-  return <MainContainer sx={{ color: 'white' }}>about detail</MainContainer>;
+  return (
+    <>
+      <MainContainer>
+        <Box width="50%" margin="auto" marginBottom="10px">
+          <ImageLayout src="/img/test/test_image.jpeg" alt="주류대표사진" />
+        </Box>
+        <Box display="flex" justifyContent="center" alignItems="center" gap={4}>
+          <Typography color="text.secondary" fontWeight={600}>
+            주원료 : {'이미지'}
+          </Typography>
+          <Typography color="text.secondary" fontWeight={600}>
+            방식 : {'이미지'}
+          </Typography>
+        </Box>
+        <ContentBox
+          sx={{
+            width: '90%',
+            margin: 'auto',
+            height: '29vh',
+            marginBottom: '10px',
+            overflow: 'scroll',
+            color: 'text.secondary',
+          }}
+        >
+          <Typography padding={1}>{data.content}</Typography>
+        </ContentBox>
+      </MainContainer>
+    </>
+  );
 };
 
 export default AboutDetail;

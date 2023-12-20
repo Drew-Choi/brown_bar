@@ -1,8 +1,7 @@
 'use client';
-import { COLORS } from '@/asset/style';
 import ContentBox from '@/components/layout/ContentBox';
+import ImageLayout from '@/components/layout/ImageLayout';
 import { Box, Typography, styled } from '@mui/material';
-import Image from 'next/image';
 import React from 'react';
 
 const data = {
@@ -46,37 +45,10 @@ const Detail = ({
         {data.name}
       </Typography>
       <Box width="50%" margin="auto">
-        <Box
-          sx={{
-            position: 'relative',
-            height: '0',
-            paddingTop: '100%',
-            overflow: 'hidden',
-            borderRadius: '10px',
-            border: `0.5px solid ${COLORS.info}`,
-            marginBottom: '10px',
-          }}
-        >
-          <Image
-            src="/img/test/test_image.jpeg"
-            priority
-            width={500}
-            height={500}
-            alt="제품이미지"
-            style={{
-              position: 'absolute',
-              display: 'block',
-              width: '100%',
-              height: 'auto',
-              top: '50%',
-              left: '0',
-              transform: 'translateY(-50%)',
-            }}
-          />
-        </Box>
+        <ImageLayout src="/img/test/test_image.jpeg" alt="제품사진" marginBottom="10px" />
       </Box>
-      <ContentBox sx={{ maxHeight: '32vh', overflow: 'scroll' }}>
-        <Typography sx={{ fontSize: { xs: '4vw', md: '36px' } }} color="text.secondary">
+      <ContentBox sx={{ height: '32vh', overflow: 'scroll' }}>
+        <Typography padding={1} sx={{ fontSize: { xs: '4vw', md: '36px' } }} color="text.secondary">
           {data.desc}
         </Typography>
       </ContentBox>

@@ -6,6 +6,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { COLORS } from '@/asset/style';
 import ContentBox from '@/components/layout/ContentBox';
 import { useRouter } from 'next/navigation';
+import ImageLayout from '@/components/layout/ImageLayout';
 
 const data = [
   {
@@ -91,34 +92,12 @@ const Section = ({
               )
             }
           >
-            <Box
-              sx={{
-                position: 'relative',
-                height: '0',
-                paddingTop: '100%',
-                overflow: 'hidden',
-                borderRadius: '10px',
-                border: `0.5px solid ${COLORS.info}`,
-                marginBottom: '5px',
-              }}
-            >
-              <Image
-                src="/img/test/test_image.jpeg"
-                priority
-                width={500}
-                height={500}
-                alt="제품이미지"
-                style={{
-                  position: 'absolute',
-                  display: 'block',
-                  width: '100%',
-                  height: 'auto',
-                  top: '50%',
-                  left: '0',
-                  transform: 'translateY(-50%)',
-                }}
-              />
-            </Box>
+            <ImageLayout
+              priority={true}
+              src="/img/test/test_image.jpeg"
+              alt="제품사진"
+              marginBottom="5px"
+            />
             <ContentBox>
               <Typography
                 textAlign="center"
