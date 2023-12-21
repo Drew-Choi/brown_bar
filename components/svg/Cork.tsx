@@ -1,3 +1,4 @@
+'use client';
 import { styled, keyframes, SxProps } from '@mui/material';
 import React from 'react';
 

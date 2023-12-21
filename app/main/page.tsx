@@ -1,17 +1,9 @@
 'use client';
 import ButtonWide from '@/components/buttons/ButtonWide';
+import SectionContainer from '@/components/layout/SectionContainer';
 import { Container, Typography, styled } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-
-const MainContainer = styled('main')<{ intro: boolean }>`
-  position: relative;
-  width: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: ${({ intro }) => (intro ? '1' : '0')};
-  transition: 2s opacity ease;
-`;
 
 const Main = () => {
   const router = useRouter();
@@ -22,7 +14,14 @@ const Main = () => {
   }, []);
 
   return (
-    <MainContainer intro={intro}>
+    <SectionContainer
+      sx={{
+        top: '50%',
+        transform: 'translateY(-50%)',
+        transition: '2s opacity ease',
+        opacity: intro ? '1' : '0',
+      }}
+    >
       <Container
         sx={{
           position: 'relative',
@@ -86,7 +85,7 @@ const Main = () => {
           </Typography>
         </ButtonWide>
       </Container>
-    </MainContainer>
+    </SectionContainer>
   );
 };
 export default Main;

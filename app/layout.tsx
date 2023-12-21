@@ -38,10 +38,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {/* 레이아웃 */}
             <Container
               maxWidth="md"
+              disableGutters={true}
               sx={{
                 position: 'relative',
                 height: '100vh',
-                padding: { xs: 0, sm: 0, md: 0, lg: 0, xl: 0 },
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
@@ -49,7 +49,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             >
               {/* 고정헤더 */}
               <Header flex="1" />
-              <Box flex="5">{children}</Box>
+              <Container disableGutters={true} component="main" sx={{ flex: '5' }}>
+                {children}
+              </Container>
               <Nav flex="1" />
               <Footer flex="0.5" />
             </Container>

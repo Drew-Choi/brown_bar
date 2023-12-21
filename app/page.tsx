@@ -1,40 +1,39 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, styled } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
 import Light from '@/components/svg/Light';
 import { useRouter } from 'next/navigation';
-
-const MainContainer = styled('main')<{ intro: boolean }>`
-  position: absolute;
-  z-index: 999;
-  background-color: black;
-  width: 100%;
-  height: 100vh;
-  top: 0;
-  opacity: ${({ intro }) => (intro ? '1' : '0')};
-  transition: 2s opacity ease;
-`;
+import SectionContainer from '@/components/layout/SectionContainer';
 
 const Screen = () => {
   const [intro, setIntro] = useState<boolean>(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const time = setTimeout(() => {
-      setIntro(false);
-    }, 500);
-    const timeTwo = setTimeout(() => {
-      router.push('/main');
-    }, 1500);
-    return () => {
-      clearTimeout(time);
-      clearTimeout(timeTwo);
-    };
-  }, [router]);
+  // useEffect(() => {
+  //   const time = setTimeout(() => {
+  //     setIntro(false);
+  //   }, 500);
+  //   const timeTwo = setTimeout(() => {
+  //     router.push('/main');
+  //   }, 1500);
+  //   return () => {
+  //     clearTimeout(time);
+  //     clearTimeout(timeTwo);
+  //   };
+  // }, [router]);
 
   return (
-    <MainContainer intro={intro}>
+    <SectionContainer
+      sx={{
+        zIndex: '999',
+        bgcolor: 'background.default',
+        height: '100vh',
+        top: '0',
+        transition: '2s opacity ease',
+        opacity: intro ? '1' : '0',
+      }}
+    >
       <Image
         style={{
           position: 'absolute',
@@ -60,7 +59,7 @@ const Screen = () => {
       <Box
         sx={{
           position: 'absolute',
-          top: '50%',
+          top: '350px',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           width: '100%',
@@ -87,7 +86,7 @@ const Screen = () => {
           - Guide -
         </Typography>
       </Box>
-    </MainContainer>
+    </SectionContainer>
   );
 };
 

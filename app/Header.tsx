@@ -1,57 +1,57 @@
 'use client';
-import React from 'react';
-import { COLORS } from '@/asset/style';
+import React, { ReactNode } from 'react';
 import Image from 'next/image';
-import { Theme, Typography, styled } from '@mui/material';
+import { Box, Container, SxProps, Typography } from '@mui/material';
 import ButtonBack from '@/components/buttons/ButtonBack';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import Selector from '@/components/Selector';
 
-const HeaderContainer = styled('header')(({ flex }: { flex: string }) => ({
-  flex: flex,
-  position: 'relative',
-  boxSizing: 'border-box',
-  width: '100%',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  gap: '20px',
-  color: COLORS.text.secondary,
-}));
+const Tag = ({
+  children,
+  skeleton,
+  sx,
+}: {
+  children: ReactNode;
+  skeleton?: boolean;
+  sx?: SxProps;
+}) => {
+  return (
+    <Box
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        bgcolor: skeleton ? 'background.default' : 'background.paper',
+        width: '100%',
+        height: 'auto',
+        padding: '5px 0',
+        borderRadius: '0 10px 10px 0',
+        color: skeleton ? 'background.default' : 'text.secondary',
+        fontSize: { xs: '8vw', md: '72px' },
+        ...sx,
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
 
-const ImageWrap = styled('div')`
-  flex: 1;
-  position: relative;
-  width: 45%;
-`;
-
-const LeftWrap = styled('div')`
-  position: relative;
-  flex: 1.5;
-  padding: 10px 0;
-`;
-
-const Tag = styled('div')(({ theme, skeleton }: { skeleton: boolean; theme?: Theme }) => ({
-  position: 'relative',
-  display: 'flex',
-  backgroundColor: skeleton ? COLORS.background.default : COLORS.background.paper,
-  width: '100%',
-  height: 'auto',
-  padding: '5px 0',
-  borderRadius: '0 10px 10px 0',
-  color: skeleton ? COLORS.background.default : COLORS.text.secondary,
-  fontSize: '8vw',
-  [theme!.breakpoints.up('md')]: {
-    fontSize: '72px',
-  },
-}));
-
-const SubText = styled('span')<{ fontSize?: string; mdFontSize?: string }>`
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '6vw')};
-  @media screen and (min-width: 900px) {
-    font-size: ${({ mdFontSize }) => (mdFontSize ? mdFontSize : '54px')};
-  }
-`;
+const SubText = ({
+  children,
+  sx,
+  fontSize = '6vw',
+  mdFontSize = '54px',
+}: {
+  children: ReactNode;
+  sx?: SxProps;
+  fontSize?: string;
+  mdFontSize?: string;
+}) => {
+  return (
+    <Box component="span" sx={{ fontSize: { xs: fontSize, md: mdFontSize }, ...sx }}>
+      {children}
+    </Box>
+  );
+};
 
 export const Header = ({ flex = '1' }: { flex?: string }) => {
   const pathName = usePathname();
@@ -66,8 +66,22 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
   if (pathName === '/') return;
 
   return (
-    <HeaderContainer flex={flex}>
-      <LeftWrap>
+    <Container
+      component="header"
+      disableGutters={true}
+      sx={{
+        flex: flex,
+        position: 'relative',
+        boxSizing: 'border-box',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        gap: '20px',
+        color: 'text.secondary',
+      }}
+    >
+      <Box sx={{ position: 'relative', flex: '1.5', padding: '10px 0' }}>
         {pathName !== '/main' && pathName !== '/' ? <ButtonBack /> : <ButtonBack skeleton={true} />}
         {pathName === '/main/find' ||
         pathName === '/main' ||
@@ -174,8 +188,8 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             )}
           </Tag>
         )}
-      </LeftWrap>
-      <ImageWrap>
+      </Box>
+      <Box sx={{ flex: '1', position: 'relative', width: '45%' }}>
         <Image
           priority
           src="/img/header_logo.png"
@@ -184,8 +198,8 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
           height={60}
           alt="대표로고"
         />
-      </ImageWrap>
-    </HeaderContainer>
+      </Box>
+    </Container>
   );
 };
 
