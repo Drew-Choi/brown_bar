@@ -10,18 +10,18 @@ const Screen = () => {
   const [intro, setIntro] = useState<boolean>(true);
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const time = setTimeout(() => {
-  //     setIntro(false);
-  //   }, 500);
-  //   const timeTwo = setTimeout(() => {
-  //     router.push('/main');
-  //   }, 1500);
-  //   return () => {
-  //     clearTimeout(time);
-  //     clearTimeout(timeTwo);
-  //   };
-  // }, [router]);
+  useEffect(() => {
+    const time = setTimeout(() => {
+      setIntro(false);
+    }, 500);
+    const timeTwo = setTimeout(() => {
+      router.push('/main');
+    }, 1500);
+    return () => {
+      clearTimeout(time);
+      clearTimeout(timeTwo);
+    };
+  }, [router]);
 
   return (
     <SectionContainer
@@ -50,8 +50,8 @@ const Screen = () => {
       <Light
         style={{
           position: 'absolute',
-          left: '51%',
-          transform: 'translateX(-50%)',
+          left: '50%',
+          transform: 'translateX(-49%)',
           zIndex: '990',
           top: '25px',
         }}

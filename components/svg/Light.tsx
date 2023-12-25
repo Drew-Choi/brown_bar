@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 
-const Light = ({ size = '90%', style }: { size?: string; style?: CSSProperties }) => {
+const Light = ({ size = '330px', style }: { size?: string; style?: CSSProperties }) => {
   return (
     <>
       <svg

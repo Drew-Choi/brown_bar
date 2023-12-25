@@ -72,9 +72,9 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
             <Box
               sx={{
                 position: 'absolute',
+                bgcolor: 'error.main',
                 width: { xs: '12vw', md: '100px' },
                 height: { xs: '12vw', md: '100px' },
-                bgcolor: 'error',
                 borderRadius: '50%',
                 right: '-5px',
                 top: '-18px',
