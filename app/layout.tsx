@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProviderCustom>
             {/* 레이아웃 */}
             <Container
-              maxWidth="md"
+              maxWidth="lg"
               disableGutters={true}
               sx={{
                 position: 'relative',

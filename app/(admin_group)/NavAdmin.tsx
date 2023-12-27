@@ -9,7 +9,7 @@ import SummarizeIcon from '@mui/icons-material/Summarize';
 import SavedSearchIcon from '@mui/icons-material/SavedSearch';
 import LocalBarIcon from '@mui/icons-material/LocalBar';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const navMenuData = [
   {
@@ -57,6 +57,9 @@ const navMenuData = [
 
 export const NavAdmin = () => {
   const [show, setShow] = useState<Boolean>(false);
+  const pathName = usePathname();
+
+  if (pathName === '/admin/join' || pathName === '/admin/login') return;
 
   return (
     <Box
@@ -71,6 +74,7 @@ export const NavAdmin = () => {
         borderColor: 'background.default',
         borderStyle: 'solid',
         borderWidth: '1px 1px 1px 0px',
+        borderRadius: '0 0 10px 0',
       }}
     >
       {/* 메뉴토글버튼 */}
@@ -135,7 +139,7 @@ const MenuListUp = React.memo(
         .map((_, index) => index === 0),
     );
 
-    const [selectIndex, setSelectIndex] = useState<number | string>('0-0');
+    const [selectIndex, setSelectIndex] = useState<string>('0-0');
 
     const collapseHandler = (index: number) => {
       setOpenValues((cur) => {
@@ -155,11 +159,11 @@ const MenuListUp = React.memo(
                 if (el.sub?.length !== 0) {
                   collapseHandler(index);
                 } else {
-                  setSelectIndex(index);
+                  setSelectIndex(`${index}`);
                   el.url !== null && router.push(el.url);
                 }
               }}
-              selected={selectIndex === index}
+              selected={selectIndex === `${index}` || selectIndex.startsWith(`${index}-`)}
             >
               {el.icon}
               {el.label}

@@ -27,7 +27,7 @@ const theme = createTheme({
       disabled: '#999999',
     },
     background: {
-      default: '#0c0c0c', // 페이지 배경색
+      default: '#0C0C0C', // 페이지 배경색
       paper: '#BFBFBF', // 카드, 메뉴 등의 배경색
     },
     divider: '#2C2C2C',

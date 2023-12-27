@@ -93,7 +93,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             Admin
           </Typography>
         </Tag>
-        <Box sx={{ width: '150px' }}>
+        <Box sx={{ width: '150px', height: 'auto' }}>
           <Image
             priority
             src="/img/header_logo.png"

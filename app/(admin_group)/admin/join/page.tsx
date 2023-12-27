@@ -1,20 +1,31 @@
+'use client';
 import InputPassword from '@/components/inputs/InputPassword';
-import SectionContainer from '@/components/layout/SectionContainer';
+import InputText from '@/components/inputs/InputText';
+import { Box } from '@mui/material';
 import React from 'react';
 
 const Join = () => {
   return (
-    <SectionContainer sx={{ padding: '10px 30px' }}>
-      <InputPassword
-        textSx={{
-          color: 'text.secondary',
-          fontSize: { xs: '6vw', md: '52px' },
-          padding: '2% 0 0 0',
-        }}
-        iconSx={{ fontSize: { xs: '6vw', md: '52px' } }}
-        labelSx={{ fontSize: { xs: '6vw', md: '52px' } }}
+    <Box maxWidth="sm" sx={{ margin: 'auto', padding: '30px', boxSizing: 'border-box' }}>
+      <InputText
+        title="Name"
+        conSx={{ marginBottom: '20px' }}
+        textSx={{ color: 'text.secondary', fontSize: '24px' }}
       />
-    </SectionContainer>
+      <InputText
+        conSx={{ marginBottom: '20px' }}
+        textSx={{ color: 'text.secondary', fontSize: '24px' }}
+      />
+      <InputPassword
+        conSx={{ marginBottom: '20px' }}
+        textSx={{ color: 'text.secondary', fontSize: '24px' }}
+      />
+      <InputPassword
+        title="Check Password"
+        conSx={{ marginBottom: '20px' }}
+        textSx={{ color: 'text.secondary', fontSize: '22px' }}
+      />
+    </Box>
   );
 };
 
