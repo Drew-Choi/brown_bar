@@ -16,6 +16,8 @@ import { Container } from '@mui/material';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
 import ThemeProviderCustom from '@/asset/muiTheme/ThemeProviderCustom';
 import Nav from './Nav';
+import UsePopupComponent from '@/hook/usePopup/UsePopupComponent';
+import RecoilProvider from '@/providers/RecoilProvider';
 
 const crimson_Text = Crimson_Text({
   weight: ['400', '600', '700'],
@@ -34,28 +36,31 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={crimson_Text.className}>
         <ReactQueryProvider>
-          <ThemeProviderCustom>
-            {/* 레이아웃 */}
-            <Container
-              maxWidth="lg"
-              disableGutters={true}
-              sx={{
-                position: 'relative',
-                height: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              {/* 고정헤더 */}
-              <Header flex="1" />
-              <Container disableGutters={true} component="main" sx={{ flex: '5' }}>
-                {children}
+          <RecoilProvider>
+            <ThemeProviderCustom>
+              {/* 레이아웃 */}
+              <Container
+                maxWidth="lg"
+                disableGutters={true}
+                sx={{
+                  position: 'relative',
+                  height: '100vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                {/* 고정헤더 */}
+                <Header flex="1" />
+                <Container disableGutters={true} component="main" sx={{ flex: '5' }}>
+                  {children}
+                </Container>
+                <Nav flex="1" />
+                <Footer flex="0.5" />
+                <UsePopupComponent />
               </Container>
-              <Nav flex="1" />
-              <Footer flex="0.5" />
-            </Container>
-          </ThemeProviderCustom>
+            </ThemeProviderCustom>
+          </RecoilProvider>
         </ReactQueryProvider>
       </body>
     </html>

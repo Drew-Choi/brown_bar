@@ -81,6 +81,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
         <Tag
           sx={{
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             width: '250px',
@@ -91,6 +92,9 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
         >
           <Typography fontSize="inherit" color="text.primary" fontWeight={700}>
             Admin
+          </Typography>
+          <Typography fontSize="15px" color="text.primary" fontWeight={600}>
+            {pathName === '/admin/join' ? '회원가입' : ''}
           </Typography>
         </Tag>
         <Box sx={{ width: '150px', height: 'auto' }}>

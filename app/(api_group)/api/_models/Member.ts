@@ -1,9 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
 
-const membersSchema = new Schema({
+const memberSchema = new Schema({
   id: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   name: { type: String, required: true },
 });
 
-export default mongoose.model('Member', membersSchema);
+// 'Member' 모델이 이미 존재하는지 확인합니다.
+export default mongoose.models.Member || mongoose.model('Member', memberSchema);

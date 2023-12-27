@@ -1,5 +1,6 @@
 'use client';
 import { COLORS } from '@/asset/style';
+import ButtonNomal from '@/components/buttons/ButtonNomal';
 import Cork from '@/components/svg/Cork';
 import { Box, Button, Container, Typography } from '@mui/material';
 import Image from 'next/image';
@@ -103,14 +104,12 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
         )}
 
         {pathName === '/main/menu/order' && (
-          <Button
-            variant="contained"
-            color="info"
+          <ButtonNomal
             sx={{ fontWeight: '700', fontSize: '5vw' }}
-            onClick={() => router.push('/main/menu/order/final')}
+            onClickEvent={() => router.push('/main/menu/order/final')}
           >
             주문하기
-          </Button>
+          </ButtonNomal>
         )}
 
         {pathName === '/main/menu/order/final' && (
