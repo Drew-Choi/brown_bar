@@ -65,6 +65,47 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
 
   if (pathName === '/') return;
 
+  if (pathName.startsWith('/admin'))
+    return (
+      <Container
+        component="header"
+        disableGutters={true}
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          width: '100%',
+          height: 'fit-content',
+        }}
+      >
+        <Tag
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '250px',
+            height: '72px',
+            fontSize: '24px',
+            borderRadius: '0 0 10px 0',
+          }}
+        >
+          <Typography fontSize="inherit" color="text.primary" fontWeight={700}>
+            Admin
+          </Typography>
+        </Tag>
+        <Box sx={{ width: '150px' }}>
+          <Image
+            priority
+            src="/img/header_logo.png"
+            style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+            width={150}
+            height={60}
+            alt="대표로고"
+          />
+        </Box>
+      </Container>
+    );
+
   return (
     <Container
       component="header"

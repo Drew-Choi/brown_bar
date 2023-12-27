@@ -15,6 +15,8 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
 
   if (pathName === '/') return;
 
+  if (pathName.startsWith('/admin')) return;
+
   return (
     <Container
       component="nav"
