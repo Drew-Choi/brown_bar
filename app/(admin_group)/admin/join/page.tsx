@@ -2,8 +2,9 @@
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import InputPassword from '@/components/inputs/InputPassword';
 import InputText from '@/components/inputs/InputText';
+import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
-import axiosInstance from '@/utils/axios';
+import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { Box } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -17,6 +18,27 @@ const Join = () => {
   const idRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const passwordCheckRef = useRef<HTMLInputElement>(null);
+
+  const { mutate: joinApi } = useMutationInstance({
+    apiEndPoint: USE_MUTATE_POINT.JOIN,
+    apiMethod: 'post',
+    onErrorFn: (error) => {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data.message;
+        const status = error.response?.status;
+
+        status === 409
+          ? openPopup({ title: '오류', content: message })
+          : openPopup({ title: '오류', content: '다시 시도해주세요.' });
+      } else {
+        openPopup({ title: '오류', content: '다시 시도해주세요.' });
+      }
+    },
+    onSuccessFn: (response) => {
+      openPopup({ title: '!환영!', content: response.message });
+      router.push('/admin');
+    },
+  });
 
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,27 +68,7 @@ const Join = () => {
       password: passwordRef.current?.value,
     };
 
-    try {
-      const response = await axiosInstance.post('join', finalData);
-
-      if (response.status === 200)
-        return (
-          openPopup({ title: '!환영!', content: response.data.message }), router.push('/admin')
-        );
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data.message;
-        const status = error.response?.status;
-
-        status === 409
-          ? openPopup({ title: '오류', content: message })
-          : openPopup({ title: '오류', content: '다시 시도해주세요.' });
-      } else if (error instanceof Error) {
-        return openPopup({ title: '오류', content: '다시 시도해주세요.' });
-      } else {
-        return openPopup({ title: '오류', content: '다시 시도해주세요.' });
-      }
-    }
+    joinApi({ apiBody: finalData });
   };
 
   return (
