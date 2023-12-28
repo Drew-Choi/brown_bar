@@ -37,11 +37,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# yarn dependency // zero-install ver.
+# yarn dependency // none-zero-install ver.
 .yarn/*
-!.yarn/cache
 !.yarn/patches
-!.yarn/plugins
 !.yarn/releases
+!.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+.pnp.*

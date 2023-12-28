@@ -5,7 +5,7 @@ const { MONGO_URI } = process.env;
 interface CustomNodeJSGlobal extends NodeJS.Global {
   mongoose: {
     conn: Connection | null;
-    promise: Promise<typeof mongoose> | null;
+    promise: Promise<Connection> | null;
   };
 }
 
@@ -31,9 +31,9 @@ const connectDB = async () => {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGO_URI, opts);
+    cached.promise = mongoose.connect(MONGO_URI, opts).then(() => mongoose.connection);
 
-    cached.conn = mongoose.connection;
+    cached.conn = await cached.promise;
     return cached.conn;
   }
 };

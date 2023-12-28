@@ -2,6 +2,8 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { Crimson_Text } from 'next/font/google';
 
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
+
 import './globals.css';
 
 import '@fontsource/roboto/300.css';
@@ -38,27 +40,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ReactQueryProvider>
           <RecoilProvider>
             <ThemeProviderCustom>
-              {/* 레이아웃 */}
-              <Container
-                maxWidth="lg"
-                disableGutters={true}
-                sx={{
-                  position: 'relative',
-                  height: '100vh',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}
-              >
-                {/* 고정헤더 */}
-                <Header flex="1" />
-                <Container disableGutters={true} component="main" sx={{ flex: '5' }}>
-                  {children}
+              <AppRouterCacheProvider>
+                {/* 레이아웃 */}
+                <Container
+                  maxWidth="lg"
+                  disableGutters={true}
+                  sx={{
+                    position: 'relative',
+                    height: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  {/* 고정헤더 */}
+                  <Header flex="1" />
+                  <Container disableGutters={true} component="main" sx={{ flex: '5' }}>
+                    {children}
+                  </Container>
+                  <Nav flex="1" />
+                  <Footer flex="0.5" />
+                  <UsePopupComponent />
                 </Container>
-                <Nav flex="1" />
-                <Footer flex="0.5" />
-                <UsePopupComponent />
-              </Container>
+              </AppRouterCacheProvider>
             </ThemeProviderCustom>
           </RecoilProvider>
         </ReactQueryProvider>
