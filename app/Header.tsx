@@ -97,7 +97,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             Admin
           </Typography>
           <Typography fontSize="15px" color="text.primary" fontWeight={600}>
-            {pathName === '/admin/join' ? '회원가입' : ''}
+            {pathName === '/admin/join' ? '회원가입' : pathName === '/admin/login' ? '로그인' : ''}
           </Typography>
         </Tag>
         <Box sx={{ width: '150px', height: 'auto' }}>

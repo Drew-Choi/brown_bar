@@ -5,7 +5,7 @@ import InputText from '@/components/inputs/InputText';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { FormEvent, useRef } from 'react';
@@ -36,7 +36,7 @@ const Join = () => {
     },
     onSuccessFn: (response) => {
       openPopup({ title: '!환영!', content: response.message });
-      router.push('/admin');
+      router.push('/admin/login');
     },
   });
 
