@@ -2,7 +2,9 @@
 import { COLORS } from '@/asset/style';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import Cork from '@/components/svg/Cork';
-import { Box, Button, Container, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';

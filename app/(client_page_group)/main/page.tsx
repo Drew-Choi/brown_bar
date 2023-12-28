@@ -1,7 +1,8 @@
 'use client';
 import ButtonWide from '@/components/buttons/ButtonWide';
 import SectionContainer from '@/components/layout/SectionContainer';
-import { Container, Typography, styled } from '@mui/material';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 

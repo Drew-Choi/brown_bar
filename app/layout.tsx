@@ -2,8 +2,6 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { Crimson_Text } from 'next/font/google';
 
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
-
 import './globals.css';
 
 import '@fontsource/roboto/300.css';
@@ -14,12 +12,13 @@ import '@fontsource/roboto/700.css';
 import Header from '@/app/Header';
 
 import Footer from './Footer';
-import { Container } from '@mui/material';
+import Container from '@mui/material/Container';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
-import ThemeProviderCustom from '@/asset/muiTheme/ThemeProviderCustom';
+
 import Nav from './Nav';
 import UsePopupComponent from '@/hook/usePopup/UsePopupComponent';
 import RecoilProvider from '@/providers/RecoilProvider';
+import ThemeRegistry from '@/asset/muiTheme/ThemeRegistry';
 
 const crimson_Text = Crimson_Text({
   weight: ['400', '600', '700'],
@@ -37,35 +36,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={crimson_Text.className}>
-        <ReactQueryProvider>
-          <RecoilProvider>
-            <ThemeProviderCustom>
-              <AppRouterCacheProvider>
-                {/* 레이아웃 */}
-                <Container
-                  maxWidth="lg"
-                  disableGutters={true}
-                  sx={{
-                    position: 'relative',
-                    height: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  {/* 고정헤더 */}
-                  <Header flex="1" />
-                  <Container disableGutters={true} component="main" sx={{ flex: '5' }}>
-                    {children}
-                  </Container>
-                  <Nav flex="1" />
-                  <Footer flex="0.5" />
-                  <UsePopupComponent />
+        <ThemeRegistry>
+          <ReactQueryProvider>
+            <RecoilProvider>
+              {/* 레이아웃 */}
+              <Container
+                maxWidth="lg"
+                disableGutters={true}
+                sx={{
+                  position: 'relative',
+                  height: '100vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                {/* 고정헤더 */}
+                <Header flex="1" />
+                <Container disableGutters={true} component="main" sx={{ flex: '5' }}>
+                  {children}
                 </Container>
-              </AppRouterCacheProvider>
-            </ThemeProviderCustom>
-          </RecoilProvider>
-        </ReactQueryProvider>
+                <Nav flex="1" />
+                <Footer flex="0.5" />
+                <UsePopupComponent />
+              </Container>
+            </RecoilProvider>
+          </ReactQueryProvider>
+        </ThemeRegistry>
       </body>
     </html>
   );

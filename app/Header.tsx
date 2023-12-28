@@ -1,10 +1,13 @@
 'use client';
 import React, { ReactNode } from 'react';
 import Image from 'next/image';
-import { Box, Container, SxProps, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import ButtonBack from '@/components/buttons/ButtonBack';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import Selector from '@/components/Selector';
+import { SxProps } from '@mui/material';
 
 const Tag = ({
   children,
