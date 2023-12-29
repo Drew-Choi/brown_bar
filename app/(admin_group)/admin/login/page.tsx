@@ -1,10 +1,10 @@
 'use client';
-import React, { FormEvent, useRef } from 'react';
+import React, { FormEvent, useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 import InputText from '@/components/inputs/InputText';
 import InputPassword from '@/components/inputs/InputPassword';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { signIn } from 'next-auth/react';
 
@@ -12,8 +12,19 @@ const Login = () => {
   const idRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const search = useSearchParams();
+  const error = search.get('error');
 
   const { openPopup } = usePopup();
+
+  useEffect(() => {
+    if (error)
+      return openPopup({
+        title: '로그인 실패',
+        content: '아이디와 비밀번호를 정확히 입력해주세요.',
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, error]);
 
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,24 +35,12 @@ const Login = () => {
     if (!passwordRef.current?.value)
       return openPopup({ title: '오류', content: '패스워드를 입력해주세요.' });
 
-    try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        id: idRef.current?.value,
-        password: passwordRef.current?.value,
-      });
-
-      router.replace('/admin');
-
-      if (result?.error) {
-        openPopup({ title: '로그인 실패', content: '아이디 또는 비밀번호가 잘못되었습니다.' });
-      } else {
-        router.push('/admin');
-      }
-    } catch (error) {
-      console.error(error);
-      openPopup({ title: '오류', content: '서버오류\n다시 시도해주세요.' });
-    }
+    await signIn('credentials', {
+      redirect: true,
+      id: idRef.current?.value,
+      password: passwordRef.current?.value,
+      callbackUrl: process.env.NEXT_PUBLIC_AUTH_URL + '/admin',
+    });
   };
 
   return (

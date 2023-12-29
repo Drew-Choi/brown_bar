@@ -31,6 +31,7 @@ export async function POST(req: Request) {
 
       await newMember.save();
 
+      //회원저장완료
       return new Response(JSON.stringify({ message: '회원가입 완료' }), { status: 200 });
     } else {
       // 중복회원일때 처리

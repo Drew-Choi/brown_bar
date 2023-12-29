@@ -31,9 +31,21 @@ export async function POST(req: Request) {
         status: 401,
       });
 
-    return new Response(JSON.stringify({ message: '로그인 성공', data: { id: user.id } }), {
-      status: 200,
-    });
+    const refreshToken = jwt.sign(
+      { id: user.id, type: 'refresh' },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: '1d',
+      },
+    );
+
+    user.auth = refreshToken;
+
+    const result = await user.save();
+
+    if (result) return new Response(JSON.stringify({ message: '로그인 성공', id: result.id }));
+    // 저장실패시 처리
+    return new Response(JSON.stringify({ message: 'server error' }));
   } catch (error) {
     if (error instanceof Error) {
       return new Response(JSON.stringify({ message: error.message }));

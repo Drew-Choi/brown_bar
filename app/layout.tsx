@@ -19,6 +19,7 @@ import Nav from './Nav';
 import UsePopupComponent from '@/hook/usePopup/UsePopupComponent';
 import RecoilProvider from '@/providers/RecoilProvider';
 import ThemeRegistry from '@/asset/muiTheme/ThemeRegistry';
+import { AuthSessionProvider } from '@/providers/AuthSessionProvider';
 
 const crimson_Text = Crimson_Text({
   weight: ['400', '600', '700'],
@@ -40,26 +41,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ReactQueryProvider>
             <RecoilProvider>
               {/* 레이아웃 */}
-              <Container
-                maxWidth="lg"
-                disableGutters={true}
-                sx={{
-                  position: 'relative',
-                  height: '100vh',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}
-              >
-                {/* 고정헤더 */}
-                <Header flex="1" />
-                <Container disableGutters={true} component="main" sx={{ flex: '5' }}>
-                  {children}
+              <AuthSessionProvider>
+                <Container
+                  maxWidth="lg"
+                  disableGutters={true}
+                  sx={{
+                    position: 'relative',
+                    height: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  {/* 고정헤더 */}
+                  <Header flex="1" />
+                  <Container disableGutters={true} component="main" sx={{ flex: '5' }}>
+                    {children}
+                  </Container>
+                  <Nav flex="1" />
+                  <Footer flex="0.5" />
+                  <UsePopupComponent />
                 </Container>
-                <Nav flex="1" />
-                <Footer flex="0.5" />
-                <UsePopupComponent />
-              </Container>
+              </AuthSessionProvider>
             </RecoilProvider>
           </ReactQueryProvider>
         </ThemeRegistry>

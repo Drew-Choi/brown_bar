@@ -8,17 +8,17 @@ export const {
 } = NextAuth({
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 60,
+    maxAge: 30,
   },
   pages: {
-    signIn: '/admin/login',
-    newUser: '/admin/join',
+    signIn: `/admin/login`,
+    newUser: `/admin/join`,
+    signOut: `/admin`,
   },
-  secret: process.env.JWT_SECRET,
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
-        const authResponse = await fetch(`http://localhost:3000/api/login`, {
+        const authResponse = await fetch(`${process.env.AUTH_URL}/api/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -39,4 +39,19 @@ export const {
       },
     }),
   ],
+  callbacks: {
+    jwt: async ({ token, user }) => {
+      if (user) {
+        token.userId = user.id;
+        // 여기에 필요한 다른 사용자 정보를 추가합니다.
+      }
+      return token;
+    },
+    session: async ({ session, token }) => {
+      console.log('세션', session);
+      console.log('토큰', token);
+
+      return session;
+    },
+  },
 });

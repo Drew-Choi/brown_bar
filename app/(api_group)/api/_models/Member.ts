@@ -4,6 +4,7 @@ const memberSchema = new Schema({
   id: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   name: { type: String, required: true },
+  auth: { type: String, default: '' },
 });
 
 // 'Member' 모델이 이미 존재하는지 확인합니다.
