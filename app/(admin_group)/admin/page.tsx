@@ -18,12 +18,16 @@ const StartAdmin = () => {
       return;
     },
     onSuccessFn() {
-      console.log('성공');
+      localStorage.setItem('rt', '1');
     },
   });
 
   useEffect(() => {
-    if (data?.user) {
+    const check = localStorage.getItem('rt') || null;
+
+    console.log(check);
+
+    if (data?.user && !check) {
       getRtApi({ apiBody: { id: data?.user.id }, apiQueryParams: { type: 'co' } });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -20,8 +20,6 @@ const initialLoginApi = async ({ id, password }: { id: string; password: string 
 
   const user = await authResponse.json();
 
-  console.log(user);
-
   return {
     id: user.id,
   };

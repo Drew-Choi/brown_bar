@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { setCookie } from 'nookies';
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,8 +13,6 @@ export async function POST(req: NextRequest) {
 
     const { id } = await req.json();
     const type = req.nextUrl.searchParams.get('type');
-    console.log(type);
-    console.log(id);
 
     if (!type) return console.log('기달');
 
@@ -26,7 +25,6 @@ export async function POST(req: NextRequest) {
           expiresIn: '5m',
         },
       );
-      console.log(refreshTokenBrower);
 
       cookies().set({
         name: 'rt',
@@ -35,23 +33,16 @@ export async function POST(req: NextRequest) {
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
+        maxAge: 5 * 60,
       });
 
-      // const cookie = serialize('rt', refreshTokenBrower, {
-      //   maxAge: 5 * 60,
-      //   path: '/',
-      //   httpOnly: true,
-      //   secure: process.env.NODE_ENV === 'production',
-      //   sameSite: 'lax',
-      // });
-      // NextResponse.next().cookies.set('rt', cookie);
-      return NextResponse.json({ message: '성공' }, { status: 200 });
+      return NextResponse.json({ message: true });
     }
   } catch (error) {
     if (error instanceof Error) {
-      return new Response(JSON.stringify({ message: error.message }));
+      return NextResponse.json({ message: error.message });
     } else {
-      return new Response(JSON.stringify({ message: 'server error' }));
+      return NextResponse.json({ message: 'server error' });
     }
   }
 }
