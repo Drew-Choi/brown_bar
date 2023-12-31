@@ -1,4 +1,5 @@
 'use client';
+import ButtonNomal from '@/components/buttons/ButtonNomal';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { useIsLogin } from '@/hook/useIsLogin/useIsLogin';
 import { usePopup } from '@/hook/usePopup/usePopup';
@@ -25,15 +26,17 @@ const StartAdmin = () => {
   useEffect(() => {
     const check = localStorage.getItem('rt') || null;
 
-    console.log(check);
-
     if (data?.user && !check) {
       getRtApi({ apiBody: { id: data?.user.id }, apiQueryParams: { type: 'co' } });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.user]);
 
-  return <div style={{ color: 'white', padding: '50px' }}>StartAdmin</div>;
+  return (
+    <div style={{ color: 'white', padding: '50px' }}>
+      <ButtonNomal>테스트</ButtonNomal>
+    </div>
+  );
 };
 
 export default StartAdmin;

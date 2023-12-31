@@ -25,29 +25,6 @@ const initialLoginApi = async ({ id, password }: { id: string; password: string 
   };
 };
 
-// 리프레쉬요청
-const refreshApi = async ({ refresh }: { refresh: string }) => {
-  const authResponse = await fetch(`${process.env.AUTH_URL}/api/login/re`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      refresh,
-    }),
-  });
-
-  if (!authResponse.ok) {
-    return null;
-  }
-
-  const user = await authResponse.json();
-
-  return {
-    id: user.id,
-  };
-};
-
 export const {
   handlers: { GET, POST },
   auth,
@@ -55,7 +32,7 @@ export const {
 } = NextAuth({
   session: {
     strategy: 'jwt',
-    maxAge: 30,
+    maxAge: 60 * 30,
   },
   pages: {
     signIn: '/admin/login',
@@ -65,9 +42,9 @@ export const {
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
-        if (credentials.refresh as string)
-          // 리프레쉬요청
-          return await refreshApi({ refresh: credentials.refresh as string });
+        if (credentials.refresh as boolean) {
+          return { id: credentials.id };
+        }
 
         // 최초 로그인 요청
         return await initialLoginApi({

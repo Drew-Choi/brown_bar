@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 
-import axiosInstance from '@/utils/axios';
+import axiosInstance from '@/axios/instance';
 
 interface UseQueryProps {
   queryKey: any[];

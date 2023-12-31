@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       );
 
     const refreshToken = jwt.sign({ id: user.id, type: 'ref' }, process.env.JWT_SECRET as string, {
-      expiresIn: '5m',
+      expiresIn: '1d',
     });
 
     user.auth = refreshToken;
