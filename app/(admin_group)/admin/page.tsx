@@ -18,7 +18,7 @@ const StartAdmin = () => {
       console.log('로그아웃 넣어야함');
       return;
     },
-    onSuccessFn() {
+    onSuccessFn: () => {
       localStorage.setItem('rt', '1');
     },
   });

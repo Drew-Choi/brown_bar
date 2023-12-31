@@ -1,31 +1,31 @@
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { getSession } from 'next-auth/react';
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   withCredentials: true,
 });
 
-axiosInstance.interceptors.request.use(async (config) => {
-  const router = useRouter();
-  const { status } = useSession();
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    const session = await getSession();
+    const user = session?.user;
 
-  console.log('log', config);
+    if (config.url !== 'join' && config.url !== 'login' && config.url !== 'login/re') {
+      if (!user) {
+        const res = await axios.post(process.env.NEXT_PUBLIC_API_BASE_URL + 'login/re', {});
 
-  if (config.url !== '/api/join' && config.url !== '/api/login' && config.url !== '/api/login/re') {
-    if (status === 'unauthenticated') {
-      const res = await axios.post(process.env.NEXT_PUBLIC_API_BASE_URL + 'login/re', {});
-
-      if (res.status === 200) {
-        return Promise.resolve(config);
-      } else {
-        router.replace('/admin/login');
-        return Promise.reject(new Error('Authentication failed'));
+        if (res.status === 200) {
+          return config;
+        } else {
+          window.location.href = '/admin/login';
+          return Promise.reject(new Error('Authentication failed'));
+        }
       }
     }
-  }
-  return Promise.resolve(config);
-});
+    return config;
+  },
+  (err) => Promise.reject(err),
+);
 
 export default axiosInstance;
