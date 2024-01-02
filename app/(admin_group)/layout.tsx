@@ -15,10 +15,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         overflow: 'hidden',
       }}
     >
-      <NavAdmin />
-      <Container component="section" disableGutters={true} sx={{ position: 'relative' }}>
-        <AuthSessionProvider>{children}</AuthSessionProvider>
-      </Container>
+      <AuthSessionProvider>
+        <NavAdmin />
+        <Container component="section" disableGutters={true} sx={{ position: 'relative' }}>
+          {children}
+        </Container>
+      </AuthSessionProvider>
     </Container>
   );
 }

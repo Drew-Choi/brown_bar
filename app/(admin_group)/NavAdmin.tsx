@@ -10,6 +10,9 @@ import SavedSearchIcon from '@mui/icons-material/SavedSearch';
 import LocalBarIcon from '@mui/icons-material/LocalBar';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { usePathname, useRouter } from 'next/navigation';
+import { useIsLogin } from '@/hook/useIsLogin/useIsLogin';
+import ButtonNomal from '@/components/buttons/ButtonNomal';
+import { signOut } from 'next-auth/react';
 
 const navMenuData = [
   {
@@ -56,10 +59,11 @@ const navMenuData = [
 ];
 
 export const NavAdmin = () => {
+  useIsLogin();
   const [show, setShow] = useState<Boolean>(false);
   const pathName = usePathname();
 
-  if (pathName === '/admin/join' || pathName === '/admin/login') return;
+  if (pathName === '/admin/login') return;
 
   return (
     <Box
@@ -103,6 +107,20 @@ export const NavAdmin = () => {
         }}
         data={navMenuData}
       />
+      <Box sx={{ position: 'relative', width: '100%' }}>
+        <ButtonNomal
+          onClickEvent={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
+          sx={{
+            position: 'relative',
+            display: 'block',
+            margin: 'auto',
+            fontSize: '12px',
+            fontWeight: '600',
+          }}
+        >
+          로그아웃
+        </ButtonNomal>
+      </Box>
     </Box>
   );
 };

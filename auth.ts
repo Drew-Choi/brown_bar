@@ -12,8 +12,9 @@ export const {
     maxAge: 60 * 24 * 60 * 60,
   },
   pages: {
-    signIn: '/admin',
-    signOut: '/admin',
+    signIn: '/admin/login',
+    signOut: '/admin/login',
+    error: '/admin/login',
   },
   providers: [
     Kakao({ clientId: process.env.KAKAO_CLIENT_ID, clientSecret: process.env.KAKAO_CLIENT_SECRET }),

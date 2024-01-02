@@ -1,15 +1,20 @@
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export const useIsLogin = () => {
   const { data, status } = useSession();
+  const router = useRouter();
+  const pathName = usePathname();
+
+  useEffect(() => {
+    if (status === 'unauthenticated' && pathName !== '/admin/login')
+      return router.replace('/admin/login');
+  }, [status, pathName]);
 
   useEffect(() => {
     if ((data as SessionAdd)?.error === 'RefreshAccessTokenError') {
-      signIn('kakao', {
-        redirect: true,
-        callbackUrl: `${process.env.NEXT_PUBLIC_AUTH_URL}/admin`,
-      });
+      router.replace('/admin/login');
     }
   }, [data]);
 

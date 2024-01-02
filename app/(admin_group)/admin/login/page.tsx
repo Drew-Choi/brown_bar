@@ -1,52 +1,28 @@
 'use client';
-import React, { FormEvent, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
-import InputText from '@/components/inputs/InputText';
-import InputPassword from '@/components/inputs/InputPassword';
-import ButtonNomal from '@/components/buttons/ButtonNomal';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { signIn } from 'next-auth/react';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { Typography } from '@mui/material';
 
 const Login = () => {
-  const idRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  const { openPopup } = usePopup();
   const search = useSearchParams();
   const error = search.get('error');
-  const { openPopup } = usePopup();
 
   useEffect(() => {
-    const rtCheck = localStorage.getItem('rt');
-    if (rtCheck) {
-      openPopup({ title: '오류', content: '현재 로그인 상태입니다.' });
-      return router.replace('/admin');
-    }
-  }, []);
+    if (error) return openPopup({ title: '로그인 오류', content: '다시 시도해주세요.' });
+  }, [error]);
 
-  useEffect(() => {
-    if (error)
-      return openPopup({
-        title: '로그인 실패',
-        content: '아이디와 비밀번호를 정확히 입력해주세요.',
-      });
-  }, [search, error]);
-
-  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!idRef.current?.value)
-      return openPopup({ title: '오류', content: '아이디를 입력해주세요.' });
-
-    if (!passwordRef.current?.value)
-      return openPopup({ title: '오류', content: '패스워드를 입력해주세요.' });
-
-    await signIn('credentials', {
+  const submitHandler = async () => {
+    await signIn('kakao', {
       redirect: true,
-      id: idRef.current?.value,
-      password: passwordRef.current?.value,
-      callbackUrl: process.env.NEXT_PUBLIC_AUTH_URL + '/admin',
+      callbackUrl: '/admin',
     });
+
+    return;
   };
 
   return (
@@ -61,43 +37,18 @@ const Login = () => {
         transform: 'translateY(-50%)',
       }}
     >
-      <form onSubmit={submitHandler}>
-        <InputText
-          ref={idRef}
-          conSx={{ marginBottom: '20px' }}
-          textSx={{ color: 'text.secondary', fontSize: '24px' }}
+      <Typography color="text.secondary" textAlign="center" fontSize="14px" marginBottom={2}>
+        관리자 페이지는 로그인이 필수입니다.
+      </Typography>
+      <Box sx={{ width: '300px', cursor: 'pointer', margin: 'auto' }} onClick={submitHandler}>
+        <Image
+          style={{ width: '100%', height: 'auto' }}
+          src="/img/kakao_login_img.png"
+          alt="카카오로그인아이콘"
+          width={250}
+          height={10}
         />
-        <InputPassword
-          ref={passwordRef}
-          conSx={{ marginBottom: '20px' }}
-          textSx={{ color: 'text.secondary', fontSize: '24px' }}
-        />
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '10px',
-            margin: '50px 0',
-          }}
-        >
-          <ButtonNomal
-            color="warning"
-            sx={{ width: '100%', fontSize: '16px', fontWeight: '600', color: 'text.primary' }}
-            onClickEvent={() => router.back()}
-          >
-            뒤로가기
-          </ButtonNomal>
-          <ButtonNomal
-            type="submit"
-            color="secondary"
-            sx={{ width: '100%', fontSize: '16px', fontWeight: '600', color: 'text.primary' }}
-          >
-            로그인
-          </ButtonNomal>
-        </Box>
-      </form>
+      </Box>
     </Box>
   );
 };

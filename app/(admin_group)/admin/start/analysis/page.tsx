@@ -1,10 +1,13 @@
 'use client';
-import { useIsLogin } from '@/hook/useIsLogin/useIsLogin';
+import ButtonNomal from '@/components/buttons/ButtonNomal';
 import Box from '@mui/material/Box';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const Analysis = () => {
-  return <Box sx={{ color: 'text.secondary' }}>Analysis</Box>;
+  const router = useRouter();
+  return <Box sx={{ color: 'text.secondary' }}>통계</Box>;
 };
 
 export default Analysis;
