@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import React from 'react';
 
 const Analysis = () => {
-  const { data } = useIsLogin();
   return <Box sx={{ color: 'text.secondary' }}>Analysis</Box>;
 };
 

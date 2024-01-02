@@ -1,4 +1,5 @@
 import { Connection } from 'mongoose';
+import { Session } from 'next-auth';
 
 declare global {
   type FontSizeSx = string | { xs?: string; sm?: string; md?: string; lg?: string; xl?: string };
@@ -12,6 +13,10 @@ declare global {
         promise: Promise<typeof mongoose> | null;
       };
     }
+  }
+
+  interface SessionAdd extends Session {
+    error?: string;
   }
 }
 

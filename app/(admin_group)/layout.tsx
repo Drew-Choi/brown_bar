@@ -1,6 +1,7 @@
 import { Container } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { NavAdmin } from './NavAdmin';
+import { AuthSessionProvider } from '@/providers/AuthSessionProvider';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
@@ -16,7 +17,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     >
       <NavAdmin />
       <Container component="section" disableGutters={true} sx={{ position: 'relative' }}>
-        {children}
+        <AuthSessionProvider>{children}</AuthSessionProvider>
       </Container>
     </Container>
   );

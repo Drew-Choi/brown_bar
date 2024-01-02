@@ -1,7 +1,6 @@
-import bcrypt from 'bcrypt';
 import connectDB from '@/app/(api_group)/api/_lib/mongodb';
 import Member from '@/app/(api_group)/api/_models/Member';
-import jwt, { JsonWebTokenError, JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
@@ -47,8 +46,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: '로그인을 해주세요.' }, { status: 403 });
       }
     } else if (type === 'co') {
-      console.log('들어옴?');
-
       const { id } = await req.json();
       // 최초 로그인시 쿠키 발행
       const refreshTokenBrower = jwt.sign({ id: id, type: 'resh' }, JWT_SECRET as string, {
@@ -62,7 +59,7 @@ export async function POST(req: NextRequest) {
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 5 * 60,
+        maxAge: 24 * 60 * 60,
       });
 
       return NextResponse.json({ message: true }, { status: 200 });

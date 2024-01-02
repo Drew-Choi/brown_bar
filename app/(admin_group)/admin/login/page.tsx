@@ -14,8 +14,15 @@ const Login = () => {
   const router = useRouter();
   const search = useSearchParams();
   const error = search.get('error');
-
   const { openPopup } = usePopup();
+
+  useEffect(() => {
+    const rtCheck = localStorage.getItem('rt');
+    if (rtCheck) {
+      openPopup({ title: '오류', content: '현재 로그인 상태입니다.' });
+      return router.replace('/admin');
+    }
+  }, []);
 
   useEffect(() => {
     if (error)
@@ -23,7 +30,6 @@ const Login = () => {
         title: '로그인 실패',
         content: '아이디와 비밀번호를 정확히 입력해주세요.',
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, error]);
 
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
