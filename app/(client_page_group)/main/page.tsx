@@ -75,14 +75,14 @@ const Main = () => {
           onClickEvent={() => router.push('/main/about')}
         >
           <Typography fontSize="inherit" fontWeight={700} lineHeight={1.2}>
-            ABOUT ALCOHOL
+            A TASTING PARTY
           </Typography>
           <Typography
             sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}
             fontWeight={700}
             alignSelf="center"
           >
-            술에 대하여
+            더 브라운's 시음회
           </Typography>
         </ButtonWide>
       </Container>

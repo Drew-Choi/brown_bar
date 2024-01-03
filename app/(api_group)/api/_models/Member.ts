@@ -7,5 +7,5 @@ const memberSchema = new Schema({
   auth: { type: String, default: '' },
 });
 
-// 'Member' 모델이 이미 존재하는지 확인합니다.
+// 모델이 이미 존재하는지 확인
 export default mongoose.models.Member || mongoose.model('Member', memberSchema);

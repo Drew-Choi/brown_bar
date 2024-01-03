@@ -10,6 +10,9 @@ interface ImageLayoutProps {
   priority?: boolean;
   imgWidth?: number;
   imgHeight?: number;
+  innerWidth?: string;
+  innerLeft?: string;
+  innerTranslate?: string;
   alt: string;
 }
 
@@ -21,6 +24,9 @@ const ImageLayout = ({
   imgWidth = 500,
   imgHeight = 500,
   alt,
+  innerWidth = '100%',
+  innerLeft = '0',
+  innerTranslate = 'translate(0, -50%)',
 }: ImageLayoutProps) => {
   return (
     <Box
@@ -43,11 +49,11 @@ const ImageLayout = ({
         style={{
           position: 'absolute',
           display: 'block',
-          width: '100%',
+          width: innerWidth,
           height: 'auto',
           top: '50%',
-          left: '0',
-          transform: 'translateY(-50%)',
+          left: innerLeft,
+          transform: innerTranslate,
         }}
       />
     </Box>

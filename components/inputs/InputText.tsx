@@ -9,8 +9,24 @@ const InputText = forwardRef<
     textSx?: SxProps;
     labelSx?: SxProps;
     title?: string;
-
-    onChangeEvent?: ((e?: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void) | undefined;
+    multiline?: boolean;
+    type?:
+      | 'button'
+      | 'checkbox'
+      | 'color'
+      | 'date'
+      | 'datetime-local'
+      | 'email'
+      | 'file'
+      | 'hidden'
+      | 'number'
+      | 'radio'
+      | 'range'
+      | 'submit'
+      | 'tel'
+      | 'text'
+      | 'time';
+    onChangeEvent?: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined;
     value?: string | number;
   }
 >(
@@ -20,7 +36,8 @@ const InputText = forwardRef<
       textSx,
       title = 'ID',
       labelSx,
-
+      multiline = false,
+      type = 'text',
       onChangeEvent,
       value,
     },
@@ -32,11 +49,12 @@ const InputText = forwardRef<
           {title} {'-'}
         </InputLabel>
         <Input
+          multiline={multiline}
           value={value}
           onChange={onChangeEvent}
           inputRef={ref}
           sx={{ ...textSx }}
-          type="text"
+          type={type}
         />
       </FormControl>
     );

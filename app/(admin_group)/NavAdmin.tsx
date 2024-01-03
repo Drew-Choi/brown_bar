@@ -10,17 +10,19 @@ import SavedSearchIcon from '@mui/icons-material/SavedSearch';
 import LocalBarIcon from '@mui/icons-material/LocalBar';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { usePathname, useRouter } from 'next/navigation';
-import { useIsLogin } from '@/hook/useIsLogin/useIsLogin';
-import ButtonNomal from '@/components/buttons/ButtonNomal';
 import { signOut } from 'next-auth/react';
+import { RiLogoutBoxLine } from 'react-icons/ri';
+import { IoSettings } from 'react-icons/io5';
+import { useIsError } from '@/hook/useIsLogin/useIsError';
 
 const navMenuData = [
   {
     label: '영업시작',
     url: null,
     icon: <PlayCircleFilledWhiteIcon />,
+    urlGroupName: 'start',
     sub: [
-      { subLabel: 'ㄴ 주문받기', url: '/admin' },
+      { subLabel: 'ㄴ 주문받기', url: '/admin/start/sales' },
       { subLabel: 'ㄴ 주문내역', url: '/admin/start/order_list' },
       { subLabel: 'ㄴ 통계', url: '/admin/start/analysis' },
     ],
@@ -29,18 +31,21 @@ const navMenuData = [
     label: '상품등록',
     icon: <LibraryAddIcon />,
     sub: [],
+    urlGroupName: null,
     url: '/admin/product_write',
   },
   {
     label: '메뉴판',
     icon: <SummarizeIcon />,
     sub: [],
+    urlGroupName: null,
     url: '/admin/menu_write',
   },
   {
     label: '내 취향 찾기',
     icon: <SavedSearchIcon />,
     url: null,
+    urlGroupName: 'find',
     sub: [
       { subLabel: 'ㄴ 초심자', url: '/admin/find/beginner' },
       { subLabel: 'ㄴ 탐험가', url: '/admin/find/explorer' },
@@ -48,18 +53,26 @@ const navMenuData = [
     ],
   },
   {
-    label: '술에 대하여',
+    label: '시음회',
     icon: <LocalBarIcon />,
     url: null,
+    urlGroupName: 'tasting',
     sub: [
-      { subLabel: 'ㄴ 아이콘 등록', url: '/admin/about/icon_write' },
-      { subLabel: 'ㄴ 설명작성', url: '/admin/about/about_write' },
+      { subLabel: 'ㄴ 일정등록', url: '/admin/tasting/write' },
+      { subLabel: 'ㄴ 오픈카톡등록', url: '/admin/tasting/chat' },
     ],
+  },
+  {
+    label: '관리자 설정',
+    icon: <IoSettings size={20} />,
+    sub: [],
+    urlGroupName: null,
+    url: '/admin/settings',
   },
 ];
 
 export const NavAdmin = () => {
-  useIsLogin();
+  useIsError();
   const [show, setShow] = useState<Boolean>(false);
   const pathName = usePathname();
 
@@ -79,6 +92,7 @@ export const NavAdmin = () => {
         borderStyle: 'solid',
         borderWidth: '1px 1px 1px 0px',
         borderRadius: '0 0 10px 0',
+        zIndex: '9',
       }}
     >
       {/* 메뉴토글버튼 */}
@@ -100,6 +114,19 @@ export const NavAdmin = () => {
       </Box>
       {/* ------ */}
 
+      <Box
+        sx={{
+          position: 'relative',
+          boxSizing: 'border-box',
+          opacity: { xs: !show ? '0' : '1', sm: '1' },
+          transition: '1s opacity ease',
+          cursor: 'pointer',
+        }}
+        onClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
+      >
+        <RiLogoutBoxLine size={30} style={{ margin: '20px 0 0 10px' }} />
+      </Box>
+
       <MenuListUp
         sx={{
           opacity: { xs: !show ? '0' : '1', sm: '1' },
@@ -107,20 +134,6 @@ export const NavAdmin = () => {
         }}
         data={navMenuData}
       />
-      <Box sx={{ position: 'relative', width: '100%' }}>
-        <ButtonNomal
-          onClickEvent={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
-          sx={{
-            position: 'relative',
-            display: 'block',
-            margin: 'auto',
-            fontSize: '12px',
-            fontWeight: '600',
-          }}
-        >
-          로그아웃
-        </ButtonNomal>
-      </Box>
     </Box>
   );
 };
@@ -132,6 +145,7 @@ const MenuListUp = React.memo(
         label: '영업시작',
         icon: <div></div>,
         url: null,
+        urlGroupName: null,
         sub: [
           { subLabel: 'ㄴ 주문받기', url: '/admin' },
           { subLabel: 'ㄴ 주문내역', url: '/admin' },
@@ -145,19 +159,19 @@ const MenuListUp = React.memo(
       label: string;
       icon: ReactNode;
       url: string | null;
+      urlGroupName: string | null;
       sub: { subLabel: string; url: string }[];
     }[];
     sx?: SxProps;
   }) => {
     const router = useRouter();
+    const pathName = usePathname();
 
     const [openValues, setOpenValues] = useState<Array<boolean>>(
       Array(data?.length || 0)
         .fill(false)
         .map((_, index) => index === 0),
     );
-
-    const [selectIndex, setSelectIndex] = useState<string>('0-0');
 
     const collapseHandler = (index: number) => {
       setOpenValues((cur) => {
@@ -172,20 +186,37 @@ const MenuListUp = React.memo(
         {data?.map((el, index) => (
           <Box component="li" sx={{ marginBottom: '10px' }} key={index}>
             <ListItemButton
-              sx={{ gap: '10px', fontWeight: '600', whiteSpace: 'nowrap' }}
+              sx={{
+                gap: '10px',
+                fontWeight: '600',
+                whiteSpace: 'nowrap',
+              }}
               onClick={(e) => {
                 if (el.sub?.length !== 0) {
                   collapseHandler(index);
                 } else {
-                  setSelectIndex(`${index}`);
-                  el.url !== null && router.push(el.url);
+                  el?.url !== null && router.push(el.url);
                 }
               }}
-              selected={selectIndex === `${index}` || selectIndex.startsWith(`${index}-`)}
+              selected={
+                el?.url
+                  ? pathName === el.url
+                  : el?.urlGroupName
+                    ? pathName.includes(el.urlGroupName)
+                    : false
+              }
             >
-              {el.icon}
-              {el.label}
-              {el.sub?.length !== 0 && (openValues[index] ? <ExpandLess /> : <ExpandMore />)}
+              <div style={{ flex: '0.5' }}>{el.icon}</div>
+              <p style={{ flex: '1' }}>{el.label}</p>
+              {el.sub?.length !== 0 ? (
+                openValues[index] ? (
+                  <ExpandLess sx={{ flex: '0.5', justifySelf: 'right' }} />
+                ) : (
+                  <ExpandMore sx={{ flex: '0.5', justifySelf: 'right' }} />
+                )
+              ) : (
+                <ExpandLess sx={{ flex: '0.5', visibility: 'hidden' }} />
+              )}
             </ListItemButton>
             {el.sub?.length !== 0 && (
               <Collapse in={openValues[index] || false} timeout="auto" unmountOnExit>
@@ -205,10 +236,9 @@ const MenuListUp = React.memo(
                       key={`${index}-${subIndex}`}
                       sx={{ whiteSpace: 'nowrap' }}
                       onClick={() => {
-                        setSelectIndex(`${index}-${subIndex}`);
                         router.push(sub.url);
                       }}
-                      selected={selectIndex === `${index}-${subIndex}`}
+                      selected={pathName === sub?.url}
                     >
                       {sub.subLabel}
                     </ListItemButton>
