@@ -116,7 +116,8 @@ const ProductWrite = () => {
     >
       <Box sx={{ width: { xs: '70%', sm: '50%' }, cursor: 'pointer' }} onClick={inputClickHandler}>
         <ImageLayout
-          src={!blobURL ? '/img/ready_file.png' : blobURL}
+          src="https://fovvimage.s3.ap-northeast-2.amazonaws.com/brown_products/aa_20240104190143"
+          // src={!blobURL ? '/img/ready_file.png' : blobURL}
           innerWidth={!blobURL ? '50%' : '100%'}
           innerLeft={!blobURL ? '50%' : '0'}
           innerTranslate={!blobURL ? 'translate(-50%, -50%)' : 'translate(0, -50%)'}

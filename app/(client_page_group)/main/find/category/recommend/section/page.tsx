@@ -15,7 +15,7 @@ const data = [
     class: 'Beginner',
     chice: 'MaltWhiskey',
     sectionIdx: 1,
-    img: '/img/test/test_image.jpeg',
+    img: 'https://fovvimage.s3.ap-northeast-2.amazonaws.com/brown_products/test',
     idx: 1,
   },
   {
@@ -92,12 +92,7 @@ const Section = ({
               )
             }
           >
-            <ImageLayout
-              priority={true}
-              src="/img/test/test_image.jpeg"
-              alt="제품사진"
-              marginBottom="5px"
-            />
+            <ImageLayout priority={true} src={el.img} alt="제품사진" marginBottom="5px" />
             <ContentBox>
               <Typography
                 textAlign="center"
