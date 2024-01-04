@@ -18,21 +18,33 @@ const ProductWrite = () => {
   const pdNameRef = useRef<HTMLInputElement>(null);
   const priceRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLInputElement>(null);
+  // 인풋 제어용
+  const inputFileRef = useRef<HTMLInputElement>(null);
 
   const { mutate: writeProductApi } = useMutationInstance({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.PRODUCT_WRITE,
     apiMultipartPost: true,
-    onErrorFn: (err) => {
+    onErrorFn: (err: any) => {
       console.error(err);
+      if (err.response.status === 400)
+        return openPopup({ title: '오류', content: err.response.data.message });
       openPopup({ title: '오류', content: '다시 시도해주세요.' });
     },
-    onSuccessFn: () => {},
+    onSuccessFn: () => {
+      if (pdNameRef.current && priceRef.current && descRef.current && inputFileRef.current) {
+        pdNameRef.current.value = '';
+        priceRef.current.value = '';
+        descRef.current.value = '';
+        inputFileRef.current.value = '';
+        setBlobURL(null);
+        setImgFile(null);
+        return;
+      }
+    },
   });
 
   // 이미지 관련
-  const inputFileRef = useRef<HTMLInputElement>(null);
-
   const inputClickHandler = () => {
     inputFileRef.current?.click();
   };
@@ -82,8 +94,6 @@ const ProductWrite = () => {
     formData.append('price', String(resultCommaRemove(priceRef.current?.value)));
     formData.append('desc', descRef.current?.value);
 
-    console.log('데이터들', formData);
-
     writeProductApi({ apiBody: formData });
   };
 
@@ -104,7 +114,7 @@ const ProductWrite = () => {
         margin: 'auto',
       }}
     >
-      <Box sx={{ width: { xs: '70%', sm: '50%' } }} onClick={inputClickHandler}>
+      <Box sx={{ width: { xs: '70%', sm: '50%' }, cursor: 'pointer' }} onClick={inputClickHandler}>
         <ImageLayout
           src={!blobURL ? '/img/ready_file.png' : blobURL}
           innerWidth={!blobURL ? '50%' : '100%'}

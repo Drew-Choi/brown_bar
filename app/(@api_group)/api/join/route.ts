@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
-import connectDB from '@/app/(api_group)/api/_lib/mongodb';
-import Member from '@/app/(api_group)/api/_models/Member';
+import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
+import Member from '@/app/(@api_group)/api/_models/Member';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
