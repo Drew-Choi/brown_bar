@@ -1,7 +1,12 @@
 'use client';
 import { COLORS } from '@/asset/style';
-import { List, ListItemButton, Box, Collapse, SxProps } from '@mui/material';
-import React, { ReactNode, useState } from 'react';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import Switch from '@mui/material/Switch';
+import { SxProps, Typography } from '@mui/material';
+import React, { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
@@ -14,6 +19,13 @@ import { signOut } from 'next-auth/react';
 import { RiLogoutBoxLine } from 'react-icons/ri';
 import { IoSettings } from 'react-icons/io5';
 import { useIsError } from '@/hook/useIsLogin/useIsError';
+import { useMutationInstance } from '@/react-query/useMutationInstance';
+import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
+import { usePopup } from '@/hook/usePopup/usePopup';
+import { useRecoilState } from 'recoil';
+import { isStart } from '@/recoil/isStart';
+import { useQueryInstance } from '@/react-query/useQueryInstance';
+import { QUERY_KEY } from '@/constant/QUERY_KEY';
 
 const navMenuData = [
   {
@@ -73,10 +85,45 @@ const navMenuData = [
 
 export const NavAdmin = () => {
   useIsError();
+  const { openPopup } = usePopup();
   const [show, setShow] = useState<Boolean>(false);
   const pathName = usePathname();
+  // 영업시작 확인
+  const [startSwitchValue, setStartSwitchValue] = useRecoilState(isStart);
+
+  // 영업상태 초기설정
+  const { isError } = useQueryInstance({
+    queryKey: [QUERY_KEY.IS_START],
+    apiMethod: 'get',
+    apiEndPoint: USE_QUERY_POINT.START,
+    staleTime: 0,
+    gcTime: 0,
+    onSuccess: (res) => {
+      setStartSwitchValue(res.data);
+    },
+  });
+
+  // 영업상태변경 요청
+  const { mutate: isStartApi } = useMutationInstance({
+    apiMethod: 'post',
+    apiEndPoint: USE_MUTATE_POINT.START,
+    onErrorFn: (err: any) => {
+      console.error(err);
+      return openPopup({ title: '오류', content: err.response.data.message });
+    },
+    onSuccessFn: (res) => {
+      setStartSwitchValue(res.data);
+    },
+  });
+
+  const startSwitchHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.checked;
+    isStartApi({ apiBody: { is_start: value } });
+  };
 
   if (pathName === '/admin/login') return;
+
+  if (isError) return <Box color="text.secondary">ERROR</Box>;
 
   return (
     <Box
@@ -117,14 +164,41 @@ export const NavAdmin = () => {
       <Box
         sx={{
           position: 'relative',
+          width: '150px',
+          display: 'flex',
           boxSizing: 'border-box',
           opacity: { xs: !show ? '0' : '1', sm: '1' },
-          transition: '1s opacity ease',
-          cursor: 'pointer',
+          transition: '0.5s opacity ease',
+          borderWidth: '0 0 2px 0',
+          borderColor: COLORS.divider,
+          borderStyle: 'solid',
+          margin: 'auto',
         }}
-        onClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
       >
-        <RiLogoutBoxLine size={30} style={{ margin: '20px 0 0 10px' }} />
+        <RiLogoutBoxLine
+          size={35}
+          style={{ margin: '20px 0 0 20px', cursor: 'pointer' }}
+          onClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
+        />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+            opacity: { xs: !show ? '0' : '1', sm: '1' },
+            transition: '0.5s opacity ease',
+            paddingTop: '7px',
+          }}
+        >
+          <Typography sx={{ fontSize: '15px', fontWeight: '600' }}>영업시작</Typography>
+          <Switch
+            checked={startSwitchValue}
+            inputProps={{ 'aria-label': 'controlled' }}
+            onChange={startSwitchHandler}
+            color="secondary"
+          />
+        </Box>
       </Box>
 
       <MenuListUp
