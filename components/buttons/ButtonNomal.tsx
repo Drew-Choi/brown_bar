@@ -1,4 +1,5 @@
-import { Button, SxProps } from '@mui/material';
+import { SxProps } from '@mui/material';
+import Button from '@mui/material/Button';
 import React, { MouseEvent, ReactNode } from 'react';
 
 const ButtonNomal = ({

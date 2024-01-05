@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { COLORS } from '@/asset/style';
 import { FaPlus, FaMinus } from 'react-icons/fa6';
 import Selector from '../Selector';

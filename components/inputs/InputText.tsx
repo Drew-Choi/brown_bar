@@ -1,6 +1,9 @@
 'use client';
-import { FormControl, Input, InputLabel, SxProps } from '@mui/material';
+import { SxProps } from '@mui/material';
 import React, { ChangeEvent, forwardRef } from 'react';
+import FormControl from '@mui/material/FormControl';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
 
 const InputText = forwardRef<
   HTMLInputElement,

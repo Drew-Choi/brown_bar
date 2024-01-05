@@ -1,4 +1,4 @@
-import { Container } from '@mui/material';
+import Container from '@mui/material/Container';
 import React, { ReactNode } from 'react';
 import { NavAdmin } from './NavAdmin';
 import { AuthSessionProvider } from '@/providers/AuthSessionProvider';

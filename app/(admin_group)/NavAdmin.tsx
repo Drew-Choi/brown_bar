@@ -5,8 +5,9 @@ import ListItemButton from '@mui/material/ListItemButton';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import Switch from '@mui/material/Switch';
-import { SxProps, Typography } from '@mui/material';
-import React, { ChangeEvent, ReactNode, useEffect, useState } from 'react';
+import { SxProps } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import React, { ChangeEvent, ReactNode, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
@@ -40,11 +41,14 @@ const navMenuData = [
     ],
   },
   {
-    label: '상품등록',
+    label: '상품',
+    url: null,
     icon: <LibraryAddIcon />,
-    sub: [],
-    urlGroupName: null,
-    url: '/admin/product_write',
+    urlGroupName: 'product',
+    sub: [
+      { subLabel: 'ㄴ 상품등록', url: '/admin/product/product_write' },
+      { subLabel: 'ㄴ 상품목록', url: '/admin/product/product_list' },
+    ],
   },
   {
     label: '메뉴판',
@@ -98,8 +102,9 @@ export const NavAdmin = () => {
     apiEndPoint: USE_QUERY_POINT.START,
     staleTime: 0,
     gcTime: 0,
+    queryEnable: pathName !== '/admin/login',
     onSuccess: (res) => {
-      setStartSwitchValue(res.data);
+      setStartSwitchValue(() => res.data);
     },
   });
 
@@ -112,7 +117,7 @@ export const NavAdmin = () => {
       return openPopup({ title: '오류', content: err.response.data.message });
     },
     onSuccessFn: (res) => {
-      setStartSwitchValue(res.data);
+      setStartSwitchValue(() => res.data);
     },
   });
 
@@ -130,8 +135,7 @@ export const NavAdmin = () => {
       component="nav"
       sx={{
         position: 'relative',
-        display: 'inline-block',
-        width: { xs: !show ? '0px' : '200px', sm: '200px' },
+        width: { xs: !show ? '0' : '200px', sm: '200px' },
         height: '100%',
         bgcolor: 'background.paper',
         transition: '1s width ease',
@@ -161,56 +165,30 @@ export const NavAdmin = () => {
       </Box>
       {/* ------ */}
 
-      <Box
-        sx={{
-          position: 'relative',
-          width: '150px',
-          display: 'flex',
-          boxSizing: 'border-box',
-          opacity: { xs: !show ? '0' : '1', sm: '1' },
-          transition: '0.5s opacity ease',
-          borderWidth: '0 0 2px 0',
-          borderColor: COLORS.divider,
-          borderStyle: 'solid',
-          margin: 'auto',
-        }}
-      >
-        <RiLogoutBoxLine
-          size={35}
-          style={{ margin: '20px 0 0 20px', cursor: 'pointer' }}
-          onClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
-        />
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            opacity: { xs: !show ? '0' : '1', sm: '1' },
-            transition: '0.5s opacity ease',
-            paddingTop: '7px',
-          }}
-        >
-          <Typography sx={{ fontSize: '15px', fontWeight: '600' }}>영업시작</Typography>
-          <Switch
-            checked={startSwitchValue}
-            inputProps={{ 'aria-label': 'controlled' }}
-            onChange={startSwitchHandler}
-            color="secondary"
-          />
-        </Box>
-      </Box>
-
       <MenuListUp
-        sx={{
-          opacity: { xs: !show ? '0' : '1', sm: '1' },
-          transition: '1s opacity ease',
-        }}
+        sx={{ opacity: { xs: !show ? '0' : '1', sm: '1' }, transition: '1s opacity ease' }}
         data={navMenuData}
+        logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
+        switchChecked={startSwitchValue || false}
+        switchOnChange={startSwitchHandler}
       />
     </Box>
   );
 };
+
+interface MenuListUpProps {
+  data?: {
+    label: string;
+    icon: ReactNode;
+    url: string | null;
+    urlGroupName: string | null;
+    sub: { subLabel: string; url: string }[];
+  }[];
+  sx?: SxProps;
+  logOutOnClick?: () => void;
+  switchOnChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  switchChecked?: boolean;
+}
 
 const MenuListUp = React.memo(
   ({
@@ -228,23 +206,15 @@ const MenuListUp = React.memo(
       },
     ],
     sx,
-  }: {
-    data?: {
-      label: string;
-      icon: ReactNode;
-      url: string | null;
-      urlGroupName: string | null;
-      sub: { subLabel: string; url: string }[];
-    }[];
-    sx?: SxProps;
-  }) => {
+    logOutOnClick,
+    switchOnChange,
+    switchChecked,
+  }: MenuListUpProps) => {
     const router = useRouter();
     const pathName = usePathname();
 
     const [openValues, setOpenValues] = useState<Array<boolean>>(
-      Array(data?.length || 0)
-        .fill(false)
-        .map((_, index) => index === 0),
+      Array(data?.length || 0).fill(false),
     );
 
     const collapseHandler = (index: number) => {
@@ -256,7 +226,51 @@ const MenuListUp = React.memo(
     };
 
     return (
-      <List component="ul" sx={{ fontSize: '16px', padding: '20px 0', ...sx }}>
+      <List component="ul" sx={{ fontSize: '16px', padding: '10px 0', ...sx }}>
+        <Box
+          sx={{
+            position: 'relative',
+            width: '80%',
+            display: 'flex',
+            boxSizing: 'border-box',
+            borderWidth: '0 0 2px 0',
+            borderColor: COLORS.divider,
+            borderStyle: 'solid',
+            margin: 'auto',
+            overflow: 'hidden',
+          }}
+        >
+          <RiLogoutBoxLine
+            size={35}
+            style={{
+              cursor: 'pointer',
+              alignSelf: 'center',
+            }}
+            onClick={logOutOnClick}
+          />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '100%',
+              paddingTop: '7px',
+            }}
+          >
+            <Typography
+              noWrap={true}
+              sx={{ fontSize: '15px', fontWeight: '600', overflow: 'hidden' }}
+            >
+              영업시작
+            </Typography>
+            <Switch
+              checked={switchChecked}
+              inputProps={{ 'aria-label': 'controlled' }}
+              onChange={switchOnChange}
+              color="secondary"
+            />
+          </Box>
+        </Box>
         {data?.map((el, index) => (
           <Box component="li" sx={{ marginBottom: '10px' }} key={index}>
             <ListItemButton

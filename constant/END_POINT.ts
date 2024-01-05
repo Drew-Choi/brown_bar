@@ -1,4 +1,4 @@
-export const USE_QUERY_POINT = { START: 'start' };
+export const USE_QUERY_POINT = { START: 'start', PRODUCT_LIST: 'product/list' };
 
 // ---------------------------------------
 

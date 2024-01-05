@@ -5,7 +5,7 @@ import { usePopup } from '@/hook/usePopup/usePopup';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 const Login = () => {
   const { openPopup } = usePopup();

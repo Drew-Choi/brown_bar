@@ -18,6 +18,13 @@ declare global {
   interface SessionAdd extends Session {
     error?: string;
   }
+
+  interface ProductInfoType {
+    pd_name: string;
+    price: number;
+    desc: string;
+    img_url: string;
+  }
 }
 
 export {};

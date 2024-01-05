@@ -4,11 +4,14 @@ import InputText from '@/components/inputs/InputText';
 import ImageLayout from '@/components/layout/ImageLayout';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { MEGA_BYTE } from '@/constant/NUMBER';
+import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { IMAGE_TYPE } from '@/constant/TYPE';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { commaInput, resultCommaRemove } from '@/utils/numberComma';
-import { Box, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { useQueryClient } from '@tanstack/react-query';
 import React, { ChangeEvent, useRef, useState } from 'react';
 
 const ProductWrite = () => {
@@ -20,6 +23,7 @@ const ProductWrite = () => {
   const descRef = useRef<HTMLInputElement>(null);
   // 인풋 제어용
   const inputFileRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   const { mutate: writeProductApi } = useMutationInstance({
     apiMethod: 'post',
@@ -39,6 +43,7 @@ const ProductWrite = () => {
         inputFileRef.current.value = '';
         setBlobURL(null);
         setImgFile(null);
+        queryClient.removeQueries({ queryKey: [QUERY_KEY.PRODUCT_LIST] });
         return;
       }
     },

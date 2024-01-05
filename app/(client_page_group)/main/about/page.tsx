@@ -1,6 +1,8 @@
 'use client';
 import ButtonWide from '@/components/buttons/ButtonWide';
-import { Box, Typography, styled } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';

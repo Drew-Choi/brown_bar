@@ -1,12 +1,11 @@
 'use client';
-import { Box, Typography, styled } from '@mui/material';
-import Image from 'next/image';
+import { styled } from '@mui/material';
 import React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
-import { COLORS } from '@/asset/style';
 import ContentBox from '@/components/layout/ContentBox';
 import { useRouter } from 'next/navigation';
 import ImageLayout from '@/components/layout/ImageLayout';
+import Typography from '@mui/material/Typography';
 
 const data = [
   {

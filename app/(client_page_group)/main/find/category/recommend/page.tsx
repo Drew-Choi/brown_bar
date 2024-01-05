@@ -1,7 +1,9 @@
 'use client';
 import ButtonWide from '@/components/buttons/ButtonWide';
 import ContentBox from '@/components/layout/ContentBox';
-import { Box, Typography, styled } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';

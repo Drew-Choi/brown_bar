@@ -1,5 +1,5 @@
 import { COLORS } from '@/asset/style';
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 import Image from 'next/image';
 import React from 'react';
 

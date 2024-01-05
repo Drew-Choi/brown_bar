@@ -1,5 +1,6 @@
-import { Container, SxProps } from '@mui/material';
+import { SxProps } from '@mui/material';
 import React, { ReactNode } from 'react';
+import Container from '@mui/material/Container';
 
 const SectionContainer = ({ children, sx }: { children: ReactNode; sx?: SxProps }) => {
   return (

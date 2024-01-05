@@ -1,7 +1,12 @@
 'use client';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { FormControl, IconButton, Input, InputAdornment, InputLabel, SxProps } from '@mui/material';
-import React, { ChangeEvent, MouseEvent, Ref, forwardRef, useState } from 'react';
+import { SxProps } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
+import React, { ChangeEvent, MouseEvent, forwardRef, useState } from 'react';
 
 const InputPassword = forwardRef<
   HTMLInputElement,

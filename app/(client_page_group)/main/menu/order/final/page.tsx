@@ -1,8 +1,9 @@
 'use client';
 import Line from '@/components/Line';
 import FianlLineLayout from '@/components/layout/FianlLineLayout';
-
-import { Container, Typography, styled } from '@mui/material';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material';
 import React from 'react';
 
 const MainContainer = styled('main')`

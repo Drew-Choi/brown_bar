@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "global.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "asset/muiTheme/theme.tsx", "constant/NAV_DATA.tsㅌ", "asset/muiTheme/EmotionCache.tsㅌ"],
+  "include": ["next-env.d.ts", "global.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "asset/muiTheme/theme.tsx", "constant/NAV_DATA.tsㅌ", "asset/muiTheme/EmotionCache.tsㅌ", "app/(@api_group)/api/_test/mongodb.mjs", "app/(@api_group)/api/_test/db_insert.mjs"],
   "exclude": ["node_modules"]
 }

@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import ButtonBack from '@/components/buttons/ButtonBack';
-import { useParams, usePathname, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useSearchParams, useRouter } from 'next/navigation';
 import Selector from '@/components/Selector';
 import { SxProps } from '@mui/material';
 
@@ -13,10 +13,12 @@ const Tag = ({
   children,
   skeleton,
   sx,
+  onClick,
 }: {
   children: ReactNode;
   skeleton?: boolean;
   sx?: SxProps;
+  onClick?: () => void;
 }) => {
   return (
     <Box
@@ -32,6 +34,7 @@ const Tag = ({
         fontSize: { xs: '8vw', md: '72px' },
         ...sx,
       }}
+      onClick={onClick}
     >
       {children}
     </Box>
@@ -57,6 +60,7 @@ const SubText = ({
 };
 
 export const Header = ({ flex = '1' }: { flex?: string }) => {
+  const router = useRouter();
   const pathName = usePathname();
   const search = useSearchParams();
   const useClass = search.get('class');
@@ -91,7 +95,9 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             height: '72px',
             fontSize: '24px',
             borderRadius: '0 0 10px 0',
+            cursor: 'pointer',
           }}
+          onClick={() => router.push('/admin')}
         >
           <Typography fontSize="inherit" color="text.primary" fontWeight={700}>
             Admin

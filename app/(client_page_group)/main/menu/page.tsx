@@ -1,7 +1,8 @@
 'use client';
 import React from 'react';
-import { styled, Container } from '@mui/material';
+import { styled } from '@mui/material';
 import MenuLineLayout from '@/components/layout/MenuLineLayout';
+import Container from '@mui/material/Container';
 
 const MainContainer = styled('main')`
   position: relative;
