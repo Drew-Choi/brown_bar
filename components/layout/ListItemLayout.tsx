@@ -3,15 +3,18 @@ import React from 'react';
 import ImageLayout from './ImageLayout';
 import ContentBox from './ContentBox';
 import { Typography } from '@mui/material';
+import { ImCancelCircle } from 'react-icons/im';
+import { COLORS } from '@/asset/style';
 
 interface ListItemLayoutProps {
   img_url: string;
   pd_name: string;
   price: number;
   desc?: string;
+  onClickDelete?: () => void;
 }
 
-const ListItemLayout = ({ img_url, pd_name, price, desc }: ListItemLayoutProps) => {
+const ListItemLayout = ({ img_url, pd_name, price, desc, onClickDelete }: ListItemLayoutProps) => {
   return (
     <ContentBox
       sx={{
@@ -19,6 +22,19 @@ const ListItemLayout = ({ img_url, pd_name, price, desc }: ListItemLayoutProps) 
         gap: '30px',
       }}
     >
+      <Box
+        onClick={onClickDelete}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          textAlign: 'right',
+          flex: '0.08',
+          justifySelf: 'right',
+          cursor: 'pointer',
+          height: 'fit-content',
+        }}
+      >
+        <ImCancelCircle color={COLORS.text.secondary} size={30} />
+      </Box>
       <Box
         sx={{
           width: { xs: '70%', md: '150px' },
@@ -59,6 +75,19 @@ const ListItemLayout = ({ img_url, pd_name, price, desc }: ListItemLayoutProps) 
         <Typography fontSize="14px" sx={{ wordBreak: 'break-all' }}>
           {desc}
         </Typography>
+      </Box>
+      <Box
+        onClick={onClickDelete}
+        sx={{
+          display: { xs: 'none', md: 'block' },
+          textAlign: 'right',
+          flex: '0.08',
+          justifySelf: 'right',
+          cursor: 'pointer',
+          height: 'fit-content',
+        }}
+      >
+        <ImCancelCircle color={COLORS.text.secondary} size={30} />
       </Box>
     </ContentBox>
   );

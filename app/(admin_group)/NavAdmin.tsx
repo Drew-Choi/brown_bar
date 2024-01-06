@@ -7,7 +7,7 @@ import Collapse from '@mui/material/Collapse';
 import Switch from '@mui/material/Switch';
 import { SxProps } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import React, { ChangeEvent, ReactNode, useRef, useState } from 'react';
+import React, { ChangeEvent, ReactNode, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
@@ -27,7 +27,6 @@ import { useRecoilState } from 'recoil';
 import { isStart } from '@/recoil/isStart';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
-import Cork from '@/components/svg/Cork';
 
 const navMenuData = [
   {
@@ -127,22 +126,12 @@ export const NavAdmin = () => {
     isStartApi({ apiBody: { is_start: value } });
   };
 
-  //메뉴 탑으로 이동용
-  const navTopRef = useRef<HTMLDivElement>(null);
-
-  const scrollToTarget = () => {
-    if (navTopRef.current) {
-      navTopRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   if (pathName === '/admin/login') return;
 
   if (isError) return <Box color="text.secondary">ERROR</Box>;
 
   return (
     <>
-      <div style={{ visibility: 'hidden' }} ref={navTopRef} />
       <Box
         component="nav"
         sx={{
@@ -187,41 +176,8 @@ export const NavAdmin = () => {
           logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
           switchChecked={startSwitchValue || false}
           switchOnChange={startSwitchHandler}
+          showUseState={() => setShow((cur) => cur && false)}
         />
-
-        {/* 스크롤 탑을로 이동 버튼 */}
-        <Box
-          onClick={scrollToTarget}
-          sx={{
-            position: 'absolute',
-            display: 'flex',
-            bottom: '50px',
-            flexDirection: 'column',
-            alignItems: 'center',
-            transform: {
-              xs: !show ? 'rotate(180deg) translateX(110%)' : 'rotate(180deg) translateX(50%)',
-              sm: 'rotate(180deg) translateX(50%)',
-            },
-            opacity: {
-              xs: !show ? '0' : '1',
-              sm: '1',
-            },
-            left: { xs: !show ? '0%' : '50%', sm: '50%' },
-            transition: '1s ease',
-            overflow: 'hidden',
-            zIndex: '15',
-            cursor: 'pointer',
-          }}
-        >
-          <Cork
-            pointerColor={COLORS.primary}
-            sx={{
-              position: 'relative',
-              display: 'block',
-            }}
-          />
-          <Typography sx={{ transform: 'rotate(180deg)' }}>to Top</Typography>
-        </Box>
       </Box>
     </>
   );
@@ -241,6 +197,7 @@ interface MenuListUpProps {
   logOutOnClick?: () => void;
   switchOnChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   switchChecked?: boolean;
+  showUseState?: () => void;
 }
 
 const MenuListUp = React.memo(
@@ -262,6 +219,7 @@ const MenuListUp = React.memo(
     logOutOnClick,
     switchOnChange,
     switchChecked,
+    showUseState,
   }: MenuListUpProps) => {
     const router = useRouter();
     const pathName = usePathname();
@@ -333,11 +291,14 @@ const MenuListUp = React.memo(
                 fontWeight: '600',
                 whiteSpace: 'nowrap',
               }}
-              onClick={(e) => {
+              onClick={() => {
                 if (el.sub?.length !== 0) {
                   collapseHandler(index);
                 } else {
-                  el?.url !== null && router.push(el.url);
+                  if (el?.url !== null) {
+                    router.push(el.url);
+                    showUseState && showUseState();
+                  }
                 }
               }}
               selected={
@@ -379,6 +340,7 @@ const MenuListUp = React.memo(
                       sx={{ whiteSpace: 'nowrap' }}
                       onClick={() => {
                         router.push(sub.url);
+                        showUseState && showUseState();
                       }}
                       selected={pathName === sub?.url}
                     >
