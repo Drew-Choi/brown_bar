@@ -1,33 +1,43 @@
 'use client';
+import axiosInstance from '@/axios/instance';
+import ButtonNomal from '@/components/buttons/ButtonNomal';
+import ListItemLayout from '@/components/layout/ListItemLayout';
 import { USE_QUERY_POINT } from '@/constant/END_POINT';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
+import { LastPage } from '@mui/icons-material';
 import Grid from '@mui/material/Unstable_Grid2';
+import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 
 const ProductList = () => {
-  const search = useSearchParams();
-  const skip = search.get('skip') ? search.get('skip') : '0';
-  const limit = search.get('limit') ? search.get('limit') : '10';
+  const fetch = async ({ pageParam }: { pageParam: number }) => {
+    const response = await axiosInstance.get(`product/list?page=${pageParam}`);
 
-  const {
-    data: { data: prodcutList },
-  } = useQueryInstance({
-    queryKey: [QUERY_KEY.PRODUCT_LIST, skip, limit],
-    apiMethod: 'get',
-    apiEndPoint: USE_QUERY_POINT.PRODUCT_LIST,
-    apiQueryParams: {
-      skip,
-      limit,
+    return response;
+  };
+
+  const { data, status, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    queryKey: [QUERY_KEY.PRODUCT_LIST],
+    queryFn: fetch,
+    initialPageParam: 1,
+    getNextPageParam: (LastPage, allPage) => {
+      const nextPage = LastPage.data.data.length ? allPage.length + 1 : undefined;
+      return nextPage;
     },
   });
 
   return (
-    <Grid container rowSpacing={2}>
-      {prodcutList?.map((el: ProductInfoType, index: number) => (
-        <Grid xs={12} color="white" key={index}>
-          aaaaa
+    <Grid container rowSpacing={2} sx={{ width: '100%', padding: '30px' }}>
+      {data?.pages[0].data.data.map((el: ProductInfoType) => (
+        <Grid xs={12} key={el._id}>
+          <ListItemLayout
+            img_url={el.img_url}
+            pd_name={el.pd_name}
+            price={el.price}
+            desc={el.desc}
+          />
         </Grid>
       ))}
     </Grid>

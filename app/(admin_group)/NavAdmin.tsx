@@ -7,7 +7,7 @@ import Collapse from '@mui/material/Collapse';
 import Switch from '@mui/material/Switch';
 import { SxProps } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import React, { ChangeEvent, ReactNode, useState } from 'react';
+import React, { ChangeEvent, ReactNode, useRef, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
@@ -27,6 +27,7 @@ import { useRecoilState } from 'recoil';
 import { isStart } from '@/recoil/isStart';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
+import Cork from '@/components/svg/Cork';
 
 const navMenuData = [
   {
@@ -126,55 +127,107 @@ export const NavAdmin = () => {
     isStartApi({ apiBody: { is_start: value } });
   };
 
+  //메뉴 탑으로 이동용
+  const navTopRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTarget = () => {
+    if (navTopRef.current) {
+      navTopRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   if (pathName === '/admin/login') return;
 
   if (isError) return <Box color="text.secondary">ERROR</Box>;
 
   return (
-    <Box
-      component="nav"
-      sx={{
-        position: 'relative',
-        width: { xs: !show ? '0' : '200px', sm: '200px' },
-        height: '100%',
-        bgcolor: 'background.paper',
-        transition: '1s width ease',
-        borderColor: 'background.default',
-        borderStyle: 'solid',
-        borderWidth: '1px 1px 1px 0px',
-        borderRadius: '0 0 10px 0',
-        zIndex: '9',
-      }}
-    >
-      {/* 메뉴토글버튼 */}
+    <>
+      <div style={{ visibility: 'hidden' }} ref={navTopRef} />
       <Box
+        component="nav"
         sx={{
-          position: 'absolute',
-          display: { xs: 'block', sm: 'none' },
-          width: 'fit-content',
-          top: '0',
-          right: '-31px',
-          zIndex: '10',
-          cursor: 'pointer',
-        }}
-        onClick={() => {
-          setShow((cur) => !cur);
+          position: 'relative',
+          width: { xs: !show ? '0' : '200px', sm: '200px' },
+          height: '100%',
+          bgcolor: 'background.paper',
+          transition: '1s width ease',
+          borderColor: 'background.default',
+          borderStyle: 'solid',
+          borderWidth: '1px 1px 1px 0px',
+          borderRadius: '0 0 10px 0',
+          zIndex: '9',
         }}
       >
-        <BiSolidFoodMenu size={35} color={COLORS.secondary} />
-      </Box>
-      {/* ------ */}
+        {/* 메뉴토글버튼 */}
+        <Box
+          sx={{
+            position: 'absolute',
+            display: { xs: 'block', sm: 'none' },
+            width: 'fit-content',
+            top: '0',
+            right: '-31px',
+            zIndex: '10',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            setShow((cur) => !cur);
+          }}
+        >
+          <BiSolidFoodMenu size={35} color={COLORS.secondary} />
+        </Box>
+        {/* ------ */}
 
-      <MenuListUp
-        sx={{ opacity: { xs: !show ? '0' : '1', sm: '1' }, transition: '1s opacity ease' }}
-        data={navMenuData}
-        logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
-        switchChecked={startSwitchValue || false}
-        switchOnChange={startSwitchHandler}
-      />
-    </Box>
+        <MenuListUp
+          sx={{
+            opacity: { xs: !show ? '0' : '1', sm: '1' },
+            transition: '1s opacity ease',
+            padding: '10px 0 150px 0',
+          }}
+          data={navMenuData}
+          logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
+          switchChecked={startSwitchValue || false}
+          switchOnChange={startSwitchHandler}
+        />
+
+        {/* 스크롤 탑을로 이동 버튼 */}
+        <Box
+          onClick={scrollToTarget}
+          sx={{
+            position: 'absolute',
+            display: 'flex',
+            bottom: '50px',
+            flexDirection: 'column',
+            alignItems: 'center',
+            transform: {
+              xs: !show ? 'rotate(180deg) translateX(110%)' : 'rotate(180deg) translateX(50%)',
+              sm: 'rotate(180deg) translateX(50%)',
+            },
+            opacity: {
+              xs: !show ? '0' : '1',
+              sm: '1',
+            },
+            left: { xs: !show ? '0%' : '50%', sm: '50%' },
+            transition: '1s ease',
+            overflow: 'hidden',
+            zIndex: '15',
+            cursor: 'pointer',
+          }}
+        >
+          <Cork
+            pointerColor={COLORS.primary}
+            sx={{
+              position: 'relative',
+              display: 'block',
+            }}
+          />
+          <Typography sx={{ transform: 'rotate(180deg)' }}>to Top</Typography>
+        </Box>
+      </Box>
+    </>
   );
 };
+
+//-----------------------------------------
 
 interface MenuListUpProps {
   data?: {
@@ -228,6 +281,7 @@ const MenuListUp = React.memo(
     return (
       <List component="ul" sx={{ fontSize: '16px', padding: '10px 0', ...sx }}>
         <Box
+          component="li"
           sx={{
             position: 'relative',
             width: '80%',

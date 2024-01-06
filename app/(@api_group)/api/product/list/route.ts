@@ -5,18 +5,16 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const skip = searchParams.get('skip');
-    const limit = searchParams.get('limit');
+    const page = searchParams.get('page');
 
-    if (skip === null || skip === undefined || !limit)
-      return NextResponse.json({ message: 'Bad Request' }, { status: 400 });
+    if (!page) return NextResponse.json({ message: 'Bad Request' }, { status: 400 });
 
     await connectDB();
 
     const list = await Product.find()
       .sort({ updated_at: -1 })
-      .skip(Number(skip))
-      .limit(Number(limit));
+      .skip((Number(page) - 1) * 10)
+      .limit(10);
 
     return NextResponse.json({ message: '리스트업 성공', data: list }, { status: 200 });
   } catch (error) {

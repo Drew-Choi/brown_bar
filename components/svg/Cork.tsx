@@ -18,7 +18,7 @@ const Container = styled('div')`
   animation: ${action} 1s ease-out infinite;
 `;
 
-const Cork = ({ sx }: { sx?: SxProps }) => {
+const Cork = ({ sx, pointerColor = '#CBA879' }: { sx?: SxProps; pointerColor?: string }) => {
   return (
     <Container sx={{ ...sx }}>
       <svg
@@ -76,7 +76,7 @@ const Cork = ({ sx }: { sx?: SxProps }) => {
         />
         <path
           d="M11.2929 43.7071C11.6834 44.0976 12.3166 44.0976 12.7071 43.7071L19.0711 37.3431C19.4616 36.9526 19.4616 36.3195 19.0711 35.9289C18.6805 35.5384 18.0474 35.5384 17.6569 35.9289L12 41.5858L6.34315 35.9289C5.95262 35.5384 5.31946 35.5384 4.92893 35.9289C4.53841 36.3195 4.53841 36.9526 4.92893 37.3431L11.2929 43.7071ZM11 42V43H13V42H11Z"
-          fill="#CBA879"
+          fill={pointerColor}
           opacity="0.5"
         />
       </svg>

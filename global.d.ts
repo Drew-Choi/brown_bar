@@ -1,4 +1,4 @@
-import { Connection } from 'mongoose';
+import { Connection, ObjectId } from 'mongoose';
 import { Session } from 'next-auth';
 
 declare global {
@@ -20,10 +20,13 @@ declare global {
   }
 
   interface ProductInfoType {
+    _id: string;
     pd_name: string;
     price: number;
     desc: string;
     img_url: string;
+    created_at?: date;
+    updated_at?: date;
   }
 }
 

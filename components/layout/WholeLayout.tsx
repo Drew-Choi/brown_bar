@@ -19,4 +19,4 @@ const WholeLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default WholeLayout;
+export default React.memo(WholeLayout);
