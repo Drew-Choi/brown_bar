@@ -3,14 +3,21 @@
 import { useRecoilState } from 'recoil';
 import { usePopupState } from './usePopupState';
 
+interface UsePopupProps {
+  title: string;
+  content: string;
+  onConfirm?: (() => void) | null;
+}
+
 export const usePopup = () => {
   const [popup, setPopup] = useRecoilState(usePopupState);
 
-  const openPopup = ({ title = '', content = '' }: { title: string; content: string }) => {
+  const openPopup = ({ title = '', content = '', onConfirm = null }: UsePopupProps) => {
     setPopup({
       show: true,
       title,
       content,
+      onConfirm,
     });
   };
 
@@ -19,6 +26,7 @@ export const usePopup = () => {
       show: false,
       title: '',
       content: '',
+      onConfirm: null,
     });
   };
 

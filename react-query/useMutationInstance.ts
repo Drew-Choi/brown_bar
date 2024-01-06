@@ -6,7 +6,7 @@ interface UseMutationProps {
   onSuccessFn?: (response: any) => void | undefined;
   onErrorFn?: (error: Error | AxiosError | unknown) => void | undefined;
   onMutateFn?: (data: any) => void | undefined;
-  apiMethod: 'post' | 'get';
+  apiMethod: 'post' | 'get' | 'delete';
   apiEndPoint: string | undefined;
   apiMultipartPost?: boolean | undefined;
 }
@@ -30,6 +30,16 @@ export const useMutationInstance = ({
     switch (apiMethod) {
       case 'get': {
         const response = await axiosInstance.get(
+          `${apiEndPoint}${apiPathParams ? '/' + apiPathParams : ''}`,
+          {
+            params: apiQueryParams,
+          },
+        );
+        return response.data;
+      }
+
+      case 'delete': {
+        const response = await axiosInstance.delete(
           `${apiEndPoint}${apiPathParams ? '/' + apiPathParams : ''}`,
           {
             params: apiQueryParams,

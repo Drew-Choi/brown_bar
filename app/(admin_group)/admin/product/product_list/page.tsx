@@ -16,7 +16,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import React, { useEffect, useRef } from 'react';
 
 const ProductList = () => {
-  const { openPopup } = usePopup();
+  const { openPopup, closePopup } = usePopup();
 
   const fetch = async ({ pageParam }: { pageParam: number }) => {
     const response = await axiosInstance.get(`product/list?page=${pageParam}`);
@@ -36,13 +36,14 @@ const ProductList = () => {
 
   // 아이템삭제
   const { mutate: deleteApi } = useMutationInstance({
-    apiMethod: 'get',
+    apiMethod: 'delete',
     apiEndPoint: USE_MUTATE_POINT.PRODUCT_DELETE,
     onErrorFn: (err: any) => {
       console.error(err);
       return openPopup({ title: '오류', content: err.response.data.message });
     },
     onSuccessFn: () => {
+      openPopup({ title: '안내', content: '삭제 성공' });
       refetch();
     },
   });
@@ -75,7 +76,13 @@ const ProductList = () => {
           arr.data.data.map((el: ProductInfoType) => (
             <Grid xs={12} key={el._id}>
               <ListItemLayout
-                onClickDelete={() => deleteApi({ apiPathParams: el._id })}
+                onClickDelete={() =>
+                  openPopup({
+                    title: '안내',
+                    content: `[${el.pd_name}] 상품을 삭제하시겠습니까?`,
+                    onConfirm: () => deleteApi({ apiPathParams: el._id }),
+                  })
+                }
                 img_url={el.img_url}
                 pd_name={el.pd_name}
                 price={el.price}

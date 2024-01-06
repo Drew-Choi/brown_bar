@@ -6,5 +6,6 @@ export const usePopupState = atom({
     show: false,
     title: '',
     content: '',
+    onConfirm: null as (() => void) | null,
   },
 });

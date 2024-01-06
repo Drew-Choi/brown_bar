@@ -1,7 +1,7 @@
 'use client';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SHADOW } from '../../asset/style';
 import { usePopup } from './usePopup';
 import ButtonNomal from '../../components/buttons/ButtonNomal';
@@ -9,7 +9,7 @@ import ButtonNomal from '../../components/buttons/ButtonNomal';
 const UsePopupComponent = () => {
   const { popup, closePopup } = usePopup();
 
-  const { show, title, content } = popup;
+  const { show, title, content, onConfirm } = popup;
 
   if (!show) return;
 
@@ -18,7 +18,7 @@ const UsePopupComponent = () => {
       sx={{
         position: 'absolute',
         width: '300px',
-        height: '200px',
+        height: '220px',
         bgcolor: 'background.paper',
         top: '40%',
         left: '50%',
@@ -34,7 +34,7 @@ const UsePopupComponent = () => {
       <Typography
         textAlign="center"
         padding="0 30px"
-        height="70px"
+        height="80px"
         overflow="scroll"
         fontSize={18}
         fontWeight={600}
@@ -43,18 +43,43 @@ const UsePopupComponent = () => {
       >
         {content || '내용 미입력'}
       </Typography>
-      <Box sx={{ textAlign: 'center' }}>
-        <ButtonNomal
-          onClickEvent={() => closePopup()}
-          color="secondary"
-          sx={{
-            fontSize: '14px',
-            padding: '2px 5px',
-          }}
-        >
-          확인
-        </ButtonNomal>
-      </Box>
+      {!onConfirm ? (
+        <Box sx={{ textAlign: 'center' }}>
+          <ButtonNomal
+            onClickEvent={() => closePopup()}
+            color="secondary"
+            sx={{
+              fontSize: '14px',
+              padding: '2px 5px',
+            }}
+          >
+            확인
+          </ButtonNomal>
+        </Box>
+      ) : (
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+          <ButtonNomal
+            onClickEvent={() => closePopup()}
+            color="info"
+            sx={{
+              fontSize: '14px',
+              padding: '2px 5px',
+            }}
+          >
+            취소
+          </ButtonNomal>
+          <ButtonNomal
+            onClickEvent={onConfirm}
+            color="secondary"
+            sx={{
+              fontSize: '14px',
+              padding: '2px 5px',
+            }}
+          >
+            확인
+          </ButtonNomal>
+        </Box>
+      )}
     </Box>
   );
 };

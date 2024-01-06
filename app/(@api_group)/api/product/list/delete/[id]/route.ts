@@ -1,9 +1,9 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Product from '@/app/(@api_group)/api/_models/Product';
 import mongoose from 'mongoose';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_: null, { params }: { params: { id: string } }) {
   try {
     const id = params.id;
 
