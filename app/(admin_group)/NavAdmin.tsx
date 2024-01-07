@@ -171,7 +171,6 @@ export const NavAdmin = () => {
           sx={{
             opacity: { xs: !show ? '0' : '1', sm: '1' },
             transition: '1s opacity ease',
-            padding: '10px 0 150px 0',
           }}
           data={navMenuData}
           logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}

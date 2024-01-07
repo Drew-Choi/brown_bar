@@ -1,10 +1,9 @@
 'use client';
 import { COLORS } from '@/asset/style';
 import axiosInstance from '@/axios/instance';
-import ButtonNomal from '@/components/buttons/ButtonNomal';
 import ListItemLayout from '@/components/layout/ListItemLayout';
 import Cork from '@/components/svg/Cork';
-import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
+import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import useScrollObserver from '@/hook/useObserver/useScrollObserver';
 import { usePopup } from '@/hook/usePopup/usePopup';
@@ -16,7 +15,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import React, { useEffect, useRef } from 'react';
 
 const ProductList = () => {
-  const { openPopup, closePopup } = usePopup();
+  const { openPopup } = usePopup();
 
   const fetch = async ({ pageParam }: { pageParam: number }) => {
     const response = await axiosInstance.get(`product/list?page=${pageParam}`);
