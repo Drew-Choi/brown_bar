@@ -6,6 +6,8 @@ const productSchema = new Schema(
     price: { type: Number, required: true },
     desc: { type: String, default: '' },
     img_url: { type: String, required: true },
+    option_arr: { type: [{ label: String, value: Number, price: Number }], default: [] },
+    category_idx: { type: Number, require: true },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

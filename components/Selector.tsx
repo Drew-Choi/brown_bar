@@ -1,55 +1,82 @@
 import { COLORS } from '@/asset/style';
-import { useMediaQuery, useTheme } from '@mui/material';
+import { SxProps } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
 import React from 'react';
 
 interface SelectorProps {
-  optionArr: { label: string; value: string | number | boolean }[];
+  optionArr: { label: string; value: string | number; price?: number }[];
+  value?: string | number;
+  onChangeEvent?: (e: SelectChangeEvent<string | number>) => void | undefined;
   width?: string;
-  onChangeEvent?: React.ChangeEventHandler<HTMLSelectElement> | undefined;
-  fontSize?: string;
-  padding?: string;
-  fontWeight?: FontWeightCrimson;
   height?: string;
+  fontWeight?: FontWeightCrimson;
+  xsFontSize?: string;
+  padding?: string;
   mdFontSize?: string;
+  titleLabel?: string;
+  subText?: string;
+  subSx?: SxProps;
+  boxPadding?: string;
+  textAlign?: string;
+  bgcolor?: string;
+  titleColor?: string;
 }
 
 const Selector = ({
   optionArr = [
-    { label: '샘플1', value: 1200 },
-    { label: '샘플2', value: 1200 },
+    { label: '샘플1', value: '1' },
+    { label: '샘플2', value: '2' },
   ],
-  width = '40%',
-  fontSize = '12px',
-  padding = '2px',
-  fontWeight = '400',
-  height = 'auto',
+  width = '100%',
+  height = '40px',
+  fontWeight = '600',
+  xsFontSize = '12px',
   mdFontSize = '15px',
   onChangeEvent,
+  value = '1',
+  subText,
+  subSx,
+  boxPadding,
+  textAlign = 'left',
+  bgcolor = COLORS.primary,
+  titleColor = 'text.secondary',
 }: SelectorProps) => {
-  const theme = useTheme();
-
-  const isMd = useMediaQuery(theme.breakpoints.up('md'));
-
   return (
-    <select
-      style={{
-        width: width,
-        height: height,
-        fontSize: !isMd ? fontSize : mdFontSize,
-        fontWeight: fontWeight,
-        padding: padding,
-        backgroundColor: COLORS.primary,
-        border: 'none',
-        color: COLORS.text.secondary,
-      }}
-      onChange={onChangeEvent}
-    >
-      {optionArr?.map((el, index) => (
-        <option value={String(el.value)} key={index}>
-          {el.label}
-        </option>
-      ))}
-    </select>
+    <FormControl sx={{ width, padding: boxPadding }}>
+      <Select
+        sx={{
+          height,
+          color: titleColor,
+          padding: '0px',
+          fontSize: { xs: xsFontSize, md: mdFontSize },
+          bgcolor,
+          fontWeight,
+          textAlign,
+        }}
+        value={value}
+        onChange={onChangeEvent}
+        displayEmpty
+        inputProps={{ 'aria-label': 'Without label' }}
+      >
+        {optionArr?.map((el) => (
+          <MenuItem
+            sx={{
+              color: 'text.primary',
+              fontSize: { xs: xsFontSize, md: mdFontSize },
+              fontWeight,
+            }}
+            key={el.value}
+            value={el.value}
+          >
+            {el.label}
+          </MenuItem>
+        ))}
+      </Select>
+      {subText && <FormHelperText sx={{ ...subSx }}>{subText}</FormHelperText>}
+    </FormControl>
   );
 };
 

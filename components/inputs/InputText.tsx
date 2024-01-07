@@ -31,6 +31,7 @@ const InputText = forwardRef<
       | 'time';
     onChangeEvent?: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined;
     value?: string | number;
+    placeholderText?: string;
   }
 >(
   (
@@ -43,15 +44,17 @@ const InputText = forwardRef<
       type = 'text',
       onChangeEvent,
       value,
+      placeholderText,
     },
     ref,
   ) => {
     return (
       <FormControl sx={{ width: '100%', ...conSx }} variant="standard">
-        <InputLabel htmlFor="standard" sx={{ ...labelSx }}>
+        <InputLabel htmlFor="standard" color="info" sx={{ ...labelSx }}>
           {title} {'-'}
         </InputLabel>
         <Input
+          placeholder={placeholderText}
           multiline={multiline}
           value={value}
           onChange={onChangeEvent}

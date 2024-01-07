@@ -13,8 +13,10 @@ export async function POST(req: NextRequest) {
     const pd_name = (await formData).get('pd_name');
     const price = Number((await formData).get('price'));
     const desc = (await formData).get('desc');
+    const category_idx = Number((await formData).get('category_idx'));
+    const option = (await formData).get('option_arr');
 
-    if (!img_file || !pd_name || !price)
+    if (!img_file || !pd_name || !price || !category_idx)
       return NextResponse.json({ message: '상품정보가 누락되었습니다.' }, { status: 400 });
 
     if (img_file instanceof File) {
@@ -36,11 +38,20 @@ export async function POST(req: NextRequest) {
         if (img_url) {
           await connectDB();
 
+          // 이미지 처리 모두 완료 후에 옵션 한목 추가
+          // 옵션항목 있을 시 파싱, 없으면 [] 빈배열
+          const optionParse = typeof option === 'string' ? JSON.parse(option) : null;
+          const option_arr = optionParse
+            ? [{ label: '- 옵션선택 -', value: 0, price: 0 }, ...optionParse]
+            : [];
+
           const newProduct = new Product({
             pd_name,
             price,
             desc,
             img_url,
+            option_arr,
+            category_idx,
           });
 
           const result = await newProduct.save();

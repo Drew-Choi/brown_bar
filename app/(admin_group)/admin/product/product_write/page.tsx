@@ -1,4 +1,6 @@
 'use client';
+import { COLORS } from '@/asset/style';
+import Selector from '@/components/Selector';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import InputText from '@/components/inputs/InputText';
 import ImageLayout from '@/components/layout/ImageLayout';
@@ -9,16 +11,26 @@ import { IMAGE_TYPE } from '@/constant/TYPE';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { commaInput, resultCommaRemove } from '@/utils/numberComma';
+import { SelectChangeEvent } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { ChangeEvent, useRef, useState } from 'react';
+import { FaMinus, FaPlus } from 'react-icons/fa6';
 
 const ProductWrite = () => {
   const { openPopup } = usePopup();
   const [blobURL, setBlobURL] = useState<string | null>(null);
   const [imgFile, setImgFile] = useState<File | null>(null);
-  const pdNameRef = useRef<HTMLInputElement>(null);
+  const [pdName, setPdName] = useState<string>('');
+  // 상품이름 핸들러
+  const pdNameHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (value?.length <= 24) {
+      setPdName(value);
+    }
+  };
   const priceRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLInputElement>(null);
   // 인풋 제어용
@@ -36,11 +48,16 @@ const ProductWrite = () => {
       openPopup({ title: '오류', content: '다시 시도해주세요.' });
     },
     onSuccessFn: () => {
-      if (pdNameRef.current && priceRef.current && descRef.current && inputFileRef.current) {
-        pdNameRef.current.value = '';
+      if (priceRef.current && descRef.current && inputFileRef.current) {
         priceRef.current.value = '';
         descRef.current.value = '';
         inputFileRef.current.value = '';
+        setOption((cur) => {
+          let copy = [...cur];
+          copy = [];
+          return copy;
+        });
+        setPdName('');
         setBlobURL(null);
         setImgFile(null);
         queryClient.removeQueries({ queryKey: [QUERY_KEY.PRODUCT_LIST] });
@@ -49,7 +66,7 @@ const ProductWrite = () => {
     },
   });
 
-  // 이미지 관련
+  // 이미지 관련 ---
   const inputClickHandler = () => {
     inputFileRef.current?.click();
   };
@@ -80,10 +97,63 @@ const ProductWrite = () => {
     }
   };
 
-  // 최종 등록
+  // 옵션항목 ----------
+  const [option, setOption] = useState<Array<{ label: string; value: number; price: string }>>([]);
+
+  // 옵션추가핸들
+  const optionAddHandler = () => {
+    setOption((cur) => {
+      let copy = [...cur];
+      copy.push({ label: '', value: cur.length + 1, price: '' });
+      return copy;
+    });
+  };
+
+  // 옵션제거핸들
+  const optionRemoveHandler = (index: number) => {
+    setOption((cur) => {
+      if (cur.length === 0) return cur;
+
+      let copy = [...cur];
+      copy.splice(index, 1);
+      return copy.map((el, index) => ({ ...el, value: index + 1 }));
+    });
+  };
+
+  // 옵션 값 각 필드로 입력
+  // 옵션명-
+  const optionNameIntoKey = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+    const value = e.target.value;
+
+    if (value?.length <= 14) {
+      setOption((cur) => {
+        let copy = [...cur];
+        copy[index] = { ...cur[index], label: value };
+        return copy;
+      });
+    }
+  };
+  // 추가가격-
+  const optionPriceRef = useRef<HTMLInputElement>(null);
+  const optionPriceIntoKey = (value: string, index: number) => {
+    setOption((cur) => {
+      let copy = [...cur];
+      copy[index] = { ...cur[index], price: value };
+      return copy;
+    });
+  };
+
+  // 카테고리 핸들러--------
+  const [menuCategoryValue, setMenuCategoryValue] = useState<string | number>(1);
+
+  const menuCategorySelectorHandler = (e: SelectChangeEvent<string | number>) => {
+    const value = e.target.value;
+    setMenuCategoryValue(value);
+  };
+
+  // 최종 등록 ---
   const submitHandler = async () => {
-    if (!pdNameRef.current?.value)
-      return openPopup({ title: '오류', content: '상품명을 입력해주세요.' });
+    if (!pdName) return openPopup({ title: '오류', content: '상품명을 입력해주세요.' });
 
     if (!priceRef.current?.value)
       return openPopup({ title: '오류', content: '가격을 입력해주세요.' });
@@ -93,13 +163,43 @@ const ProductWrite = () => {
 
     if (!imgFile) return openPopup({ title: '오류', content: '대표사진을 업로드해주세요.' });
 
+    if (!menuCategoryValue)
+      return openPopup({ title: '오류', content: '메뉴판 카테고리를 선택해주세요.' });
+
+    if (option.length !== 0) {
+      // 옵션 검증
+      const searchFalse = option.some((el) => !el.label);
+
+      if (searchFalse)
+        return openPopup({
+          title: '오류',
+          content: `옵션명을 모두 입력해주세요.`,
+        });
+
+      const replacePrice = option.map((el) => ({
+        ...el,
+        price: !el.price ? 0 : resultCommaRemove(el.price),
+      }));
+
+      const formData = new FormData();
+      formData.append('img_file', imgFile);
+      formData.append('pd_name', pdName);
+      formData.append('price', String(resultCommaRemove(priceRef.current?.value)));
+      formData.append('desc', descRef.current?.value);
+      formData.append('category_idx', String(menuCategoryValue));
+      formData.append('option_arr', JSON.stringify(replacePrice));
+
+      return writeProductApi({ apiBody: formData });
+    }
+
     const formData = new FormData();
     formData.append('img_file', imgFile);
-    formData.append('pd_name', pdNameRef.current?.value);
+    formData.append('pd_name', pdName);
     formData.append('price', String(resultCommaRemove(priceRef.current?.value)));
     formData.append('desc', descRef.current?.value);
+    formData.append('category_idx', String(menuCategoryValue));
 
-    writeProductApi({ apiBody: formData });
+    return writeProductApi({ apiBody: formData });
   };
 
   return (
@@ -115,10 +215,11 @@ const ProductWrite = () => {
         gap: '25px',
         color: 'white',
         maxWidth: '700px',
-        padding: { xs: '30px 60px', sm: '0 50px' },
+        padding: { xs: '30px', sm: '0 50px' },
         margin: 'auto',
       }}
     >
+      {/* // ------ 이미지 라인 ----- */}
       <Box sx={{ width: { xs: '70%', sm: '50%' }, cursor: 'pointer' }} onClick={inputClickHandler}>
         <ImageLayout
           src={!blobURL ? '/img/ready_file.png' : blobURL}
@@ -127,7 +228,7 @@ const ProductWrite = () => {
           innerTranslate={!blobURL ? 'translate(-50%, -50%)' : 'translate(0, -50%)'}
           alt="등록상품이미지"
         />
-        <Typography fontSize="15px" textAlign="center" marginTop={1}>
+        <Typography color="text.disabled" fontSize="15px" textAlign="center" marginTop={1}>
           1:1 비율 <br />
           <span style={{ fontSize: '13px', fontWeight: '600' }}>jpg, jpeg, png, gif, webp</span>
         </Typography>
@@ -139,12 +240,34 @@ const ProductWrite = () => {
         conSx={{ display: 'none' }}
         onChangeEvent={inputFileHandler}
       />
+      {/* // ------- 이미지 끝 --- */}
+
+      <Selector
+        // 데이터 받아서 등록
+        optionArr={[
+          { label: '스카치 블랜디드 싱글몰트 위스키 위스키 위스키키키', value: 1 },
+          { label: '아메리칸 위스키', value: 2 },
+          { label: '와인', value: 3 },
+        ]}
+        value={menuCategoryValue}
+        width="110%"
+        textAlign="center"
+        xsFontSize="14px"
+        mdFontSize="18px"
+        padding="0"
+        boxPadding="0"
+        subText="메뉴판 카테고리 선택"
+        subSx={{ textAlign: 'center', color: 'text.disabled' }}
+        onChangeEvent={menuCategorySelectorHandler}
+      />
 
       <InputText
-        ref={pdNameRef}
+        value={pdName}
+        placeholderText="띄어쓰기 포함 최대 24자"
         title="상품명"
         textSx={{ fontSize: '20px', color: 'text.secondary' }}
         labelSx={{ fontSize: '18px' }}
+        onChangeEvent={pdNameHandler}
       />
 
       <InputText
@@ -170,6 +293,82 @@ const ProductWrite = () => {
         textSx={{ fontSize: '18px', color: 'text.secondary' }}
         labelSx={{ fontSize: '18px' }}
       />
+
+      {/* 옵션 박스 */}
+      <Typography sx={{ width: '100%' }}>옵션추가 -</Typography>
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex_start',
+          gap: '10px',
+        }}
+      >
+        <Box sx={{ flex: '0.5' }}>
+          <FaPlus size={25} style={{ cursor: 'pointer' }} onClick={optionAddHandler} />
+        </Box>
+        <Box sx={{ flex: '9.5' }}>
+          {option?.map((el, index) => (
+            <Box
+              key={index}
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignContent: 'center',
+                gap: '10px',
+                marginBottom: '20px',
+                paddingBottom: '30px',
+                borderBottom: '2px solid' + COLORS.divider,
+              }}
+            >
+              <Box sx={{ flex: '0.25', display: 'flex', alignItems: 'center' }}>
+                <FaMinus
+                  size={20}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => optionRemoveHandler(index)}
+                />
+              </Box>
+              <Box sx={{ flex: '0.25', display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ fontSize: '25px', fontWeight: '600' }}>{el.value}</Typography>
+              </Box>
+              <Box sx={{ flex: '9.5' }}>
+                <InputText
+                  title="옵션명"
+                  placeholderText="띄어쓰기 포함 최대 14자"
+                  value={el.label}
+                  textSx={{ fontSize: '18px', color: 'text.secondary' }}
+                  labelSx={{ fontSize: '18px' }}
+                  conSx={{ marginBottom: '10px' }}
+                  onChangeEvent={(e) => optionNameIntoKey(e, index)}
+                />
+                <InputText
+                  ref={optionPriceRef}
+                  title="추가가격"
+                  placeholderText="숫자만 가능"
+                  value={el.price}
+                  textSx={{ fontSize: '18px', color: 'text.secondary' }}
+                  labelSx={{ fontSize: '18px' }}
+                  onChangeEvent={(e) =>
+                    commaInput(
+                      e,
+                      (newValue: string) => {
+                        optionPriceIntoKey(newValue, index);
+                      },
+                      optionPriceRef,
+                    )
+                  }
+                />
+                <Typography sx={{ marginTop: '5px', color: 'text.disabled', fontSize: '14px' }}>
+                  *가격 미입력시 추가금 0원으로 등록 됨
+                </Typography>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'right' }}>
         <ButtonNomal
           sx={{ fontSize: '15px', fontWeight: '600', padding: '5px' }}

@@ -6,19 +6,25 @@ import { FaPlus, FaMinus } from 'react-icons/fa6';
 import Selector from '../Selector';
 import OnTheRock from '../svg/OnTheRock';
 import ContentBox from './ContentBox';
+import { SelectChangeEvent } from '@mui/material';
 
 interface MenuLineProps {
   data: {
     name: string;
     desc: string;
     price: number;
-    optionArr?: { label: string; value: string | number | boolean }[];
+    optionArr?: { label: string; value: string | number; price?: number }[];
   };
   changeOrderList?: boolean;
 }
 
 const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
-  const [optionValue, setOptionValue] = useState<string>('');
+  const [optionValue, setOptionValue] = useState<string | number>(0);
+
+  const indiMenuOptionSelectorHandler = (e: SelectChangeEvent<string | number>) => {
+    const value = e.target.value;
+    setOptionValue(value);
+  };
 
   return (
     <ContentBox>
@@ -54,8 +60,12 @@ const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
       >
         {data?.optionArr && !changeOrderList && data?.optionArr?.length !== 0 && (
           <Selector
+            value={optionValue}
             optionArr={data?.optionArr}
-            onChangeEvent={(e) => setOptionValue(e.target.value)}
+            onChangeEvent={indiMenuOptionSelectorHandler}
+            height="30px"
+            xsFontSize="14px"
+            bgcolor={COLORS.divider}
           />
         )}
 
@@ -95,7 +105,13 @@ const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
           textAlign="right"
           sx={{ fontSize: { xs: '5vw', md: '36px' } }}
         >
-          {(data?.price + Number(optionValue)).toLocaleString('ko-KR')} ₩
+          {(
+            data?.price +
+            (data.optionArr?.length !== 0
+              ? Number(data.optionArr?.find((el) => el.value === optionValue)?.price)
+              : 0)
+          ).toLocaleString('ko-KR')}{' '}
+          ₩
         </Typography>
       </div>
       {!changeOrderList ? (

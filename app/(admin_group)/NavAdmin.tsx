@@ -30,7 +30,7 @@ import { QUERY_KEY } from '@/constant/QUERY_KEY';
 
 const navMenuData = [
   {
-    label: '영업시작',
+    label: '영업',
     url: null,
     icon: <PlayCircleFilledWhiteIcon />,
     urlGroupName: 'start',
@@ -39,6 +39,13 @@ const navMenuData = [
       { subLabel: 'ㄴ 주문내역', url: '/admin/start/order_list' },
       { subLabel: 'ㄴ 통계', url: '/admin/start/analysis' },
     ],
+  },
+  {
+    label: '메뉴판',
+    icon: <SummarizeIcon />,
+    sub: [],
+    urlGroupName: null,
+    url: '/admin/menu_write',
   },
   {
     label: '상품',
@@ -50,13 +57,7 @@ const navMenuData = [
       { subLabel: 'ㄴ 상품목록', url: '/admin/product/product_list' },
     ],
   },
-  {
-    label: '메뉴판',
-    icon: <SummarizeIcon />,
-    sub: [],
-    urlGroupName: null,
-    url: '/admin/menu_write',
-  },
+
   {
     label: '내 취향 찾기',
     icon: <SavedSearchIcon />,

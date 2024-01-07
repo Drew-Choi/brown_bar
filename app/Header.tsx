@@ -1,12 +1,11 @@
 'use client';
-import React, { ReactNode } from 'react';
+import React, { ChangeEvent, ReactNode, useState } from 'react';
 import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import ButtonBack from '@/components/buttons/ButtonBack';
 import { useParams, usePathname, useSearchParams, useRouter } from 'next/navigation';
-import Selector from '@/components/Selector';
 import { SxProps } from '@mui/material';
 
 const Tag = ({
@@ -97,9 +96,13 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             borderRadius: '0 0 10px 0',
             cursor: 'pointer',
           }}
-          onClick={() => router.push('/admin')}
         >
-          <Typography fontSize="inherit" color="text.primary" fontWeight={700}>
+          <Typography
+            fontSize="inherit"
+            color="text.primary"
+            fontWeight={700}
+            onClick={() => router.push('/admin')}
+          >
             Admin
           </Typography>
           <Typography fontSize="15px" color="text.primary" fontWeight={600}>
@@ -146,49 +149,33 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
         pathName === '/' ||
         pathName === '/main/about' ? (
           <Tag skeleton={true}>
-            <Typography fontSize="inherit">tag</Typography>
+            <Box fontSize="inherit">tag</Box>
           </Tag>
         ) : (
           <Tag skeleton={false} sx={{ justifyContent: useClass && !choice ? 'center' : 'left' }}>
             {pathName === '/main/menu' ? (
-              <Typography
+              <Box
                 fontSize="inherit"
-                color="text.primary"
                 fontWeight={700}
-                padding="0 10px"
-                sx={{ display: 'flex', alignItems: 'center' }}
-                width="100%"
-                gap="10px"
+                sx={{
+                  width: '100%',
+                  display: 'block',
+                  color: 'text.primary',
+                  padding: '0 10px',
+                }}
               >
-                Menu |{' '}
-                <Selector
-                  optionArr={[
-                    { label: '위스키', value: 'wh' },
-                    { label: '버번', value: 'a' },
-                    { label: '브랜디', value: 'b' },
-                    { label: '와인', value: 'w' },
-                    { label: '칵테일', value: 'c' },
-                    { label: '데킬라', value: 't' },
-                    { label: '럼', value: 'r' },
-                  ]}
-                  fontWeight="600"
-                  width="45%"
-                  height="70%"
-                  padding="5px"
-                  fontSize="4.5vw"
-                  mdFontSize="35px"
-                />
-              </Typography>
+                Menu
+              </Box>
             ) : pathName === '/main/menu/order' || pathName === '/main/menu/order/final' ? (
-              <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
+              <Box fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
                 Order | <SubText fontSize="8vw" mdFontSize="72px">{`T 5`}</SubText>
-              </Typography>
+              </Box>
             ) : pathName === '/main/find/category' ||
               pathName === '/main/find/category/recommend' ||
               pathName === '/main/find/category/recommend/section' ||
               pathName === `/main/menu/detail/${idx}` ||
               pathName === `/main/about/detail/${about_idx}` ? (
-              <Typography
+              <Box
                 sx={{ fontSize: eng && kor ? { xs: '6vw', md: '54px' } : 'inherit' }}
                 color="text.primary"
                 fontWeight={700}
@@ -238,11 +225,11 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
                     </SubText>
                   </>
                 )}
-              </Typography>
+              </Box>
             ) : (
-              <Typography fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
+              <Box fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
                 | <SubText>{``}</SubText>
-              </Typography>
+              </Box>
             )}
           </Tag>
         )}

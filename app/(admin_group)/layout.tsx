@@ -2,6 +2,7 @@ import Container from '@mui/material/Container';
 import React, { ReactNode } from 'react';
 import { NavAdmin } from './NavAdmin';
 import { AuthSessionProvider } from '@/providers/AuthSessionProvider';
+import UsePopupComponent from '@/hook/usePopup/UsePopupComponent';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
