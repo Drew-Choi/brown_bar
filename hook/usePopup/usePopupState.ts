@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-export const usePopupState = atom({
+export const usePopupState = atom<UsePopupProps>({
   key: 'usePopupState',
   default: {
     show: false,

@@ -7,7 +7,8 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const page = searchParams.get('page');
 
-    if (!page) return NextResponse.json({ message: 'Bad Request' }, { status: 400 });
+    if (!page)
+      return NextResponse.json({ message: '새로고침 후 다시 시도해주세요' }, { status: 400 });
 
     await connectDB();
 
@@ -16,7 +17,7 @@ export async function GET(req: NextRequest) {
       .skip((Number(page) - 1) * 10)
       .limit(10);
 
-    return NextResponse.json({ message: '리스트업 성공', data: list }, { status: 200 });
+    return NextResponse.json({ message: '상품 리스트업 성공', data: list }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

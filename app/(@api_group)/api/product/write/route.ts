@@ -16,6 +16,9 @@ export async function POST(req: NextRequest) {
     const category_idx = Number((await formData).get('category_idx'));
     const option = (await formData).get('option_arr');
 
+    if (category_idx === 0)
+      return NextResponse.json({ message: '메뉴판 등록이 누락되었습니다.' }, { status: 400 });
+
     if (!img_file || !pd_name || !price || !category_idx)
       return NextResponse.json({ message: '상품정보가 누락되었습니다.' }, { status: 400 });
 

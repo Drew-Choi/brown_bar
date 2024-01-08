@@ -1,26 +1,25 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Product from '@/app/(@api_group)/api/_models/Product';
-import mongoose from 'mongoose';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function DELETE(_: null, { params }: { params: { id: string } }) {
+// 카테고리별 상품 불러오기
+export async function GET(_: null, { params }: { params: { category_idx: string } }) {
   try {
-    const id = params.id;
+    const category_idx = Number(params.category_idx);
 
-    if (!id)
+    if (!category_idx)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });
 
     await connectDB();
 
-    const { ObjectId } = mongoose.Types;
+    const List = await Product.find({ category_idx }).sort({ updated_at: -1 });
 
-    const result = await Product.deleteOne({ _id: new ObjectId(id) });
+    const data = {
+      category_idx,
+      pd_datas: List,
+    };
 
-    if (result.acknowledged && result.deletedCount > 0) {
-      return NextResponse.json({ message: '삭제 성공' }, { status: 200 });
-    } else {
-      return NextResponse.json({ message: 'DB error' }, { status: 500 });
-    }
+    return NextResponse.json({ message: '성공', data }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

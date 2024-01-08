@@ -1,20 +1,27 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
-import Product from '@/app/(@api_group)/api/_models/Product';
-import mongoose from 'mongoose';
+import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { NextResponse } from 'next/server';
+import Product from '../../../_models/Product';
 
-export async function DELETE(_: null, { params }: { params: { id: string } }) {
+// 메뉴 카테고리 삭제
+export async function DELETE(_: null, { params }: { params: { category_idx: string } }) {
   try {
-    const id = params.id;
+    const category_idx = Number(params.category_idx);
 
-    if (!id)
+    if (!category_idx)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });
 
     await connectDB();
 
-    const { ObjectId } = mongoose.Types;
+    const check = await Product.findOne({ category_idx });
 
-    const result = await Product.deleteOne({ _id: new ObjectId(id) });
+    if (check)
+      return NextResponse.json(
+        { message: '해당 카테고리에 상품이 있어 삭제가 불가합니다.' },
+        { status: 400 },
+      );
+
+    const result = await Menu.deleteOne({ category_idx });
 
     if (result.acknowledged && result.deletedCount > 0) {
       return NextResponse.json({ message: '삭제 성공' }, { status: 200 });

@@ -8,7 +8,7 @@ import React from 'react';
 
 interface SelectorProps {
   optionArr: { label: string; value: string | number; price?: number }[];
-  value?: string | number;
+  value?: string | number | undefined;
   onChangeEvent?: (e: SelectChangeEvent<string | number>) => void | undefined;
   width?: string;
   height?: string;
@@ -61,19 +61,32 @@ const Selector = ({
         displayEmpty
         inputProps={{ 'aria-label': 'Without label' }}
       >
-        {optionArr?.map((el) => (
+        {optionArr?.length !== 0 ? (
+          optionArr?.map((el) => (
+            <MenuItem
+              sx={{
+                color: 'text.primary',
+                fontSize: { xs: xsFontSize, md: mdFontSize },
+                fontWeight,
+              }}
+              key={el.value}
+              value={el.value}
+            >
+              {el.label}
+            </MenuItem>
+          ))
+        ) : (
           <MenuItem
             sx={{
               color: 'text.primary',
               fontSize: { xs: xsFontSize, md: mdFontSize },
               fontWeight,
             }}
-            key={el.value}
-            value={el.value}
+            value={0}
           >
-            {el.label}
+            등록된 메뉴 카테고리가 없습니다.
           </MenuItem>
-        ))}
+        )}
       </Select>
       {subText && <FormHelperText sx={{ ...subSx }}>{subText}</FormHelperText>}
     </FormControl>

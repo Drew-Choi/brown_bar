@@ -1,1 +1,6 @@
-export const QUERY_KEY = { IS_START: 'is_start', PRODUCT_LIST: 'product_list' };
+export const QUERY_KEY = {
+  IS_START: 'is_start',
+  PRODUCT_LIST: 'product_list',
+  MENU_PRODUCT_LIST: 'menu_product_list',
+  MENU_LIST: 'menu_list',
+};

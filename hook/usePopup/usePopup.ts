@@ -3,12 +3,6 @@
 import { useRecoilState } from 'recoil';
 import { usePopupState } from './usePopupState';
 
-interface UsePopupProps {
-  title: string;
-  content: string;
-  onConfirm?: (() => void) | null;
-}
-
 export const usePopup = () => {
   const [popup, setPopup] = useRecoilState(usePopupState);
 

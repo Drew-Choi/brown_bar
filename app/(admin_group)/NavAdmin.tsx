@@ -110,12 +110,11 @@ export const NavAdmin = () => {
   });
 
   // 영업상태변경 요청
-  const { mutate: isStartApi } = useMutationInstance({
+  const { mutate: isStartAPI } = useMutationInstance({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.START,
-    onErrorFn: (err: any) => {
-      console.error(err);
-      return openPopup({ title: '오류', content: err.response.data.message });
+    onErrorFn: () => {
+      return openPopup({ title: '오류', content: '다시 시도해주세요.' });
     },
     onSuccessFn: (res) => {
       setStartSwitchValue(() => res.data);
@@ -124,12 +123,12 @@ export const NavAdmin = () => {
 
   const startSwitchHandler = async (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.checked;
-    isStartApi({ apiBody: { is_start: value } });
+    isStartAPI({ apiBody: { is_start: value } });
   };
 
   if (pathName === '/admin/login') return;
 
-  if (isError) return <Box color="text.secondary">ERROR</Box>;
+  if (isError) return <Box color="text.secondary">Fetching Error</Box>;
 
   return (
     <>

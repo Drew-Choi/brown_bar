@@ -1,6 +1,7 @@
 'use client';
 import { COLORS } from '@/asset/style';
 import axiosInstance from '@/axios/instance';
+import Empty from '@/components/Empty';
 import ListItemLayout from '@/components/layout/ListItemLayout';
 import Cork from '@/components/svg/Cork';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
@@ -34,12 +35,15 @@ const ProductList = () => {
   });
 
   // 아이템삭제
-  const { mutate: deleteApi } = useMutationInstance({
+  const { mutate: deleteAPI } = useMutationInstance({
     apiMethod: 'delete',
     apiEndPoint: USE_MUTATE_POINT.PRODUCT_DELETE,
     onErrorFn: (err: any) => {
-      console.error(err);
-      return openPopup({ title: '오류', content: err.response.data.message });
+      if (err.response.status === 400) {
+        openPopup({ title: '오류', content: err.response.data.message });
+      } else {
+        openPopup({ title: '오류', content: '다시 시도해주세요.' });
+      }
     },
     onSuccessFn: () => {
       openPopup({ title: '안내', content: '삭제 성공' });
@@ -71,24 +75,32 @@ const ProductList = () => {
     <>
       <div ref={navTopRef} style={{ height: '0', width: '0', visibility: 'hidden' }} />
       <Grid container rowSpacing={2} sx={{ width: '100%', padding: '30px' }}>
-        {data?.pages.map((arr) =>
-          arr.data.data.map((el: ProductInfoType) => (
-            <Grid xs={12} key={el._id}>
-              <ListItemLayout
-                onClickDelete={() =>
-                  openPopup({
-                    title: '안내',
-                    content: `[${el.pd_name}] 상품을 삭제하시겠습니까?`,
-                    onConfirm: () => deleteApi({ apiPathParams: el._id }),
-                  })
-                }
-                img_url={el.img_url}
-                pd_name={el.pd_name}
-                price={el.price}
-                desc={el.desc}
-              />
-            </Grid>
-          )),
+        {data?.pages[0].data.data.length !== 0 ? (
+          data?.pages.map((arr) =>
+            arr.data.data.map((el: ProductInfoType) => (
+              <Grid xs={12} key={el._id}>
+                <ListItemLayout
+                  onClickDelete={() =>
+                    openPopup({
+                      title: '안내',
+                      content: (
+                        <div style={{ whiteSpace: 'pre-line' }}>
+                          {`[${el.pd_name}]\n정말 삭제하시겠습니까?`}
+                        </div>
+                      ),
+                      onConfirm: () => deleteAPI({ apiPathParams: el._id }),
+                    })
+                  }
+                  img_url={el.img_url}
+                  pd_name={el.pd_name}
+                  price={el.price}
+                  desc={el.desc}
+                />
+              </Grid>
+            )),
+          )
+        ) : (
+          <Empty title="등록된 상품이 없습니다." />
         )}
         {status !== 'pending' && (
           <Grid xs={12} sx={{ visibility: 'hidden' }}>

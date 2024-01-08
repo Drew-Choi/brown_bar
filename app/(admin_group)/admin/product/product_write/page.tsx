@@ -4,12 +4,13 @@ import Selector from '@/components/Selector';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import InputText from '@/components/inputs/InputText';
 import ImageLayout from '@/components/layout/ImageLayout';
-import { USE_MUTATE_POINT } from '@/constant/END_POINT';
+import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
 import { MEGA_BYTE } from '@/constant/NUMBER';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { IMAGE_TYPE } from '@/constant/TYPE';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
+import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { commaInput, resultCommaRemove } from '@/utils/numberComma';
 import { SelectChangeEvent } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -23,6 +24,36 @@ const ProductWrite = () => {
   const [blobURL, setBlobURL] = useState<string | null>(null);
   const [imgFile, setImgFile] = useState<File | null>(null);
   const [pdName, setPdName] = useState<string>('');
+
+  // 카테고리 핸들러--------
+  const [menuCategoryValue, setMenuCategoryValue] = useState<string | number | undefined>(
+    undefined,
+  );
+
+  const menuCategorySelectorHandler = (e: SelectChangeEvent<string | number>) => {
+    const value = e.target.value;
+    setMenuCategoryValue(value);
+  };
+
+  // 메뉴리스트 패칭
+  const { data: menuList, isError } = useQueryInstance({
+    queryKey: [QUERY_KEY.MENU_LIST],
+    apiEndPoint: USE_QUERY_POINT.MENU,
+    apiMethod: 'get',
+    selectFn: (data) => {
+      // 셀렉터에 맞게 변형
+      return data.data?.map(({ category_idx, ...rest }: MenuCategoryType) => ({
+        ...rest,
+        value: category_idx,
+      }));
+    },
+    onSuccess: (response) => {
+      if (response?.length !== 0) return setMenuCategoryValue(response[0].value);
+
+      return setMenuCategoryValue(0);
+    },
+  });
+
   // 상품이름 핸들러
   const pdNameHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -33,11 +64,13 @@ const ProductWrite = () => {
   };
   const priceRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLInputElement>(null);
+
   // 인풋 제어용
   const inputFileRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
-  const { mutate: writeProductApi } = useMutationInstance({
+  // 상품등록 API
+  const { mutate: writeProductAPI } = useMutationInstance({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.PRODUCT_WRITE,
     apiMultipartPost: true,
@@ -61,6 +94,7 @@ const ProductWrite = () => {
         setBlobURL(null);
         setImgFile(null);
         queryClient.removeQueries({ queryKey: [QUERY_KEY.PRODUCT_LIST] });
+        queryClient.removeQueries({ queryKey: [QUERY_KEY.MENU_PRODUCT_LIST] });
         return;
       }
     },
@@ -143,14 +177,6 @@ const ProductWrite = () => {
     });
   };
 
-  // 카테고리 핸들러--------
-  const [menuCategoryValue, setMenuCategoryValue] = useState<string | number>(1);
-
-  const menuCategorySelectorHandler = (e: SelectChangeEvent<string | number>) => {
-    const value = e.target.value;
-    setMenuCategoryValue(value);
-  };
-
   // 최종 등록 ---
   const submitHandler = async () => {
     if (!pdName) return openPopup({ title: '오류', content: '상품명을 입력해주세요.' });
@@ -189,7 +215,7 @@ const ProductWrite = () => {
       formData.append('category_idx', String(menuCategoryValue));
       formData.append('option_arr', JSON.stringify(replacePrice));
 
-      return writeProductApi({ apiBody: formData });
+      return writeProductAPI({ apiBody: formData });
     }
 
     const formData = new FormData();
@@ -199,8 +225,10 @@ const ProductWrite = () => {
     formData.append('desc', descRef.current?.value);
     formData.append('category_idx', String(menuCategoryValue));
 
-    return writeProductApi({ apiBody: formData });
+    return writeProductAPI({ apiBody: formData });
   };
+
+  if (isError) return <Box color="text.secondary">Fetching Error</Box>;
 
   return (
     <Box
@@ -244,11 +272,7 @@ const ProductWrite = () => {
 
       <Selector
         // 데이터 받아서 등록
-        optionArr={[
-          { label: '스카치 블랜디드 싱글몰트 위스키 위스키 위스키키키', value: 1 },
-          { label: '아메리칸 위스키', value: 2 },
-          { label: '와인', value: 3 },
-        ]}
+        optionArr={menuList}
         value={menuCategoryValue}
         width="110%"
         textAlign="center"
