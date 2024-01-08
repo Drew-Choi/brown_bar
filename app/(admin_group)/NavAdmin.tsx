@@ -224,16 +224,10 @@ const MenuListUp = React.memo(
     const router = useRouter();
     const pathName = usePathname();
 
-    const [openValues, setOpenValues] = useState<Array<boolean>>(
-      Array(data?.length || 0).fill(false),
-    );
+    const [openValues, setOpenValues] = useState<Record<number, boolean>>({});
 
     const collapseHandler = (index: number) => {
-      setOpenValues((cur) => {
-        const copy = [...cur];
-        copy[index] = !copy[index];
-        return copy;
-      });
+      setOpenValues((cur) => ({ ...cur, [index]: cur[index] ? !cur[index] : true }));
     };
 
     return (
