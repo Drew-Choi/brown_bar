@@ -25,9 +25,9 @@ const pdData = [
     pd_datas: [
       {
         _id: 1,
-        pd_name: '상품이름',
+        pd_name: '상품이름상품이름상품이름상품이름상품이름상품이름',
         price: 30000,
-        desc: '하하하하하',
+        desc: '하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하',
         optio_arr: [{ lable: '- 옵션추가 -', value: 0, price: 0 }],
       },
       {
@@ -80,12 +80,14 @@ const MenuWrite = () => {
                   gap: '10px',
                   justifyContent: 'space-between',
                   fontWeight: '600',
-                  bgcolor: COLORS.secondary,
+                  bgcolor: COLORS.primary,
                   borderRadius: '10px',
                 }}
                 onClick={() => oneDepthHandler(index)}
               >
-                <Typography sx={{ flex: '9', fontWeight: '600', fontSize: '16px' }}>
+                <Typography
+                  sx={{ flex: '9', fontWeight: '600', fontSize: '16px', color: 'text.secondary' }}
+                >
                   {el.label}
                 </Typography>
                 {openValues[index] ? (
@@ -122,14 +124,21 @@ const MenuWrite = () => {
                           dense
                           component="li"
                           sx={{
+                            width: '100%',
                             bgcolor: COLORS.info,
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            gap: '10px',
+                            gap: '15px',
+                            paddingBottom: '20px',
+                            marginBottom: '20px',
+                            borderBottom: '1px solid #7d7d7d',
+                            borderRadius: '10px',
                           }}
                         >
                           <Typography sx={{ flex: '1' }}>{pd.pd_name}</Typography>
-                          <Typography sx={{ flex: '1' }}>{pd.price}</Typography>
+                          <Typography sx={{ flex: '0.5', textAlign: 'center' }}>
+                            {pd.price.toLocaleString('ko-KR')} ₩
+                          </Typography>
                         </ListItemButton>
                       ))
                     ) : (
