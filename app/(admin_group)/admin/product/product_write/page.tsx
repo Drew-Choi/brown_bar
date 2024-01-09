@@ -26,9 +26,7 @@ const ProductWrite = () => {
   const [pdName, setPdName] = useState<string>('');
 
   // 카테고리 핸들러--------
-  const [menuCategoryValue, setMenuCategoryValue] = useState<string | number | undefined>(
-    undefined,
-  );
+  const [menuCategoryValue, setMenuCategoryValue] = useState<string | number | undefined>(0);
 
   const menuCategorySelectorHandler = (e: SelectChangeEvent<string | number>) => {
     const value = e.target.value;
@@ -36,7 +34,11 @@ const ProductWrite = () => {
   };
 
   // 메뉴리스트 패칭
-  const { data: menuList, isError } = useQueryInstance({
+  const {
+    data: menuList,
+    isError,
+    isLoading,
+  } = useQueryInstance({
     queryKey: [QUERY_KEY.MENU_LIST],
     apiEndPoint: USE_QUERY_POINT.MENU,
     apiMethod: 'get',
@@ -270,20 +272,23 @@ const ProductWrite = () => {
       />
       {/* // ------- 이미지 끝 --- */}
 
-      <Selector
-        // 데이터 받아서 등록
-        optionArr={menuList}
-        value={menuCategoryValue}
-        width="110%"
-        textAlign="center"
-        xsFontSize="14px"
-        mdFontSize="18px"
-        padding="0"
-        boxPadding="0"
-        subText="메뉴판 카테고리 선택"
-        subSx={{ textAlign: 'center', color: 'text.disabled' }}
-        onChangeEvent={menuCategorySelectorHandler}
-      />
+      {isLoading ? (
+        <Box>Loading...</Box>
+      ) : (
+        <Selector
+          optionArr={menuList}
+          value={menuCategoryValue}
+          width="110%"
+          textAlign="center"
+          xsFontSize="14px"
+          mdFontSize="18px"
+          padding="0"
+          boxPadding="0"
+          subText="메뉴판 카테고리 선택"
+          subSx={{ textAlign: 'center', color: 'text.disabled' }}
+          onChangeEvent={menuCategorySelectorHandler}
+        />
+      )}
 
       <InputText
         value={pdName}

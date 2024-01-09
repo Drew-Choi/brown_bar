@@ -24,15 +24,28 @@ const ProductList = () => {
     return response;
   };
 
-  const { data, error, status, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
-    queryKey: [QUERY_KEY.PRODUCT_LIST],
-    queryFn: fetch,
-    initialPageParam: 1,
-    getNextPageParam: (LastPage, allPage) => {
-      const nextPage = LastPage.data.data.length ? allPage.length + 1 : undefined;
-      return nextPage;
+  const { data, error, status, fetchNextPage, hasNextPage, refetch, isFetching } = useInfiniteQuery(
+    {
+      queryKey: [QUERY_KEY.PRODUCT_LIST],
+      queryFn: fetch,
+      initialPageParam: 1,
+      getNextPageParam: (LastPage, allPage) => {
+        if (LastPage.data.data?.length < 10) return undefined;
+
+        const nextPage = allPage.length + 1;
+        return nextPage;
+      },
     },
-  });
+  );
+
+  // 바텀 자동 패칭
+  const { isInView, elementRef } = useScrollObserver({ isOnlyTop: false });
+
+  useEffect(() => {
+    if (isInView) {
+      !isFetching && hasNextPage && fetchNextPage();
+    }
+  }, [isInView, hasNextPage, isFetching, fetchNextPage]);
 
   // 아이템삭제
   const { mutate: deleteAPI } = useMutationInstance({
@@ -50,15 +63,6 @@ const ProductList = () => {
       refetch();
     },
   });
-
-  // 바텀 자동 패칭
-  const { isInView, elementRef } = useScrollObserver({ isOnlyTop: false });
-
-  useEffect(() => {
-    if (isInView && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [isInView, hasNextPage]);
 
   //메뉴 탑으로 이동용
   const navTopRef = useRef<HTMLDivElement>(null);
