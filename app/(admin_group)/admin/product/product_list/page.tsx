@@ -81,7 +81,7 @@ const ProductList = () => {
       <Grid container rowSpacing={2} sx={{ width: '100%', padding: '30px' }}>
         {data?.pages[0].data.data.length !== 0 ? (
           data?.pages.map((arr) =>
-            arr.data.data.map((el: ProductInfoType) => (
+            arr.data.data.map((el: ProductNewListType) => (
               <Grid xs={12} key={el._id}>
                 <ListItemLayout
                   onClickDelete={() =>
@@ -99,6 +99,8 @@ const ProductList = () => {
                   pd_name={el.pd_name}
                   price={el.price}
                   desc={el.desc}
+                  option={el.option_arr}
+                  category={el.category}
                 />
               </Grid>
             )),

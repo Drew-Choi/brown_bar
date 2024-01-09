@@ -33,8 +33,22 @@ declare global {
     price: number;
     desc: string;
     img_url: string;
+    category_idx: number;
     created_at?: date;
     updated_at?: date;
+    option_arr:
+      | {
+          label: string;
+          value: number;
+          price: number;
+          _id: string;
+        }[]
+      | [];
+  }
+
+  interface ProductNewListType
+    extends Omit<ProductInfoType, 'category_idx' | 'created_at' | 'updated_at'> {
+    category: string;
   }
 
   interface MenuCategoryType {

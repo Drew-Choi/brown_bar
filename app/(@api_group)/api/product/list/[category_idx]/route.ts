@@ -12,14 +12,11 @@ export async function GET(_: null, { params }: { params: { category_idx: string 
 
     await connectDB();
 
-    const List = await Product.find({ category_idx }).sort({ updated_at: -1 });
+    const List = await Product.find({ category_idx })
+      .sort({ updated_at: -1 })
+      .select('-created_at -updated_at -__v -img_url');
 
-    const data = {
-      category_idx,
-      pd_datas: List,
-    };
-
-    return NextResponse.json({ message: '성공', data }, { status: 200 });
+    return NextResponse.json({ message: '성공', data: List }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

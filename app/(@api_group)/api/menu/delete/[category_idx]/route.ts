@@ -2,6 +2,9 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { NextResponse } from 'next/server';
 import Product from '../../../_models/Product';
+import redisClient from '../../../_lib/redis';
+
+const cacheKey = 'menuList';
 
 // 메뉴 카테고리 삭제
 export async function DELETE(_: null, { params }: { params: { category_idx: string } }) {
@@ -24,6 +27,22 @@ export async function DELETE(_: null, { params }: { params: { category_idx: stri
     const result = await Menu.deleteOne({ category_idx });
 
     if (result.acknowledged && result.deletedCount > 0) {
+      const cacheMenuList = await redisClient.GET(cacheKey);
+
+      // 캐싱 데이터 없음 그냥 진행
+      if (!cacheMenuList) return NextResponse.json({ message: '삭제 성공' }, { status: 200 });
+
+      // 있으면 배열에서 삭제
+      // 1개 남았을 경우는 모두 삭제
+      const parseMenuList: MenuCategoryType[] = JSON.parse(cacheMenuList);
+
+      if (parseMenuList?.length <= 1) {
+        await redisClient.DEL(cacheKey);
+        return NextResponse.json({ message: '삭제 성공' }, { status: 200 });
+      }
+
+      const filterMenuList = parseMenuList.filter((el) => el.category_idx !== category_idx);
+      await redisClient.SET(cacheKey, JSON.stringify(filterMenuList));
       return NextResponse.json({ message: '삭제 성공' }, { status: 200 });
     } else {
       return NextResponse.json({ message: 'DB error' }, { status: 500 });

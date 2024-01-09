@@ -1,6 +1,9 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { NextRequest, NextResponse } from 'next/server';
+import redisClient from '../_lib/redis';
+
+const cacheKey = 'menuList';
 
 // 메뉴 카테고리 추가
 export async function POST(req: NextRequest) {
@@ -16,9 +19,18 @@ export async function POST(req: NextRequest) {
       label,
     });
 
-    const result = await newCategory.save();
+    const result: MenuCategoryType = await newCategory.save();
 
     if (result) {
+      const preCache = await redisClient.GET(cacheKey);
+
+      // 캐싱데이터가 없음 그냥 진행
+      if (!preCache) return NextResponse.json({ message: '저장성공' }, { status: 200 });
+
+      // 있으면 배열에 추가하여 저장
+      let parseCache: MenuCategoryType[] = JSON.parse(preCache);
+      parseCache.push(result);
+      await redisClient.SET(cacheKey, JSON.stringify(parseCache));
       return NextResponse.json({ message: '저장성공' }, { status: 200 });
     }
     return NextResponse.json({ message: 'DB Error' }, { status: 500 });
@@ -36,14 +48,28 @@ export async function POST(req: NextRequest) {
 // 메뉴 카테고리 리스트 불러오기
 export async function GET() {
   try {
-    await connectDB();
+    const cacheMenuList = await redisClient.GET(cacheKey);
+    console.log('시작');
 
-    const result = await Menu.find();
+    if (!cacheMenuList) {
+      await connectDB();
+      console.log('db가니?');
 
-    if (result) {
-      return NextResponse.json({ message: '메뉴 리스트업 성공', data: result }, { status: 200 });
+      const result: MenuCategoryType[] = await Menu.find();
+
+      if (result) {
+        await redisClient.SET(cacheKey, JSON.stringify(result));
+        return NextResponse.json({ message: '메뉴 리스트업 성공', data: result }, { status: 200 });
+      }
+      return NextResponse.json({ message: 'DB Error' }, { status: 500 });
     }
-    return NextResponse.json({ message: 'DB Error' }, { status: 500 });
+
+    console.log('캐싱으로 패칭');
+    // 캐시데이터 있음 캐싱데이터 res
+    return NextResponse.json(
+      { message: '메뉴 리스트업 성공', data: JSON.parse(cacheMenuList) },
+      { status: 200 },
+    );
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

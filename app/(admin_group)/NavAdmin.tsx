@@ -23,10 +23,9 @@ import { useIsError } from '@/hook/useIsLogin/useIsError';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
-import { useRecoilState } from 'recoil';
-import { isStart } from '@/recoil/isStart';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
+import { useQueryClient } from '@tanstack/react-query';
 
 const navMenuData = [
   {
@@ -90,23 +89,18 @@ const navMenuData = [
 
 export const NavAdmin = () => {
   useIsError();
+
+  const queryClient = useQueryClient();
   const { openPopup } = usePopup();
   const [show, setShow] = useState<Boolean>(false);
   const pathName = usePathname();
-  // 영업시작 확인
-  const [startSwitchValue, setStartSwitchValue] = useRecoilState(isStart);
 
   // 영업상태 초기설정
-  const { isError } = useQueryInstance({
+  const { isError, refetch } = useQueryInstance({
     queryKey: [QUERY_KEY.IS_START],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.START,
-    staleTime: 0,
-    gcTime: 0,
     queryEnable: pathName !== '/admin/login',
-    onSuccess: (res) => {
-      setStartSwitchValue(() => res.data);
-    },
   });
 
   // 영업상태변경 요청
@@ -116,8 +110,8 @@ export const NavAdmin = () => {
     onErrorFn: () => {
       return openPopup({ title: '오류', content: '다시 시도해주세요.' });
     },
-    onSuccessFn: (res) => {
-      setStartSwitchValue(() => res.data);
+    onSuccessFn: () => {
+      refetch();
     },
   });
 
@@ -173,7 +167,9 @@ export const NavAdmin = () => {
           }}
           data={navMenuData}
           logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
-          switchChecked={startSwitchValue || false}
+          switchChecked={
+            queryClient.getQueryData<{ message: string; data: boolean }>([QUERY_KEY.IS_START])?.data
+          }
           switchOnChange={startSwitchHandler}
           showUseState={() => setShow((cur) => cur && false)}
         />

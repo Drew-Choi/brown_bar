@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
     const { is_start } = await req.json();
 
-    const result = await Start.findOneAndUpdate(
+    const result: { is_start: boolean } | null = await Start.findOneAndUpdate(
       { is_start: { $exists: true } },
       { $set: { is_start } },
       { new: true },

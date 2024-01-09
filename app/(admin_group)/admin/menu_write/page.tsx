@@ -268,32 +268,62 @@ const CollapseSubMenu = React.memo(
           <Box color="text.secondary">Loading...</Box>
         ) : isError ? (
           <Box color="text.secondary">Fetching Error</Box>
-        ) : productList.pd_datas?.length === 0 ? (
+        ) : productList?.length === 0 ? (
           <ListItemButton dense component="li" sx={{ whiteSpace: 'nowrap' }}>
             등록된 상품이 없습니다.
           </ListItemButton>
         ) : (
-          productList.pd_datas?.map((pd: ProductInfoType) => (
+          productList?.map((pd: ProductInfoType) => (
             <ListItemButton
               key={pd._id}
               dense
               component="li"
               sx={{
+                display: 'block',
                 width: '100%',
                 bgcolor: COLORS.info,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: '15px',
                 paddingBottom: '20px',
                 marginBottom: '20px',
                 borderBottom: '1px solid #7d7d7d',
                 borderRadius: '10px',
               }}
             >
-              <Typography sx={{ flex: '1' }}>{pd.pd_name}</Typography>
-              <Typography sx={{ flex: '0.5', textAlign: 'center' }}>
-                {pd.price.toLocaleString('ko-KR')} ₩
-              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  width: '100%',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: '15px',
+                }}
+              >
+                <Typography sx={{ flex: '1' }}>{pd.pd_name}</Typography>
+                <Typography sx={{ flex: '0.5', textAlign: 'center' }}>
+                  {pd.price.toLocaleString('ko-KR')} ₩
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: '10px',
+                }}
+              >
+                <Typography textAlign="left" flex={1.5} fontSize={14}>
+                  {pd.desc}
+                </Typography>
+                <Typography textAlign="right" flex={1} fontSize={14}>
+                  {pd.option_arr?.map(
+                    (el, index) =>
+                      index !== 0 && (
+                        <React.Fragment key={el.value}>
+                          {el.label}: {el.price.toLocaleString('ko-KR')} <br />
+                        </React.Fragment>
+                      ),
+                  )}
+                </Typography>
+              </Box>
             </ListItemButton>
           ))
         )}
