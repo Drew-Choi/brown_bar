@@ -49,11 +49,9 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     const cacheMenuList = await redisClient.GET(cacheKey);
-    console.log('시작');
 
     if (!cacheMenuList) {
       await connectDB();
-      console.log('db가니?');
 
       const result: MenuCategoryType[] = await Menu.find();
 
@@ -64,7 +62,6 @@ export async function GET() {
       return NextResponse.json({ message: 'DB Error' }, { status: 500 });
     }
 
-    console.log('캐싱으로 패칭');
     // 캐시데이터 있음 캐싱데이터 res
     return NextResponse.json(
       { message: '메뉴 리스트업 성공', data: JSON.parse(cacheMenuList) },
