@@ -27,6 +27,13 @@ declare global {
     onConfirm?: (() => void) | null;
   }
 
+  type ProductOptionType = {
+    label: string;
+    value: number;
+    price: number;
+    _id: string;
+  };
+
   interface ProductInfoType {
     _id: string;
     pd_name: string;
@@ -36,18 +43,10 @@ declare global {
     category_idx: number;
     created_at?: date;
     updated_at?: date;
-    option_arr:
-      | {
-          label: string;
-          value: number;
-          price: number;
-          _id: string;
-        }[]
-      | [];
+    option_arr: ProductOptionType[] | [];
   }
 
-  interface ProductNewListType
-    extends Omit<ProductInfoType, 'category_idx' | 'created_at' | 'updated_at'> {
+  interface ProductNewListType extends Omit<ProductInfoType, 'created_at' | 'updated_at'> {
     category: string;
   }
 
@@ -59,6 +58,11 @@ declare global {
   interface MenuProductsType {
     category_idx: number;
     pd_datas: ProductInfoType[];
+  }
+
+  interface InfinityFetchingType {
+    pageParams: number[] | [];
+    pages: { data: { message: string; data: ProductNewListType[] } }[] | [];
   }
 }
 

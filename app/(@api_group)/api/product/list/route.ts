@@ -16,13 +16,13 @@ const newListGenerate = (
     // Mongoose 문서 객체를 JavaScript 객체로 변환
     const productObj = productDoc.toObject();
 
-    const { category_idx, ...rest } = productObj;
-
     // 키벨류가 일치하는 객체 추출
-    const findCategoryLabel = menuList.find((menu) => menu.category_idx === category_idx);
+    const findCategoryLabel = menuList.find(
+      (menu) => menu.category_idx === productObj.category_idx,
+    );
 
     return {
-      ...rest,
+      ...productObj,
       category: String(findCategoryLabel ? findCategoryLabel.label : undefined),
     };
   });

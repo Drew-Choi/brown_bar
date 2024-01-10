@@ -53,7 +53,7 @@ export async function GET() {
     if (!cacheMenuList) {
       await connectDB();
 
-      const result: MenuCategoryType[] = await Menu.find();
+      const result: MenuCategoryType[] = await Menu.find().select('-_id -__v');
 
       if (result) {
         await redisClient.SET(cacheKey, JSON.stringify(result));

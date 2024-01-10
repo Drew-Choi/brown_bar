@@ -5,44 +5,42 @@ import ContentBox from './ContentBox';
 import { Typography } from '@mui/material';
 import { ImCancelCircle } from 'react-icons/im';
 import { COLORS } from '@/asset/style';
+import { FaRegEdit } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 interface ListItemLayoutProps {
-  img_url: string;
-  pd_name: string;
-  price: number;
-  category: string;
-  option: { label: string; value: number; price: number }[] | [];
   onClickDelete?: () => void;
-  desc?: string;
+  productData: ProductNewListType;
 }
 
-const ListItemLayout = ({
-  img_url,
-  pd_name,
-  price,
-  desc,
-  onClickDelete,
-  category,
-  option,
-}: ListItemLayoutProps) => {
+const ListItemLayout = ({ onClickDelete, productData }: ListItemLayoutProps) => {
+  const router = useRouter();
+
   return (
     <ContentBox>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography color="text.secondary" fontWeight={700} textAlign="left" padding="10px">
           <span style={{ position: 'relative', fontWeight: '400', marginRight: '5px' }}>Menu:</span>{' '}
-          {category}
+          {productData?.category}
         </Typography>
         <Box
-          onClick={onClickDelete}
           sx={{
             textAlign: 'right',
             flex: '0.08',
             justifySelf: 'right',
-            cursor: 'pointer',
             height: 'fit-content',
           }}
+          onClick={() => router.push(`/admin/product/product_list/${productData._id}`)}
         >
-          <ImCancelCircle color={COLORS.text.secondary} size={30} />
+          <Box sx={{ display: 'flex', gap: '20px' }}>
+            <FaRegEdit color={COLORS.text.secondary} size={30} style={{ cursor: 'pointer' }} />
+            <ImCancelCircle
+              color={COLORS.text.secondary}
+              size={30}
+              style={{ cursor: 'pointer' }}
+              onClick={onClickDelete}
+            />
+          </Box>
         </Box>
       </Box>
       <Box
@@ -58,7 +56,7 @@ const ListItemLayout = ({
             margin: { xs: '20px auto', md: '0' },
           }}
         >
-          <ImageLayout priority={true} src={img_url} alt="상품이미지" />
+          <ImageLayout priority={true} src={productData?.img_url} alt="상품이미지" />
         </Box>
         <Box
           sx={{
@@ -71,9 +69,9 @@ const ListItemLayout = ({
           }}
         >
           <Typography gutterBottom fontWeight={600}>
-            {pd_name}
+            {productData?.pd_name}
           </Typography>
-          <Typography gutterBottom>{price.toLocaleString('ko-KR')} ₩</Typography>
+          <Typography gutterBottom>{productData?.price.toLocaleString('ko-KR')} ₩</Typography>
         </Box>
 
         <Box
@@ -98,9 +96,9 @@ const ListItemLayout = ({
             }}
           >
             - 옵션 - <br />
-            {option?.length === 0
+            {productData?.option_arr?.length === 0
               ? ''
-              : option?.map((el, index) =>
+              : productData?.option_arr?.map((el, index) =>
                   index !== 0 ? (
                     <React.Fragment key={el.value}>
                       <span>{`${el.label}: ${el.price.toLocaleString('ko-KR')}`}</span>
@@ -133,7 +131,7 @@ const ListItemLayout = ({
               lineHeight: '1.5',
             }}
           >
-            {desc}
+            {productData?.desc}
           </Typography>
         </Box>
       </Box>

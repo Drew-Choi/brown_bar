@@ -88,19 +88,14 @@ const ProductList = () => {
                     openPopup({
                       title: '안내',
                       content: (
-                        <div style={{ whiteSpace: 'pre-line' }}>
+                        <span style={{ whiteSpace: 'pre-line' }}>
                           {`[${el.pd_name}]\n정말 삭제하시겠습니까?`}
-                        </div>
+                        </span>
                       ),
                       onConfirm: () => deleteAPI({ apiPathParams: el._id }),
                     })
                   }
-                  img_url={el.img_url}
-                  pd_name={el.pd_name}
-                  price={el.price}
-                  desc={el.desc}
-                  option={el.option_arr}
-                  category={el.category}
+                  productData={el}
                 />
               </Grid>
             )),

@@ -12,9 +12,9 @@ export async function GET(_: null, { params }: { params: { category_idx: string 
 
     await connectDB();
 
-    const List = await Product.find({ category_idx })
+    const List: ProductNewListType[] = await Product.find({ category_idx })
       .sort({ updated_at: -1 })
-      .select('-created_at -updated_at -__v -img_url');
+      .select('-created_at -updated_at -__v');
 
     return NextResponse.json({ message: '성공', data: List }, { status: 200 });
   } catch (error) {

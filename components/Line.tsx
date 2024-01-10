@@ -1,16 +1,20 @@
 import { COLORS } from '@/asset/style';
-import { styled } from '@mui/material';
+import { SxProps } from '@mui/material';
+import Box from '@mui/material/Box';
 import React from 'react';
 
-const LineContainer = styled('div')<{ height: string; margin: string }>`
-  width: 100%;
-  height: ${({ height }) => height};
-  background-color: ${COLORS.divider};
-  margin: ${({ margin }) => margin};
-`;
-
-const Line = ({ height = '1px', margin = '0 0 0 0' }: { height?: string; margin?: string }) => {
-  return <LineContainer height={height} margin={margin} />;
+const Line = ({
+  width = '100%',
+  height = '1px',
+  margin = '0 0 0 0',
+  sx,
+}: {
+  height?: string;
+  margin?: string;
+  width?: string;
+  sx?: SxProps;
+}) => {
+  return <Box sx={{ width, height, margin, backgroundColor: COLORS.divider, ...sx }} />;
 };
 
 export default React.memo(Line);

@@ -265,7 +265,7 @@ const MenuListUp = React.memo(
               영업시작
             </Typography>
             <Switch
-              checked={switchChecked}
+              checked={switchChecked || false}
               inputProps={{ 'aria-label': 'controlled' }}
               onChange={switchOnChange}
               color="secondary"

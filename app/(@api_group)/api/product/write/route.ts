@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (category_idx === 0)
       return NextResponse.json({ message: '메뉴판 등록이 누락되었습니다.' }, { status: 400 });
 
-    if (!img_file || !pd_name || !price || !category_idx)
+    if (!img_file || !pd_name || !price || !category_idx || !desc)
       return NextResponse.json({ message: '상품정보가 누락되었습니다.' }, { status: 400 });
 
     if (img_file instanceof File) {

@@ -4,7 +4,7 @@ const productSchema = new Schema(
   {
     pd_name: { type: String, required: true },
     price: { type: Number, required: true },
-    desc: { type: String, default: '' },
+    desc: { type: String, require: true },
     img_url: { type: String, required: true },
     option_arr: { type: [{ label: String, value: Number, price: Number }], default: [] },
     category_idx: { type: Number, require: true },
