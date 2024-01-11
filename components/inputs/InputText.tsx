@@ -1,6 +1,6 @@
 'use client';
 import { SxProps } from '@mui/material';
-import React, { ChangeEvent, forwardRef } from 'react';
+import React, { ChangeEvent, KeyboardEvent, forwardRef } from 'react';
 import FormControl from '@mui/material/FormControl';
 import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
@@ -32,6 +32,8 @@ const InputText = forwardRef<
     onChangeEvent?: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined;
     value?: string | number;
     placeholderText?: string;
+    defaultValue?: string;
+    onKeyUp?: ((event: KeyboardEvent<HTMLInputElement>) => void) | undefined;
   }
 >(
   (
@@ -45,6 +47,8 @@ const InputText = forwardRef<
       onChangeEvent,
       value,
       placeholderText,
+      defaultValue,
+      onKeyUp,
     },
     ref,
   ) => {
@@ -54,6 +58,7 @@ const InputText = forwardRef<
           {title} {'-'}
         </InputLabel>
         <Input
+          defaultValue={defaultValue}
           placeholder={placeholderText}
           multiline={multiline}
           value={value}
@@ -61,6 +66,7 @@ const InputText = forwardRef<
           inputRef={ref}
           sx={{ ...textSx }}
           type={type}
+          onKeyUp={onKeyUp}
         />
       </FormControl>
     );

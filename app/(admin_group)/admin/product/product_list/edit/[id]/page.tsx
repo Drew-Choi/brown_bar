@@ -17,7 +17,7 @@ import { SelectChangeEvent } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa6';
 
@@ -42,7 +42,10 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
   const { openPopup } = usePopup();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const search = useSearchParams();
   const { id } = params;
+
+  const category_idx = search.get('category_idx');
 
   // 메뉴리스트 패칭
   const {
@@ -59,9 +62,6 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
         ...rest,
         value: category_idx,
       }));
-    },
-    onSuccess: (response) => {
-      if (response?.length === 0) return setMenuCategoryValue(0);
     },
   });
 
@@ -191,35 +191,35 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
     });
   };
 
+  const cacheList: InfinityFetchingType | undefined = queryClient.getQueryData([
+    QUERY_KEY.PRODUCT_LIST,
+  ]);
+
   // 수정용 세팅 -----------
   useEffect(() => {
-    const cacheList: InfinityFetchingType | undefined = queryClient.getQueryData([
-      QUERY_KEY.PRODUCT_LIST,
-    ]);
+    const list =
+      cacheList && cacheList.pageParams?.length === 1 && menuList?.length > 0
+        ? cacheList.pages[0].data.data
+        : cacheList?.pages.map((el) => [...el.data.data]).flat();
+    const findProduct: ProductNewListType | undefined = list?.find((el) => el._id === id);
 
-    if (cacheList && cacheList.pageParams?.length === 1) {
-      const list = cacheList.pages[0].data.data;
-      const findProduct: ProductNewListType | undefined = list.find((el) => el._id === id);
-
-      // 가격은 String으로 변환이 필요
-      if (findProduct && priceRef.current && descRef.current) {
-        setPreData(findProduct);
-        setBlobURL(findProduct?.img_url);
-        setPdName(findProduct?.pd_name);
-        priceRef.current.value = String(findProduct?.price);
-        descRef.current.value = findProduct?.desc;
-        setMenuCategoryValue(findProduct?.category_idx);
-        setOption((cur: { label: string; value: number; price: string }[]) => {
-          let copy = [...cur];
-          copy = findProduct?.option_arr
-            .map((el) => ({ ...el, price: String(el.price) }))
-            .filter((_, index) => index !== 0);
-          return copy;
-        });
-      }
+    // 가격은 String으로 변환이 필요
+    if (findProduct && priceRef.current && descRef.current) {
+      setPreData(findProduct);
+      setBlobURL(findProduct?.img_url);
+      setPdName(findProduct?.pd_name);
+      priceRef.current.value = String(findProduct?.price);
+      descRef.current.value = findProduct?.desc;
+      setMenuCategoryValue(findProduct?.category_idx);
+      setOption((cur: { label: string; value: number; price: string }[]) => {
+        let copy = [...cur];
+        copy = findProduct?.option_arr
+          .map((el) => ({ ...el, price: String(el.price) }))
+          .filter((_, index) => index !== 0);
+        return copy;
+      });
     }
-  }, []);
-  // -----------------------
+  }, [menuList, cacheList?.pageParams?.length]);
 
   // 최종 등록 ---
   const submitHandler = async () => {
@@ -301,7 +301,35 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
     return editProductAPI({ apiBody: formData });
   };
 
-  if (isError) return <Box color="text.secondary">Fetching Error</Box>;
+  if (isError)
+    return (
+      <Typography textAlign="center" color="text.secondary">
+        Fetching Error
+      </Typography>
+    );
+
+  if (isLoading)
+    return (
+      <Typography sx={{ color: 'text.secondary', textAlign: 'center', padding: '100px 20px' }}>
+        Loading ...
+      </Typography>
+    );
+
+  if (!cacheList)
+    return (
+      <Typography sx={{ color: 'text.secondary', textAlign: 'center', padding: '100px 20px' }}>
+        - 상품정보 없음 -<br />
+        상품목록에서 상품을 선택해주세요.
+      </Typography>
+    );
+
+  if (menuList?.length <= 0 && !isLoading)
+    return (
+      <Typography sx={{ color: 'text.secondary', textAlign: 'center', padding: '100px 20px' }}>
+        - 메뉴 카테고리 오류 -<br />
+        메뉴판 카테고리를 등록해주세요.
+      </Typography>
+    );
 
   return (
     <Box

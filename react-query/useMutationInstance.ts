@@ -1,5 +1,5 @@
 import axiosInstance from '@/axios/instance';
-import { MutationFunction, UseMutationResult, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 interface UseMutationProps {

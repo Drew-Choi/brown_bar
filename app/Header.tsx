@@ -108,9 +108,15 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
           <Typography fontSize="15px" color="text.primary" fontWeight={600}>
             {pathName === '/admin/login'
               ? '로그인'
-              : pathName === '/admin/product_write'
+              : pathName === '/admin/product/product_write'
                 ? '상품등록'
-                : ''}
+                : pathName === '/admin/product/product_list'
+                  ? '상품목록'
+                  : pathName.includes('/admin/product/product_list/edit/')
+                    ? '상품수정'
+                    : pathName === '/admin/menu_write'
+                      ? '메뉴판'
+                      : ''}
           </Typography>
         </Tag>
         <Box sx={{ width: '150px', height: 'auto' }}>

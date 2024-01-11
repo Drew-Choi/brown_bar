@@ -30,10 +30,14 @@ const ListItemLayout = ({ onClickDelete, productData }: ListItemLayoutProps) => 
             justifySelf: 'right',
             height: 'fit-content',
           }}
-          onClick={() => router.push(`/admin/product/product_list/${productData._id}`)}
         >
           <Box sx={{ display: 'flex', gap: '20px' }}>
-            <FaRegEdit color={COLORS.text.secondary} size={30} style={{ cursor: 'pointer' }} />
+            <FaRegEdit
+              color={COLORS.text.secondary}
+              size={30}
+              style={{ cursor: 'pointer' }}
+              onClick={() => router.push(`/admin/product/product_list/edit/${productData._id}`)}
+            />
             <ImCancelCircle
               color={COLORS.text.secondary}
               size={30}

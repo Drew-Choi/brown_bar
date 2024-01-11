@@ -1,13 +1,12 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import Product from '../../../_models/Product';
 import redisClient from '../../../_lib/redis';
-
-const cacheKey = 'menuList';
+import { REDIS_CACHE_KEY } from '../../../_constant/KEY';
 
 // 메뉴 카테고리 삭제
-export async function DELETE(_: null, { params }: { params: { category_idx: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { category_idx: string } }) {
   try {
     const category_idx = Number(params.category_idx);
 
@@ -26,8 +25,8 @@ export async function DELETE(_: null, { params }: { params: { category_idx: stri
 
     const result = await Menu.deleteOne({ category_idx });
 
-    if (result.acknowledged && result.deletedCount > 0) {
-      const cacheMenuList = await redisClient.GET(cacheKey);
+    if (result.acknowledged && result.deletedCount === 1) {
+      const cacheMenuList = await redisClient.GET(REDIS_CACHE_KEY.MENU_LIST);
 
       // 캐싱 데이터 없음 그냥 진행
       if (!cacheMenuList) return NextResponse.json({ message: '삭제 성공' }, { status: 200 });
@@ -37,12 +36,12 @@ export async function DELETE(_: null, { params }: { params: { category_idx: stri
       const parseMenuList: MenuCategoryType[] = JSON.parse(cacheMenuList);
 
       if (parseMenuList?.length <= 1) {
-        await redisClient.DEL(cacheKey);
+        await redisClient.DEL(REDIS_CACHE_KEY.MENU_LIST);
         return NextResponse.json({ message: '삭제 성공' }, { status: 200 });
       }
 
       const filterMenuList = parseMenuList.filter((el) => el.category_idx !== category_idx);
-      await redisClient.SET(cacheKey, JSON.stringify(filterMenuList));
+      await redisClient.SET(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(filterMenuList));
       return NextResponse.json({ message: '삭제 성공' }, { status: 200 });
     } else {
       return NextResponse.json({ message: 'DB error' }, { status: 500 });

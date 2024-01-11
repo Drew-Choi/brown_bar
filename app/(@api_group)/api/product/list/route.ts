@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import redisClient from '../../_lib/redis';
 import Menu from '../../_models/Menu';
 import { Document } from 'mongoose';
+import { REDIS_CACHE_KEY } from '../../_constant/KEY';
 
 const newListGenerate = (
   productList: ProductInfoType[],
@@ -29,8 +30,6 @@ const newListGenerate = (
 };
 
 export async function GET(req: NextRequest) {
-  const cacheKey = 'menuList';
-
   try {
     const searchParams = req.nextUrl.searchParams;
     const page = searchParams.get('page');
@@ -47,7 +46,7 @@ export async function GET(req: NextRequest) {
       .select('-created_at -updated_at -__v');
 
     // 메뉴카테고리 캐싱 확인
-    const cacheMenuList: string | null = await redisClient.GET(cacheKey);
+    const cacheMenuList: string | null = await redisClient.GET(REDIS_CACHE_KEY.MENU_LIST);
 
     //캐시 없을시
     if (!cacheMenuList) {
@@ -56,7 +55,7 @@ export async function GET(req: NextRequest) {
       if (menuList.length !== 0) {
         const newList = newListGenerate(list, menuList);
 
-        await redisClient.SET(cacheKey, JSON.stringify(menuList));
+        await redisClient.SET(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(menuList));
 
         return NextResponse.json({ message: '상품 리스트업 성공', data: newList }, { status: 200 });
       } else {

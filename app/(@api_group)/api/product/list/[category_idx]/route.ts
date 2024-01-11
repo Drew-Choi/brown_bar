@@ -3,7 +3,7 @@ import Product from '@/app/(@api_group)/api/_models/Product';
 import { NextRequest, NextResponse } from 'next/server';
 
 // 카테고리별 상품 불러오기
-export async function GET(_: null, { params }: { params: { category_idx: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { category_idx: string } }) {
   try {
     const category_idx = Number(params.category_idx);
 

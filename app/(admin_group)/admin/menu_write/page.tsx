@@ -2,7 +2,7 @@
 import ContentBox from '@/components/layout/ContentBox';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
-import React, { FormEvent, useRef, useState } from 'react';
+import React, { FormEvent, KeyboardEvent, useRef, useState } from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import Collapse from '@mui/material/Collapse';
@@ -17,58 +17,28 @@ import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import Empty from '@/components/Empty';
+import { FaRegEdit } from 'react-icons/fa';
+import { GiConfirmed } from 'react-icons/gi';
+import { useRouter } from 'next/navigation';
 
-//패칭해야함
-const pdData = [
-  {
-    category_idx: 2,
-    pd_datas: [
-      {
-        _id: 10,
-        pd_name: 'zz',
-        price: 30000,
-        desc: '하하하하하',
-        optio_arr: [{ lable: '- 옵션추가 -', value: 0, price: 0 }],
-      },
-    ],
-  },
-  {
-    category_idx: 3,
-    pd_datas: [
-      {
-        _id: 1,
-        pd_name: '상품이름상품이름상품이름상품이름상품이름상품이름',
-        price: 30000,
-        desc: '하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하하',
-        optio_arr: [{ lable: '- 옵션추가 -', value: 0, price: 0 }],
-      },
-      {
-        _id: 2,
-        pd_name: '상품이름1',
-        price: 30000,
-        desc: '하하하하하',
-        optio_arr: [{ lable: '- 옵션추가 -', value: 0, price: 0 }],
-      },
-      {
-        _id: 3,
-        pd_name: '상품이름2',
-        price: 30000,
-        desc: '하하하하하',
-        optio_arr: [{ lable: '- 옵션추가 -', value: 0, price: 0 }],
-      },
-      {
-        _id: 4,
-        pd_name: '상품이름3',
-        price: 30000,
-        desc: '하하하하하',
-        optio_arr: [{ lable: '- 옵션추가 -', value: 0, price: 0 }],
-      },
-    ],
-  },
-];
 const MenuWrite = () => {
   const { openPopup } = usePopup();
+
+  // 메뉴명 수정시 사용자 입력 데이터 저장
+  const editInputRef = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Collapse 액티브 체크
   const [openValues, setOpenValues] = useState<Record<number, boolean>>({});
+  const oneDepthHandler = (idx: number) => {
+    setOpenValues((cur) => ({ ...cur, [idx]: cur[idx] ? !cur[idx] : true }));
+  };
+
+  // 에딧 세팅
+  const [onEdit, setOnEdit] = useState<Record<number, boolean>>({});
+  const onEditHandler = (idx: number) => {
+    setOnEdit((cur) => ({ ...cur, [idx]: cur[idx] ? !cur[idx] : true }));
+    setOpenValues((cur) => ({ ...cur, [idx]: false }));
+  };
 
   // 메뉴리스트 패칭
   const {
@@ -126,12 +96,40 @@ const MenuWrite = () => {
     },
   });
 
-  // Collapse 액티브 체크
-  const oneDepthHandler = (idx: number) => {
-    setOpenValues((cur) => ({ ...cur, [idx]: cur[idx] ? !cur[idx] : true }));
-  };
+  // 에딧 핸들러 및 API
+  const { mutate: editAPI } = useMutationInstance({
+    apiEndPoint: USE_MUTATE_POINT.MENU_EDIT,
+    apiMethod: 'post',
+    onErrorFn: (err: any) => {
+      if (err.response.status === 400) {
+        openPopup({ title: '오류', content: err.response.data.message });
+      } else {
+        openPopup({ title: '오류', content: '다시 시도해주세요.' });
+      }
+    },
+    onSuccessFn: (response) => {
+      if (response?.category_idx) {
+        const idx = response.category_idx;
+        setOnEdit((cur) => ({ ...cur, [idx]: false }));
+        setOpenValues((cur) => ({ ...cur, [idx]: false }));
+        refetch();
+      }
+    },
+  });
+  const submitEditHandler = (
+    e: KeyboardEvent<HTMLInputElement> | null,
+    category_idx: number,
+    preName: string,
+  ) => {
+    if ((e && e.key === 'Enter') || !e) {
+      if (preName === editInputRef.current[category_idx]?.value)
+        return openPopup({ title: '오류', content: '변경사항이 없습니다.' });
 
-  // 하위 메뉴 상품리스트 클릭시 마다 개별로 부르는 함수
+      const new_label = editInputRef.current[category_idx]?.value;
+
+      editAPI({ apiBody: { category_idx, new_label } });
+    }
+  };
 
   if (isError) return <Box color="text.secondary">Fetching Error</Box>;
 
@@ -147,15 +145,15 @@ const MenuWrite = () => {
           marginBottom: '10px',
           textAlign: 'right',
           gap: '20px',
-          padding: '20px',
+          padding: { xs: '20px 0px', sm: '20px' },
         }}
       >
         <InputText
           title="카테고리추가"
           ref={categoryLabelRef}
-          textSx={{ fontSize: '18px', color: 'text.secondary' }}
+          textSx={{ flex: '9', fontSize: '18px', color: 'text.secondary' }}
         />
-        <ButtonNomal type="submit" sx={{ padding: '10px 20px' }}>
+        <ButtonNomal type="submit" sx={{ flex: '1', padding: '10px 20px' }}>
           <FaPlus />
         </ButtonNomal>
       </Box>
@@ -172,22 +170,39 @@ const MenuWrite = () => {
               }}
             >
               <Box component="li" sx={{ marginBottom: '10px' }}>
-                <Box sx={{ textAlign: 'right' }}>
-                  <FaMinus
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    gap: '20px',
+                    marginBottom: '10px',
+                  }}
+                >
+                  <FaRegEdit
                     color={COLORS.text.secondary}
+                    size={25}
                     style={{ cursor: 'pointer' }}
-                    onClick={() =>
-                      openPopup({
-                        title: '안내',
-                        content: (
-                          <div style={{ whiteSpace: 'pre-line' }}>
-                            {`[${el.label}]\n정말 삭제하시겠습니까?`}
-                          </div>
-                        ),
-                        onConfirm: () => categoryDeleteAPI({ apiPathParams: el.category_idx }),
-                      })
-                    }
+                    onClick={() => onEditHandler(el.category_idx)}
                   />
+                  {!onEdit && (
+                    <FaMinus
+                      size={20}
+                      color={COLORS.text.secondary}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() =>
+                        openPopup({
+                          title: '안내',
+                          content: (
+                            <div style={{ whiteSpace: 'pre-line' }}>
+                              {`[${el.label}]\n정말 삭제하시겠습니까?`}
+                            </div>
+                          ),
+                          onConfirm: () => categoryDeleteAPI({ apiPathParams: el.category_idx }),
+                        })
+                      }
+                    />
+                  )}
                 </Box>
                 <ListItemButton
                   sx={{
@@ -196,19 +211,47 @@ const MenuWrite = () => {
                     fontWeight: '600',
                     bgcolor: COLORS.primary,
                     borderRadius: '10px',
+                    cursor: !onEdit[el.category_idx] ? 'pointer' : 'default',
                   }}
-                  selected={openValues[el.category_idx]}
-                  onClick={() => oneDepthHandler(el.category_idx)}
+                  selected={openValues[el.category_idx] || false}
+                  onClick={() => !onEdit[el.category_idx] && oneDepthHandler(el.category_idx)}
                 >
-                  <Typography
-                    sx={{ flex: '9', fontWeight: '600', fontSize: '16px', color: 'text.secondary' }}
-                  >
-                    {el.label}
-                  </Typography>
-                  {openValues[el.category_idx] ? (
-                    <ExpandLess sx={{ flex: '1', justifySelf: 'right' }} />
+                  {!onEdit[el.category_idx] ? (
+                    <Typography
+                      sx={{
+                        flex: '9',
+                        fontWeight: '600',
+                        fontSize: '16px',
+                        color: 'text.secondary',
+                      }}
+                    >
+                      {el.label}
+                    </Typography>
                   ) : (
+                    <InputText
+                      title="카테고리명 수정"
+                      textSx={{ color: 'text.secondary', fontSize: '16px', fontWeight: '600' }}
+                      defaultValue={el.label}
+                      ref={(dom) => {
+                        editInputRef.current[el.category_idx] = dom;
+                      }}
+                      onKeyUp={(e) => submitEditHandler(e, el.category_idx, el.label)}
+                    />
+                  )}
+
+                  {openValues[el.category_idx] && !onEdit[el.category_idx] ? (
+                    <ExpandLess sx={{ flex: '1', justifySelf: 'right' }} />
+                  ) : !openValues[el.category_idx] && !onEdit[el.category_idx] ? (
                     <ExpandMore sx={{ flex: '1', justifySelf: 'right' }} />
+                  ) : (
+                    <GiConfirmed
+                      size={30}
+                      color={COLORS.text.secondary}
+                      style={{ cursor: 'pointer', zindex: '10' }}
+                      onClick={() => {
+                        submitEditHandler(null, el.category_idx, el.label);
+                      }}
+                    />
                   )}
                 </ListItemButton>
                 <Collapse
@@ -253,6 +296,7 @@ const CollapseSubMenu = React.memo(
       apiPathParams: el_category_idx,
       queryEnable: openValues,
     });
+    const router = useRouter();
 
     return (
       <List
@@ -287,6 +331,13 @@ const CollapseSubMenu = React.memo(
                 borderBottom: '1px solid #7d7d7d',
                 borderRadius: '10px',
               }}
+              onClick={() =>
+                router.push(
+                  `/admin/product/product_list/edit/${pd._id}?category_idx=${String(
+                    pd.category_idx,
+                  )}`,
+                )
+              }
             >
               <Box
                 sx={{

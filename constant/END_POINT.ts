@@ -9,4 +9,5 @@ export const USE_MUTATE_POINT = {
   START: 'start',
   MENU: 'menu',
   MENU_DELETE: 'menu/delete',
+  MENU_EDIT: 'menu/edit',
 };
