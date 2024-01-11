@@ -7,6 +7,7 @@ interface UseQueryProps {
   queryKey: any[];
   onSuccess?: (data: any) => void | undefined;
   selectFn?: (data: any) => void | undefined;
+  initialDataFn?: (() => any) | undefined;
   apiMethod: 'get' | 'post';
   apiEndPoint: string;
   apiQueryParams?: Object | undefined;
@@ -24,6 +25,7 @@ export const useQueryInstance = ({
   queryKey,
   onSuccess,
   selectFn,
+  initialDataFn,
   apiMethod,
   apiEndPoint,
   apiQueryParams,
@@ -81,6 +83,7 @@ export const useQueryInstance = ({
     staleTime,
     gcTime,
     select: selectFn,
+    initialData: initialDataFn,
   });
 
   // 커스텀 onSuccess

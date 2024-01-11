@@ -185,7 +185,7 @@ const MenuWrite = () => {
                     style={{ cursor: 'pointer' }}
                     onClick={() => onEditHandler(el.category_idx)}
                   />
-                  {!onEdit && (
+                  {!onEdit[el.category_idx] && (
                     <FaMinus
                       size={20}
                       color={COLORS.text.secondary}

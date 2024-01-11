@@ -21,6 +21,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa6';
 
+type CacheListType = InfinityFetchingType | { message: string; data: ProductNewListType[] };
+
 const compareValue = (pre: { [key: string]: any }[], post: { [key: string]: any }[]): boolean => {
   if (pre.length !== post.length + 1) return false;
 
@@ -44,7 +46,6 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const search = useSearchParams();
   const { id } = params;
-
   const category_idx = search.get('category_idx');
 
   // 메뉴리스트 패칭
@@ -62,6 +63,12 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
         ...rest,
         value: category_idx,
       }));
+    },
+    initialDataFn: () => {
+      const menuListCache = queryClient.getQueryData([QUERY_KEY.MENU_LIST]);
+
+      if (menuListCache) return menuListCache;
+      return undefined;
     },
   });
 
@@ -191,35 +198,58 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
     });
   };
 
-  const cacheList: InfinityFetchingType | undefined = queryClient.getQueryData([
-    QUERY_KEY.PRODUCT_LIST,
+  const cacheList: CacheListType | undefined = queryClient.getQueryData([
+    !category_idx ? `${QUERY_KEY.PRODUCT_LIST}` : `${QUERY_KEY.MENU_PRODUCT_LIST}`,
+    Number(category_idx),
   ]);
 
   // 수정용 세팅 -----------
   useEffect(() => {
-    const list =
-      cacheList && cacheList.pageParams?.length === 1 && menuList?.length > 0
-        ? cacheList.pages[0].data.data
-        : cacheList?.pages.map((el) => [...el.data.data]).flat();
-    const findProduct: ProductNewListType | undefined = list?.find((el) => el._id === id);
+    if (!category_idx && cacheList && 'pageParams' in cacheList) {
+      const list =
+        cacheList && cacheList?.pageParams?.length === 1 && menuList?.length > 0
+          ? cacheList.pages[0].data.data
+          : cacheList?.pages.map((el) => [...el.data.data]).flat();
+      const findProduct: ProductNewListType | undefined = list?.find((el) => el._id === id);
 
-    // 가격은 String으로 변환이 필요
-    if (findProduct && priceRef.current && descRef.current) {
-      setPreData(findProduct);
-      setBlobURL(findProduct?.img_url);
-      setPdName(findProduct?.pd_name);
-      priceRef.current.value = String(findProduct?.price);
-      descRef.current.value = findProduct?.desc;
-      setMenuCategoryValue(findProduct?.category_idx);
-      setOption((cur: { label: string; value: number; price: string }[]) => {
-        let copy = [...cur];
-        copy = findProduct?.option_arr
-          .map((el) => ({ ...el, price: String(el.price) }))
-          .filter((_, index) => index !== 0);
-        return copy;
-      });
+      // 가격은 String으로 변환이 필요
+      if (findProduct && priceRef.current && descRef.current) {
+        setPreData(findProduct);
+        setBlobURL(findProduct?.img_url);
+        setPdName(findProduct?.pd_name);
+        priceRef.current.value = String(findProduct?.price);
+        descRef.current.value = findProduct?.desc;
+        setMenuCategoryValue(findProduct?.category_idx);
+        setOption((cur: { label: string; value: number; price: string }[]) => {
+          let copy = [...cur];
+          copy = findProduct?.option_arr
+            .map((el) => ({ ...el, price: String(el.price) }))
+            .filter((_, index) => index !== 0);
+          return copy;
+        });
+      }
     }
-  }, [menuList, cacheList?.pageParams?.length]);
+
+    // 메뉴판에서 수정 넘어올 때
+    if (category_idx && cacheList && 'data' in cacheList) {
+      const findProduct = cacheList.data.find((el) => el._id === id);
+      if (findProduct && priceRef.current && descRef.current) {
+        setPreData(findProduct);
+        setBlobURL(findProduct?.img_url);
+        setPdName(findProduct?.pd_name);
+        priceRef.current.value = String(findProduct?.price);
+        descRef.current.value = findProduct?.desc;
+        setMenuCategoryValue(findProduct?.category_idx);
+        setOption((cur: { label: string; value: number; price: string }[]) => {
+          let copy = [...cur];
+          copy = findProduct?.option_arr
+            .map((el) => ({ ...el, price: String(el.price) }))
+            .filter((_, index) => index !== 0);
+          return copy;
+        });
+      }
+    }
+  }, [menuList, cacheList, category_idx]);
 
   // 최종 등록 ---
   const submitHandler = async () => {
