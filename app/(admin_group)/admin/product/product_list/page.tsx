@@ -1,16 +1,13 @@
 'use client';
-import { COLORS } from '@/asset/style';
 import axiosInstance from '@/axios/instance';
 import Empty from '@/components/Empty';
+import ToTopButton from '@/components/buttons/ToTopButton';
 import ListItemLayout from '@/components/layout/ListItemLayout';
-import Cork from '@/components/svg/Cork';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import useScrollObserver from '@/hook/useObserver/useScrollObserver';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import React, { useEffect, useRef } from 'react';
@@ -112,33 +109,7 @@ const ProductList = () => {
 
       {/* 상단으로 돌아가기 */}
 
-      <Box
-        onClick={scrollToTarget}
-        sx={{
-          position: 'fixed',
-          bottom: '10px',
-          right: '5px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          transform: 'rotate(180deg)',
-          cursor: 'pointer',
-          bgcolor: '#84848442',
-          borderRadius: '10px',
-          padding: '3px',
-        }}
-      >
-        <Cork
-          pointerColor={COLORS.primary}
-          sx={{
-            position: 'relative',
-            display: 'block',
-          }}
-        />
-        <Typography sx={{ transform: 'rotate(180deg)', color: 'text.secondary' }}>
-          to Top
-        </Typography>
-      </Box>
+      <ToTopButton onClickEvent={scrollToTarget} />
     </>
   );
 };

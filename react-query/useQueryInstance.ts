@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import axiosInstance from '@/axios/instance';
 
 interface UseQueryProps {
-  queryKey: any[];
+  queryKey: string[];
   onSuccess?: (data: any) => void | undefined;
   selectFn?: (data: any) => void | undefined;
   initialDataFn?: (() => any) | undefined;
