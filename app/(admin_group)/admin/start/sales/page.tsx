@@ -8,26 +8,8 @@ import Box from '@mui/material/Box';
 import { After } from '@/asset/After';
 import ToTopButton from '@/components/buttons/ToTopButton';
 import { Before } from '@/asset/Before';
-
-type MenuType = {
-  _id: string;
-  pd_name: string;
-  price: number;
-  ea: number;
-};
-
-interface OrderCardProps {
-  order_idx: number;
-  tb_idx: number;
-  menu: MenuType[];
-  complete: boolean;
-  pay: boolean;
-}
-
-interface TableDataProps {
-  tb_idx: number;
-  bar: boolean;
-}
+import { FaRegCheckCircle } from 'react-icons/fa';
+import { TbLocationCheck } from 'react-icons/tb';
 
 const data = [
   {
@@ -251,10 +233,14 @@ const OrderCard = React.memo(({ el }: { el: OrderCardProps }) => {
         borderRadius: '10px',
       }}
     >
-      <Typography>
-        <span style={{ fontWeight: '700', fontSize: '20px' }}>{el.tb_idx}</span> 번 테이블 {'>'}{' '}
-        <span style={{ fontWeight: '700', fontSize: '16px' }}>주문</span>
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography>
+          <span style={{ fontWeight: '700', fontSize: '20px' }}>{el.tb_idx}</span> 번 테이블 {'>'}{' '}
+          <span style={{ fontWeight: '700', fontSize: '16px' }}>주문</span>
+        </Typography>
+        <TbLocationCheck size={25} style={{ cursor: 'pointer' }} />
+      </Box>
+
       <Grid container rowGap={1}>
         <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
           <After height="15px">
@@ -321,9 +307,15 @@ const CompleteCard = React.memo(
           height: '300px',
         }}
       >
-        <Typography>
-          <span style={{ fontWeight: '700', fontSize: '20px' }}>{tableData.tb_idx}</span> 번 테이블
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography>
+            <span style={{ fontWeight: '700', fontSize: '20px' }}>{tableData.tb_idx}</span> 번
+            테이블
+            {tableData.bar && <span style={{ fontWeight: '700', fontSize: '16px' }}> (바)</span>}
+          </Typography>
+          <FaRegCheckCircle size={25} style={{ cursor: 'pointer' }} />
+        </Box>
+
         <Typography>Total: {generateTotalPrice(menuList).toLocaleString('ko-KR')} ₩</Typography>
 
         <Grid container rowGap={1}>

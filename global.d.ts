@@ -64,6 +64,27 @@ declare global {
     pageParams: number[] | [];
     pages: { data: { message: string; data: ProductNewListType[] } }[] | [];
   }
+
+  // 영업시작 파트
+  type MenuType = {
+    _id: string;
+    pd_name: string;
+    price: number;
+    ea: number;
+  };
+
+  interface OrderCardProps {
+    order_idx: number;
+    tb_idx: number;
+    menu: MenuType[];
+    complete: boolean;
+    pay: boolean;
+  }
+
+  type TableDataProps = {
+    tb_idx: number;
+    bar: boolean;
+  };
 }
 
 export {};
