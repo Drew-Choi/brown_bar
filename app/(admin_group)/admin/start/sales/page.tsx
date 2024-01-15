@@ -18,7 +18,6 @@ import { GC_TIME } from '@/constant/NUMBER';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { BiReset } from 'react-icons/bi';
-import { useQueryClient } from '@tanstack/react-query';
 
 const tableData = [
   { tb_idx: 1, bar: false },
@@ -30,7 +29,7 @@ const tableData = [
 
 const generateMenuList = (orderData: OrderCardProps[], tableData: TableDataProps): MenuType[] => {
   const menuFilter = orderData
-    .filter((el) => el.tb_idx === tableData.tb_idx && el.complete)
+    .filter((el) => el.tb_idx === tableData.tb_idx && el.complete && !el.pay)
     .map((el) => el.menu)
     .flat()
     .reduce((acc: { [key: string]: MenuType }, item: MenuType) => {
@@ -52,7 +51,11 @@ const Sales = () => {
   const { openPopup } = usePopup();
 
   // 영업상태 초기설정
-  const { data: isStart, isError: isStartError } = useQueryInstance({
+  const {
+    data: isStart,
+    isError: isStartError,
+    isLoading: startLoading,
+  } = useQueryInstance({
     queryKey: [QUERY_KEY.IS_START],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.START,
@@ -103,6 +106,20 @@ const Sales = () => {
     },
   });
 
+  const { mutate: payAPI } = useMutationInstance({
+    apiMethod: 'post',
+    apiEndPoint: USE_MUTATE_POINT.ORDER_PAY,
+    onErrorFn: (err: any) => {
+      console.error(err);
+      if (err.response.status === 400)
+        return openPopup({ title: '오류', content: err.response.data.message });
+      openPopup({ title: '오류', content: '다시 시도해주세요.' });
+    },
+    onSuccessFn: () => {
+      refetch();
+    },
+  });
+
   //메뉴 탑으로 이동용
   const navTopRef = useRef<HTMLDivElement>(null);
 
@@ -112,9 +129,12 @@ const Sales = () => {
     }
   };
 
+  if (startLoading) return;
+
   if (isError || isStartError) return <Box color="text.secondary">Fetching Error</Box>;
 
-  if (!isStart.data) return <Box color="text.secondary">영업시작 상태가 아닙니다.</Box>;
+  if (!isStart.data && !startLoading)
+    return <Box color="text.secondary">영업시작 상태가 아닙니다.</Box>;
 
   return (
     <Grid
@@ -194,6 +214,13 @@ const Sales = () => {
               orderData={orderListData.data}
               onClickReset={() =>
                 rollbackAPI({
+                  apiBody: {
+                    tb_idx: el.tb_idx,
+                  },
+                })
+              }
+              onClickPay={() =>
+                payAPI({
                   apiBody: {
                     tb_idx: el.tb_idx,
                   },
@@ -315,9 +342,11 @@ const CompleteCard = React.memo(
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             {menuList?.length !== 0 && (
-              <BiReset size={25} style={{ cursor: 'pointer' }} onClick={onClickReset} />
+              <>
+                <BiReset size={25} style={{ cursor: 'pointer' }} onClick={onClickReset} />
+                <FaRegCheckCircle size={25} style={{ cursor: 'pointer' }} onClick={onClickPay} />
+              </>
             )}
-            <FaRegCheckCircle size={25} style={{ cursor: 'pointer' }} onClick={onClickPay} />
           </Box>
         </Box>
 

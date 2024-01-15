@@ -17,4 +17,5 @@ export const USE_MUTATE_POINT = {
   MENU_EDIT: 'menu/edit',
   ORDER_COMPLETE: 'order/order_list/complete',
   ORDER_ROLLBACK: 'order/order_list/complete/rollback',
+  ORDER_PAY: 'order/order_list/complete/pay',
 };

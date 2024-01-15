@@ -11,22 +11,11 @@ export async function POST(req: NextRequest) {
 
     await connectDB();
 
-    const result = await Order.findOneAndUpdate(
-      {
-        tb_idx: tb_idx,
-        complete: true,
-      },
-      { $set: { complete: false } },
-      {
-        sort: { created_at: -1 },
-        new: true,
-      },
-    );
+    const result = await Order.updateMany({ tb_idx: tb_idx }, { $set: { pay: true } });
 
     if (result) {
-      return NextResponse.json({ message: '롤백 완료' }, { status: 200 });
+      return NextResponse.json({ message: '결제완료' }, { status: 200 });
     }
-
     return NextResponse.json({ message: 'DB Error' }, { status: 500 });
   } catch (error) {
     if (error instanceof Error) {
