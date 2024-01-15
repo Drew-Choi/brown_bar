@@ -25,7 +25,6 @@ import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
-import { useQueryClient } from '@tanstack/react-query';
 
 const navMenuData = [
   {
@@ -90,13 +89,16 @@ const navMenuData = [
 export const NavAdmin = () => {
   useIsError();
 
-  const queryClient = useQueryClient();
   const { openPopup } = usePopup();
   const [show, setShow] = useState<Boolean>(false);
   const pathName = usePathname();
 
   // 영업상태 초기설정
-  const { isError, refetch } = useQueryInstance({
+  const {
+    data: isStart,
+    isError,
+    refetch,
+  } = useQueryInstance({
     queryKey: [QUERY_KEY.IS_START],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.START,
@@ -167,9 +169,7 @@ export const NavAdmin = () => {
           }}
           data={navMenuData}
           logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
-          switchChecked={
-            queryClient.getQueryData<{ message: string; data: boolean }>([QUERY_KEY.IS_START])?.data
-          }
+          switchChecked={isStart?.data}
           switchOnChange={startSwitchHandler}
           showUseState={() => setShow((cur) => cur && false)}
         />

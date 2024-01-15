@@ -3,7 +3,7 @@ import Product from '@/app/(@api_group)/api/_models/Product';
 import { NextRequest, NextResponse } from 'next/server';
 import { deleteS3, saveS3 } from '../../_lib/s3';
 import { S3BUCKET_PATH } from '@/constant/PATH';
-import { dayAndTimeOnlyNumber } from '@/utils/nowDayAndTime';
+import { dayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
 
 export async function POST(req: NextRequest) {
   try {

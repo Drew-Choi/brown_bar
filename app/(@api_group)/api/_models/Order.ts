@@ -1,8 +1,9 @@
+import { nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
 import mongoose, { Schema } from 'mongoose';
 
 const orderSchema = new Schema(
   {
-    order_idx: { type: Number, required: true, unique: true },
+    order_idx: { type: String, unique: true },
     tb_idx: { type: Number, required: true },
     menu: [
       {
@@ -12,22 +13,28 @@ const orderSchema = new Schema(
         ea: { type: Number, required: true },
       },
     ],
-    complete: { type: Boolean, required: true },
-    pay: { type: Boolean, required: true },
+    complete: { type: Boolean, required: true, default: false },
+    pay: { type: Boolean, required: true, default: false },
   },
-
   {
-    timestamps: { createdAt: 'created_at' },
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   },
 );
 
 orderSchema.pre('save', async function (next) {
   if (this?.isNew) {
-    const lastDocument = await mongoose.models.Menu.findOne().sort({ order_idx: -1 });
+    const nowDataKST = nowDayAndTimeOnlyNumber({ format: 'YYYYMMDD' });
+
+    const lastDocument = await mongoose.models.Order.findOne({
+      order_idx: new RegExp('^' + nowDataKST),
+    }).sort({ order_idx: -1 });
+
     if (lastDocument) {
-      this.order_idx = lastDocument.order_idx + 1;
+      const lastNumber = Number(lastDocument.order_idx?.split('_')[1]);
+
+      this.order_idx = `${nowDataKST}_${lastNumber + 1}`;
     } else {
-      this.order_idx = 1;
+      this.order_idx = `${nowDataKST}_1`;
     }
   }
   next();

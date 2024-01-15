@@ -3,7 +3,7 @@ import Product from '@/app/(@api_group)/api/_models/Product';
 import { NextRequest, NextResponse } from 'next/server';
 import { saveS3 } from '../../_lib/s3';
 import { S3BUCKET_PATH } from '@/constant/PATH';
-import { dayAndTimeOnlyNumber } from '@/utils/nowDayAndTime';
+import { nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       const buffer = Buffer.from(await img_file.arrayBuffer());
       const contentType = img_file.type;
       // const contentName = img_file.name;
-      const contentName = `${pd_name}_${dayAndTimeOnlyNumber()}`;
+      const contentName = `${pd_name}_${nowDayAndTimeOnlyNumber({})}`;
 
       const response = await saveS3({
         buffer,

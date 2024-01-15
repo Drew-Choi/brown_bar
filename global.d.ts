@@ -79,6 +79,8 @@ declare global {
     menu: MenuType[];
     complete: boolean;
     pay: boolean;
+    created_at?: Date;
+    updated_at?: Date;
   }
 
   type TableDataProps = {

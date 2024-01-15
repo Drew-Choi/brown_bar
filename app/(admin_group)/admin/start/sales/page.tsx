@@ -10,109 +10,15 @@ import ToTopButton from '@/components/buttons/ToTopButton';
 import { Before } from '@/asset/Before';
 import { FaRegCheckCircle } from 'react-icons/fa';
 import { TbLocationCheck } from 'react-icons/tb';
-
-const data = [
-  {
-    order_idx: 1,
-    tb_idx: 1,
-    menu: [
-      {
-        _id: '1',
-        pd_name: '코일레',
-        price: 50000,
-        ea: 2,
-      },
-      { _id: '2', pd_name: '블랙러시안', price: 13000, ea: 2 },
-    ],
-    complete: false,
-    pay: false,
-  },
-  {
-    order_idx: 2,
-    tb_idx: 2,
-    menu: [
-      { _id: '1', pd_name: '코일레', price: 50000, ea: 1 },
-      { _id: '2', pd_name: '블랙러시안', price: 13000, ea: 2 },
-    ],
-    complete: false,
-    pay: false,
-  },
-  {
-    order_idx: 3,
-    tb_idx: 4,
-    menu: [
-      { _id: '1', pd_name: '코일레', price: 50000, ea: 2 },
-      { _id: '2', pd_name: '블랙러시안', price: 13000, ea: 2 },
-    ],
-    complete: false,
-    pay: false,
-  },
-  {
-    order_idx: 4,
-    tb_idx: 4,
-    menu: [
-      { _id: '1', pd_name: '코일레', price: 50000, ea: 2 },
-      { _id: '2', pd_name: '블랙러시안', price: 13000, ea: 2 },
-    ],
-    complete: false,
-    pay: false,
-  },
-  {
-    order_idx: 5,
-    tb_idx: 5,
-    menu: [
-      { _id: '1', pd_name: '코일레', price: 50000, ea: 2 },
-      { _id: '2', pd_name: '블랙러시안', price: 13000, ea: 1 },
-    ],
-    complete: false,
-    pay: false,
-  },
-  {
-    order_idx: 6,
-    tb_idx: 1,
-    menu: [
-      { _id: '1', pd_name: '코일레', price: 50000, ea: 2 },
-      { _id: '2', pd_name: '블랙러시안', price: 13000, ea: 1 },
-      { _id: '3', pd_name: '데킬라', price: 10000, ea: 2 },
-      { _id: '4', pd_name: '아메리카노', price: 11000, ea: 1 },
-    ],
-    complete: false,
-    pay: false,
-  },
-  {
-    order_idx: 7,
-    tb_idx: 1,
-    menu: [
-      { _id: '5', pd_name: '추주1', price: 25000, ea: 2 },
-      { _id: '6', pd_name: '추주2', price: 9000, ea: 1 },
-      { _id: '7', pd_name: '추주3', price: 5000, ea: 2 },
-    ],
-    complete: false,
-    pay: false,
-  },
-  {
-    order_idx: 8,
-    tb_idx: 3,
-    menu: [
-      { _id: '5', pd_name: '추주1', price: 25000, ea: 2 },
-      { _id: '6', pd_name: '추주2', price: 9000, ea: 1 },
-      { _id: '7', pd_name: '추주3', price: 5000, ea: 2 },
-    ],
-    complete: false,
-    pay: false,
-  },
-  {
-    order_idx: 9,
-    tb_idx: 5,
-    menu: [
-      { _id: '5', pd_name: '추주1', price: 25000, ea: 2 },
-      { _id: '6', pd_name: '추주2', price: 9000, ea: 1 },
-      { _id: '7', pd_name: '추주3', price: 5000, ea: 2 },
-    ],
-    complete: false,
-    pay: false,
-  },
-];
+import { useQueryInstance } from '@/react-query/useQueryInstance';
+import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
+import { nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
+import { QUERY_KEY } from '@/constant/QUERY_KEY';
+import { GC_TIME } from '@/constant/NUMBER';
+import { useMutationInstance } from '@/react-query/useMutationInstance';
+import { usePopup } from '@/hook/usePopup/usePopup';
+import { BiReset } from 'react-icons/bi';
+import { useQueryClient } from '@tanstack/react-query';
 
 const tableData = [
   { tb_idx: 1, bar: false },
@@ -143,6 +49,60 @@ const generateTotalPrice = (menuList: MenuType[]): number => {
 };
 
 const Sales = () => {
+  const { openPopup } = usePopup();
+
+  // 영업상태 초기설정
+  const { data: isStart, isError: isStartError } = useQueryInstance({
+    queryKey: [QUERY_KEY.IS_START],
+    apiMethod: 'get',
+    apiEndPoint: USE_QUERY_POINT.START,
+  });
+
+  const {
+    data: orderListData,
+    isError,
+    refetch,
+  } = useQueryInstance({
+    queryKey: [QUERY_KEY.ORDER_LIST],
+    apiMethod: 'get',
+    apiEndPoint: USE_QUERY_POINT.ORDER_LIST,
+    apiQueryParams: {
+      day: nowDayAndTimeOnlyNumber({ format: 'YYYYMMDD' }),
+    },
+    staleTime: 0,
+    gcTime: GC_TIME.DEFAULT,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+  });
+
+  const { mutate: completeAPI } = useMutationInstance({
+    apiMethod: 'post',
+    apiEndPoint: USE_MUTATE_POINT.ORDER_COMPLETE,
+    onErrorFn: (err: any) => {
+      console.error(err);
+      if (err.response.status === 400)
+        return openPopup({ title: '오류', content: err.response.data.message });
+      openPopup({ title: '오류', content: '다시 시도해주세요.' });
+    },
+    onSuccessFn: () => {
+      refetch();
+    },
+  });
+
+  const { mutate: rollbackAPI } = useMutationInstance({
+    apiMethod: 'post',
+    apiEndPoint: USE_MUTATE_POINT.ORDER_ROLLBACK,
+    onErrorFn: (err: any) => {
+      console.error(err);
+      if (err.response.status === 400)
+        return openPopup({ title: '오류', content: err.response.data.message });
+      openPopup({ title: '오류', content: '다시 시도해주세요.' });
+    },
+    onSuccessFn: () => {
+      refetch();
+    },
+  });
+
   //메뉴 탑으로 이동용
   const navTopRef = useRef<HTMLDivElement>(null);
 
@@ -151,6 +111,11 @@ const Sales = () => {
       navTopRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  if (isError || isStartError) return <Box color="text.secondary">Fetching Error</Box>;
+
+  if (!isStart.data) return <Box color="text.secondary">영업시작 상태가 아닙니다.</Box>;
+
   return (
     <Grid
       container
@@ -158,7 +123,7 @@ const Sales = () => {
         width: '100%',
         boxSizing: 'border-box',
         padding: '30px',
-        minHeight: '700px',
+        minHeight: '1650px',
       }}
     >
       <div ref={navTopRef} />
@@ -170,6 +135,7 @@ const Sales = () => {
             bgcolor: '#cba77950',
             border: '1px solid' + COLORS.info,
             marginBottom: { xs: '50px', md: '0' },
+            height: '100%',
           }}
         >
           <Typography
@@ -188,7 +154,16 @@ const Sales = () => {
           <Box
             sx={{ height: { xs: '1000px', md: '100%' }, overflowY: { xs: 'scroll', md: 'auto' } }}
           >
-            {data?.map((el) => !el.complete && <OrderCard key={el.order_idx} el={el} />)}
+            {orderListData.data?.map(
+              (el: OrderCardProps) =>
+                !el.complete && (
+                  <OrderCard
+                    key={el.order_idx}
+                    el={el}
+                    onClickEvent={() => completeAPI({ apiBody: { order_idx: el.order_idx } })}
+                  />
+                ),
+            )}
           </Box>
         </ContentBox>
       </Grid>
@@ -212,7 +187,20 @@ const Sales = () => {
           >
             Complete
           </Typography>
-          {tableData?.map((el) => <CompleteCard key={el.tb_idx} tableData={el} orderData={data} />)}
+          {tableData?.map((el) => (
+            <CompleteCard
+              key={el.tb_idx}
+              tableData={el}
+              orderData={orderListData.data}
+              onClickReset={() =>
+                rollbackAPI({
+                  apiBody: {
+                    tb_idx: el.tb_idx,
+                  },
+                })
+              }
+            />
+          ))}
         </ContentBox>
       </Grid>
       <ToTopButton onClickEvent={scrollToTarget} />
@@ -221,70 +209,82 @@ const Sales = () => {
 };
 export default Sales;
 
-const OrderCard = React.memo(({ el }: { el: OrderCardProps }) => {
-  return (
-    <Box
-      sx={{
-        boxSizing: 'border-box',
-        width: '80%',
-        padding: '20px',
-        bgcolor: COLORS.background.paper,
-        margin: '20px auto',
-        borderRadius: '10px',
-      }}
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography>
-          <span style={{ fontWeight: '700', fontSize: '20px' }}>{el.tb_idx}</span> 번 테이블 {'>'}{' '}
-          <span style={{ fontWeight: '700', fontSize: '16px' }}>주문</span>
-        </Typography>
-        <TbLocationCheck size={25} style={{ cursor: 'pointer' }} />
-      </Box>
-
-      <Grid container rowGap={1}>
-        <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
-          <After height="15px">
-            <Typography textAlign="center" sx={{ fontSize: '15px', fontWeight: '600' }}>
-              메뉴
-            </Typography>
-          </After>
-        </Grid>
-        <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
-          <Typography textAlign="center" sx={{ fontSize: '15px', fontWeight: '600' }}>
-            총가격
+const OrderCard = React.memo(
+  ({ el, onClickEvent }: { el: OrderCardProps; onClickEvent?: () => void }) => {
+    return (
+      <Box
+        sx={{
+          boxSizing: 'border-box',
+          width: '80%',
+          padding: '20px',
+          bgcolor: COLORS.background.paper,
+          margin: '20px auto',
+          borderRadius: '10px',
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography>
+            <span style={{ fontWeight: '700', fontSize: '20px' }}>{el.tb_idx}</span> 번 테이블 {'>'}{' '}
+            <span style={{ fontWeight: '700', fontSize: '16px' }}>주문</span>
           </Typography>
-        </Grid>
-        <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
-          <Before height="15px">
-            <Typography textAlign="center" sx={{ fontSize: '15px', fontWeight: '600' }}>
-              수량
-            </Typography>
-          </Before>
-        </Grid>
-        {el.menu?.map((menu, index) => (
-          <React.Fragment key={index}>
-            <Grid xs={4}>
-              <Typography>{menu.pd_name}</Typography>
-            </Grid>
-            <Grid xs={4}>
-              <Typography textAlign="center" lineHeight="1">
-                {(menu.price * menu.ea).toLocaleString('ko-KR')} ₩ <br />
-                <span style={{ fontSize: '12px' }}>({menu.price.toLocaleString('ko-KR')})</span>
+          <TbLocationCheck size={25} style={{ cursor: 'pointer' }} onClick={onClickEvent} />
+        </Box>
+
+        <Grid container rowGap={1}>
+          <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
+            <After height="15px">
+              <Typography textAlign="center" sx={{ fontSize: '15px', fontWeight: '600' }}>
+                메뉴
               </Typography>
-            </Grid>
-            <Grid xs={4}>
-              <Typography textAlign="center">{menu.ea.toLocaleString('ko-KR')} 개</Typography>
-            </Grid>
-          </React.Fragment>
-        ))}
-      </Grid>
-    </Box>
-  );
-});
+            </After>
+          </Grid>
+          <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
+            <Typography textAlign="center" sx={{ fontSize: '15px', fontWeight: '600' }}>
+              총가격
+            </Typography>
+          </Grid>
+          <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
+            <Before height="15px">
+              <Typography textAlign="center" sx={{ fontSize: '15px', fontWeight: '600' }}>
+                수량
+              </Typography>
+            </Before>
+          </Grid>
+          {el.menu?.map((menu, index) => (
+            <React.Fragment key={index}>
+              <Grid xs={4}>
+                <Typography>{menu.pd_name}</Typography>
+              </Grid>
+              <Grid xs={4}>
+                <Typography textAlign="center" lineHeight="1">
+                  {(menu.price * menu.ea).toLocaleString('ko-KR')} ₩ <br />
+                  <span style={{ fontSize: '12px' }}>({menu.price.toLocaleString('ko-KR')})</span>
+                </Typography>
+              </Grid>
+              <Grid xs={4}>
+                <Typography textAlign="center">{menu.ea.toLocaleString('ko-KR')} 개</Typography>
+              </Grid>
+            </React.Fragment>
+          ))}
+        </Grid>
+      </Box>
+    );
+  },
+);
 OrderCard.displayName = 'OrderCard';
 
 const CompleteCard = React.memo(
-  ({ tableData, orderData }: { tableData: TableDataProps; orderData: OrderCardProps[] }) => {
+  ({
+    tableData,
+    orderData,
+    onClickPay,
+    onClickReset,
+  }: {
+    tableData: TableDataProps;
+    orderData: OrderCardProps[];
+    onClickPay?: () => void;
+    onClickReset?: () => void;
+  }) => {
     const [menuList, setMenuList] = useState<MenuType[]>([]);
 
     //데이터 셋
@@ -313,7 +313,12 @@ const CompleteCard = React.memo(
             테이블
             {tableData.bar && <span style={{ fontWeight: '700', fontSize: '16px' }}> (바)</span>}
           </Typography>
-          <FaRegCheckCircle size={25} style={{ cursor: 'pointer' }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            {menuList?.length !== 0 && (
+              <BiReset size={25} style={{ cursor: 'pointer' }} onClick={onClickReset} />
+            )}
+            <FaRegCheckCircle size={25} style={{ cursor: 'pointer' }} onClick={onClickPay} />
+          </Box>
         </Box>
 
         <Typography>Total: {generateTotalPrice(menuList).toLocaleString('ko-KR')} ₩</Typography>
