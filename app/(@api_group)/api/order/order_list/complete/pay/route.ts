@@ -4,17 +4,43 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { tb_idx }: OrderCardProps = await req.json();
+    const { tb_idx, menu }: { tb_idx: number; menu: MenuType[] } = await req.json();
 
     if (!tb_idx)
-      return NextResponse.json({ message: '테이블번호가 누락되었습니다.' }, { status: 400 });
+      return NextResponse.json(
+        { message: '테이블번호가 누락되었습니다. 새로고침을 해주세요.' },
+        { status: 400 },
+      );
+
+    if (menu?.length === 0)
+      return NextResponse.json(
+        { message: '주문내역이 없습니다. 새로고침을 해주세요.' },
+        { status: 400 },
+      );
 
     await connectDB();
 
-    const result = await Order.updateMany({ tb_idx: tb_idx }, { $set: { pay: true } });
+    const newPayCompleteObj = new Order({
+      tb_idx,
+      menu,
+      complete: true,
+      pay: true,
+    });
+
+    const result: OrderCardProps = await newPayCompleteObj.save();
 
     if (result) {
-      return NextResponse.json({ message: '결제완료' }, { status: 200 });
+      // 이전 데이터삭제
+      const removeResult = await Order.deleteMany({
+        tb_idx,
+        complete: true,
+        pay: false,
+      });
+
+      if (removeResult.acknowledged)
+        return NextResponse.json({ message: '결제완료' }, { status: 200 });
+
+      return NextResponse.json({ message: 'DB Error' }, { status: 500 });
     }
     return NextResponse.json({ message: 'DB Error' }, { status: 500 });
   } catch (error) {

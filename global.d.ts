@@ -74,7 +74,7 @@ declare global {
   };
 
   interface OrderCardProps {
-    order_idx: number;
+    order_idx: string;
     tb_idx: number;
     menu: MenuType[];
     complete: boolean;

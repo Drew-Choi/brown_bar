@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       menu,
     });
 
-    const result: OrderCardProps[] = await newOrder.save();
+    const result: OrderCardProps = await newOrder.save();
 
     if (!result) return NextResponse.json({ message: 'DB Error' }, { status: 500 });
 

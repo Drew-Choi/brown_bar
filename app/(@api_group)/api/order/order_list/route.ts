@@ -1,27 +1,13 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import Order from '../../_models/Order';
-import { changeFlatFormat, pointChangeToUTC } from '@/utils/mometDayAndTime';
 
 export async function GET(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const day: string | null = searchParams.get('day');
-
-    if (!day) return NextResponse.json({ message: '날짜 정보가 없습니다.' }, { status: 400 });
-
-    const dayFormat = changeFlatFormat({ day });
-
     await connectDB();
 
-    const { start, end } = pointChangeToUTC({
-      day: dayFormat,
-      startTime: '00:00',
-      endTime: '23:59',
-    });
-
     const result: OrderCardProps[] = await Order.find({
-      created_at: { $gte: new Date(start), $lte: new Date(end) },
+      pay: false,
     }).select('-_id -__v');
 
     if (!result) return NextResponse.json({ message: 'DB Error' }, { status: 500 });

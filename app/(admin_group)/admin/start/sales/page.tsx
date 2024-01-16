@@ -12,7 +12,6 @@ import { FaRegCheckCircle } from 'react-icons/fa';
 import { TbLocationCheck } from 'react-icons/tb';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
-import { nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { GC_TIME } from '@/constant/NUMBER';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
@@ -27,7 +26,10 @@ const tableData = [
   { tb_idx: 5, bar: true },
 ];
 
-const generateMenuList = (orderData: OrderCardProps[], tableData: TableDataProps): MenuType[] => {
+const generateMenuList = (
+  orderData: OrderCardProps[],
+  tableData: TableDataProps,
+): { menuList: MenuType[] } => {
   const menuFilter = orderData
     .filter((el) => el.tb_idx === tableData.tb_idx && el.complete && !el.pay)
     .map((el) => el.menu)
@@ -40,7 +42,9 @@ const generateMenuList = (orderData: OrderCardProps[], tableData: TableDataProps
       return acc;
     }, {});
 
-  return Object.values(menuFilter);
+  const menuList = Object.values(menuFilter);
+
+  return { menuList };
 };
 
 const generateTotalPrice = (menuList: MenuType[]): number => {
@@ -69,9 +73,6 @@ const Sales = () => {
     queryKey: [QUERY_KEY.ORDER_LIST],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.ORDER_LIST,
-    apiQueryParams: {
-      day: nowDayAndTimeOnlyNumber({ format: 'YYYYMMDD' }),
-    },
     staleTime: 0,
     gcTime: GC_TIME.DEFAULT,
     refetchOnMount: true,
@@ -115,7 +116,8 @@ const Sales = () => {
         return openPopup({ title: '오류', content: err.response.data.message });
       openPopup({ title: '오류', content: '다시 시도해주세요.' });
     },
-    onSuccessFn: () => {
+    onSuccessFn: (response) => {
+      openPopup({ title: 'Success', content: response.message });
       refetch();
     },
   });
@@ -219,10 +221,17 @@ const Sales = () => {
                   },
                 })
               }
-              onClickPay={() =>
-                payAPI({
-                  apiBody: {
-                    tb_idx: el.tb_idx,
+              onClickPay={(menuList) =>
+                openPopup({
+                  title: `${el.tb_idx}번 테이블`,
+                  content: '정말 결제하시겠습니까?',
+                  onConfirm: () => {
+                    payAPI({
+                      apiBody: {
+                        tb_idx: el.tb_idx,
+                        menu: menuList,
+                      },
+                    });
                   },
                 })
               }
@@ -309,7 +318,7 @@ const CompleteCard = React.memo(
   }: {
     tableData: TableDataProps;
     orderData: OrderCardProps[];
-    onClickPay?: () => void;
+    onClickPay?: (menuList: MenuType[]) => void;
     onClickReset?: () => void;
   }) => {
     const [menuList, setMenuList] = useState<MenuType[]>([]);
@@ -317,8 +326,8 @@ const CompleteCard = React.memo(
     //데이터 셋
     useEffect(() => {
       if (orderData && tableData) {
-        const newMenuList = generateMenuList(orderData, tableData);
-        setMenuList(newMenuList);
+        const { menuList } = generateMenuList(orderData, tableData);
+        setMenuList(menuList);
       }
     }, [orderData, tableData]);
 
@@ -344,7 +353,11 @@ const CompleteCard = React.memo(
             {menuList?.length !== 0 && (
               <>
                 <BiReset size={25} style={{ cursor: 'pointer' }} onClick={onClickReset} />
-                <FaRegCheckCircle size={25} style={{ cursor: 'pointer' }} onClick={onClickPay} />
+                <FaRegCheckCircle
+                  size={25}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => (onClickPay ? onClickPay(menuList) : null)}
+                />
               </>
             )}
           </Box>

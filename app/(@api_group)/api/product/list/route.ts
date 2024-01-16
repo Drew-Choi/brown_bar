@@ -1,10 +1,10 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Product from '@/app/(@api_group)/api/_models/Product';
 import { NextRequest, NextResponse } from 'next/server';
-import redisClient from '../../_lib/redis';
 import Menu from '../../_models/Menu';
 import { Document } from 'mongoose';
 import { REDIS_CACHE_KEY } from '../../_constant/KEY';
+import { getRedisClient } from '../../_lib/redis';
 
 const newListGenerate = (
   productList: ProductInfoType[],
@@ -45,6 +45,7 @@ export async function GET(req: NextRequest) {
       .limit(10)
       .select('-created_at -updated_at -__v');
 
+    const redisClient = await getRedisClient();
     // 메뉴카테고리 캐싱 확인
     const cacheMenuList: string | null = await redisClient.GET(REDIS_CACHE_KEY.MENU_LIST);
 
