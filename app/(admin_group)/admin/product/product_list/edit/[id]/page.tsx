@@ -46,7 +46,7 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const search = useSearchParams();
   const { id } = params;
-  const category_idx = search.get('category_idx');
+  const category_idx = Number(search.get('category_idx'));
 
   // 메뉴리스트 패칭
   const {
@@ -63,12 +63,6 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
         ...rest,
         value: category_idx,
       }));
-    },
-    initialDataFn: () => {
-      const menuListCache = queryClient.getQueryData([QUERY_KEY.MENU_LIST]);
-
-      if (menuListCache) return menuListCache;
-      return undefined;
     },
   });
 
@@ -199,8 +193,8 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
   };
 
   const cacheList: CacheListType | undefined = queryClient.getQueryData([
-    !category_idx ? `${QUERY_KEY.PRODUCT_LIST}` : `${QUERY_KEY.MENU_PRODUCT_LIST}`,
-    Number(category_idx),
+    !category_idx ? QUERY_KEY.PRODUCT_LIST : QUERY_KEY.MENU_PRODUCT_LIST,
+    String(category_idx),
   ]);
 
   // 수정용 세팅 -----------

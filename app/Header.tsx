@@ -119,11 +119,11 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
                       : ''}
           </Typography>
         </Tag>
-        <Box sx={{ width: '150px', height: 'auto' }}>
+        <Box sx={{ width: '150px', height: 'fit-content' }}>
           <Image
             priority
             src="/img/header_logo.png"
-            style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+            style={{ width: '100%', height: 'fit-content', objectFit: 'contain' }}
             width={150}
             height={60}
             alt="대표로고"
@@ -240,11 +240,11 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
           </Tag>
         )}
       </Box>
-      <Box sx={{ flex: '1', position: 'relative', width: '45%' }}>
+      <Box sx={{ flex: '1', position: 'relative', width: '45%', height: 'fit-content' }}>
         <Image
           priority
           src="/img/header_logo.png"
-          style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+          style={{ width: '100%', height: 'fit-content', objectFit: 'contain' }}
           width={150}
           height={60}
           alt="대표로고"

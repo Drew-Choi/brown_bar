@@ -29,7 +29,7 @@ const UsePopupComponent = () => {
         sx={{
           position: 'absolute',
           width: '300px',
-          height: '220px',
+          height: '260px',
           bgcolor: 'background.paper',
           top: '40%',
           left: !pathName.includes('/admin') ? '50%' : { xs: '50%', sm: '57.5%' },
@@ -45,7 +45,7 @@ const UsePopupComponent = () => {
         <Typography
           textAlign="center"
           padding="0 30px"
-          height="80px"
+          height="120px"
           overflow="scroll"
           fontSize={18}
           fontWeight={600}

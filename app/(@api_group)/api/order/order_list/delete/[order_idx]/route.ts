@@ -1,20 +1,17 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
-import Product from '@/app/(@api_group)/api/_models/Product';
-import mongoose from 'mongoose';
+import Order from '@/app/(@api_group)/api/_models/Order';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { order_idx: string } }) {
   try {
-    const { id } = params;
+    const { order_idx } = params;
 
-    if (!id)
+    if (!order_idx)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });
 
     await connectDB();
 
-    const { ObjectId } = mongoose.Types;
-
-    const result = await Product.deleteOne({ _id: new ObjectId(id) });
+    const result = await Order.deleteOne({ order_idx });
 
     if (result.acknowledged && result.deletedCount > 0) {
       return NextResponse.json({ message: '삭제 성공' }, { status: 200 });

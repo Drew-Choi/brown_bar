@@ -290,7 +290,7 @@ const CollapseSubMenu = React.memo(
       isError,
       isLoading,
     } = useQueryInstance({
-      queryKey: [QUERY_KEY.MENU_PRODUCT_LIST, el_category_idx],
+      queryKey: [QUERY_KEY.MENU_PRODUCT_LIST, String(el_category_idx)],
       apiEndPoint: USE_QUERY_POINT.PRODUCT_LIST,
       apiMethod: 'get',
       apiPathParams: el_category_idx,

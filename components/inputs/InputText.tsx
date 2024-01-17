@@ -34,6 +34,7 @@ const InputText = forwardRef<
     placeholderText?: string;
     defaultValue?: string;
     onKeyUp?: ((event: KeyboardEvent<HTMLInputElement>) => void) | undefined;
+    labelFocused?: boolean;
   }
 >(
   (
@@ -49,12 +50,13 @@ const InputText = forwardRef<
       placeholderText,
       defaultValue,
       onKeyUp,
+      labelFocused = true,
     },
     ref,
   ) => {
     return (
       <FormControl sx={{ width: '100%', ...conSx }} variant="standard">
-        <InputLabel htmlFor="standard" color="info" sx={{ ...labelSx }}>
+        <InputLabel focused={labelFocused} htmlFor="standard" color="info" sx={{ ...labelSx }}>
           {title} {'-'}
         </InputLabel>
         <Input
