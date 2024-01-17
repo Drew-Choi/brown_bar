@@ -3,6 +3,7 @@ export const USE_QUERY_POINT = {
   PRODUCT_LIST: 'product/list',
   MENU: 'menu',
   ORDER_LIST: 'order/order_list',
+  ORDER_HISTORY: 'order/order_history',
 };
 
 // ---------------------------------------

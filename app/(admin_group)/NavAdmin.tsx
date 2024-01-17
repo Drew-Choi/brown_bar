@@ -34,7 +34,7 @@ const navMenuData = [
     urlGroupName: 'start',
     sub: [
       { subLabel: 'ㄴ 주문받기', url: '/admin/start/sales' },
-      { subLabel: 'ㄴ 주문내역', url: '/admin/start/order_list' },
+      { subLabel: 'ㄴ 주문내역', url: '/admin/start/order_history' },
       { subLabel: 'ㄴ 통계', url: '/admin/start/analysis' },
     ],
   },
