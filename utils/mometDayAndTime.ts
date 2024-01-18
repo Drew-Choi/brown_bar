@@ -49,7 +49,7 @@ export const convertUtcToKst = ({
   utcTime,
   format = 'YYYY-MM-DD HH:mm',
 }: {
-  utcTime: string | Date;
+  utcTime: string | Date | undefined;
   format:
     | 'YYYY-MM-DD HH:mm:ss'
     | 'YYYY-MM-DD HH:mm'
