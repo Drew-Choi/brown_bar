@@ -20,6 +20,7 @@ import Empty from '@/components/Empty';
 import { FaRegEdit } from 'react-icons/fa';
 import { GiConfirmed } from 'react-icons/gi';
 import { useRouter } from 'next/navigation';
+import LoadingMenuWrite from './loading';
 
 const MenuWrite = () => {
   const { openPopup } = usePopup();
@@ -45,6 +46,7 @@ const MenuWrite = () => {
     data: { data: menuList },
     isError,
     refetch,
+    isLoading,
   } = useQueryInstance({
     queryKey: [QUERY_KEY.MENU_LIST],
     apiEndPoint: USE_QUERY_POINT.MENU,
@@ -132,6 +134,8 @@ const MenuWrite = () => {
   };
 
   if (isError) return <Box color="text.secondary">Fetching Error</Box>;
+
+  if (isLoading) return <LoadingMenuWrite />;
 
   return (
     <Box sx={{ width: '100%', padding: { xs: '40px 20px', sm: '40px 50px' } }}>
