@@ -18,12 +18,13 @@ import { After } from '@/asset/After';
 import { Before } from '@/asset/Before';
 import { FaRegCheckCircle } from 'react-icons/fa';
 import { BiReset } from 'react-icons/bi';
-import { convertUtcToKst } from '@/utils/mometDayAndTime';
+import { convertUtcToKst, nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
 import { usePopup } from '@/hook/usePopup/usePopup';
 
-const isInOneMonth = (startDate: string, endDate: string) => {
-  const oneMonthLater = moment(startDate).add(1, 'months');
-  return moment(endDate).isSameOrBefore(oneMonthLater);
+const isInOneMonth = (startTime: string, endTime: string) => {
+  const oneMonth = moment(startTime).add(1, 'months');
+
+  return moment(endTime).isSameOrBefore(oneMonth);
 };
 
 const OrderHistory = () => {
@@ -44,11 +45,21 @@ const OrderHistory = () => {
     if (startTime && endTime) {
       const newStartTime = startTime.format('YYYYMMDDHHmm');
       const newEndTime = endTime.format('YYYYMMDDHHmm');
-      if (newStartTime >= newEndTime)
-        return openPopup({ title: '오류', content: '현재 보다 과거 날짜를 선택해주세요.' });
+      const nowTime = nowDayAndTimeOnlyNumber({ format: 'YYYYMMDDHHmm' });
 
-      // if (isInOneMonth(newStartTime, newEndTime))
-      //   return openPopup({ title: '오류', content: '범위는 1달을 초과할 수 없습니다.' });
+      if (newEndTime > nowTime)
+        return openPopup({ title: '오류', content: '끝 시간을 현재 또는 과거로 해주세요.' });
+
+      if (newStartTime >= newEndTime)
+        return openPopup({
+          title: '오류',
+          content: '시작 시간을 현재 보다 과거로 해주세요.',
+        });
+
+      console.log(isInOneMonth(startTime.toISOString(), endTime.toISOString()));
+
+      if (!isInOneMonth(startTime.toISOString(), endTime.toISOString()))
+        return openPopup({ title: '오류', content: '범위는 1달을 초과할 수 없습니다.' });
 
       setSearchDate((cur) => ({ ...cur, start: startTime, end: endTime }));
     }
@@ -74,11 +85,18 @@ const OrderHistory = () => {
   if (isError) return <Box color="text.secondary">Fetching Error</Box>;
 
   return (
-    <Box sx={{ color: 'text.secondary', padding: { xs: '50px 10px', sm: '50px 30px' } }}>
+    <Box
+      sx={{
+        color: 'text.secondary',
+        boxSizing: 'border-box',
+        padding: { xs: '50px 10px', sm: '50px 30px' },
+      }}
+    >
       <Box
         sx={{
           bgcolor: COLORS.background.paper,
-          padding: '30px 10px',
+          boxSizing: 'border-box',
+          padding: '30px',
           minHeight: '700px',
           borderRadius: '10px',
         }}
@@ -151,7 +169,6 @@ const OrderHistory = () => {
         </Box>
         <ContentBox
           sx={{
-            width: { xs: '95%', sm: '90%' },
             minHeight: '700px',
             margin: 'auto',
             bgcolor: 'none',

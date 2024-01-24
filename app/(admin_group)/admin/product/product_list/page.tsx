@@ -21,8 +21,8 @@ const ProductList = () => {
     return response;
   };
 
-  const { data, error, status, fetchNextPage, hasNextPage, refetch, isFetching } = useInfiniteQuery(
-    {
+  const { data, status, fetchNextPage, hasNextPage, refetch, isFetching, isError } =
+    useInfiniteQuery({
       queryKey: [QUERY_KEY.PRODUCT_LIST],
       queryFn: fetch,
       initialPageParam: 1,
@@ -32,8 +32,7 @@ const ProductList = () => {
         const nextPage = allPage.length + 1;
         return nextPage;
       },
-    },
-  );
+    });
 
   // 바텀 자동 패칭
   const { isInView, elementRef } = useScrollObserver({ isOnlyTop: false });
@@ -70,7 +69,7 @@ const ProductList = () => {
     }
   };
 
-  if (error) return;
+  if (isError) return;
 
   return (
     <>
