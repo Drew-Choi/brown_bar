@@ -1,6 +1,6 @@
 'use client';
 import Box from '@mui/material/Box';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
@@ -20,6 +20,10 @@ import { FaRegCheckCircle } from 'react-icons/fa';
 import { BiReset } from 'react-icons/bi';
 import { convertUtcToKst, nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
 import { usePopup } from '@/hook/usePopup/usePopup';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import axiosInstance from '@/axios/instance';
+import { LastPage } from '@mui/icons-material';
+import useScrollObserver from '@/hook/useObserver/useScrollObserver';
 
 const isInOneMonth = (startTime: string, endTime: string) => {
   const oneMonth = moment(startTime).add(1, 'months');
@@ -56,8 +60,6 @@ const OrderHistory = () => {
           content: '시작 시간을 현재 보다 과거로 해주세요.',
         });
 
-      console.log(isInOneMonth(startTime.toISOString(), endTime.toISOString()));
-
       if (!isInOneMonth(startTime.toISOString(), endTime.toISOString()))
         return openPopup({ title: '오류', content: '범위는 1달을 초과할 수 없습니다.' });
 
@@ -65,22 +67,54 @@ const OrderHistory = () => {
     }
   }, [startTime, endTime]);
 
+  const fetch = async ({ pageParam }: { pageParam: number }) => {
+    const response = await axiosInstance.get(USE_QUERY_POINT.ORDER_HISTORY, {
+      params: {
+        start_time: searchDate?.start?.toISOString(),
+        end_time: searchDate?.end?.toISOString(),
+        page: pageParam,
+      },
+    });
+
+    return response;
+  };
+
   const {
-    data: { data: historyList },
+    data: historyList,
+    status,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+    isFetching,
     isError,
-  } = useQueryInstance({
+  } = useInfiniteQuery({
     queryKey: [
       QUERY_KEY.ORDER_HISTORY,
       String(searchDate?.start?.toISOString()),
       String(searchDate?.end?.toISOString()),
     ],
-    apiMethod: 'get',
-    apiEndPoint: USE_QUERY_POINT.ORDER_HISTORY,
-    apiQueryParams: {
-      start_time: searchDate?.start?.toISOString(),
-      end_time: searchDate?.end?.toISOString(),
+    queryFn: fetch,
+    initialPageParam: 1,
+    getNextPageParam: (LastPage, allPage) => {
+      if (LastPage.data.data?.length < 10) return undefined;
+
+      const nextPage = allPage.length + 1;
+      return nextPage;
+    },
+    select: (data) => {
+      const newMessageList = data.pages.map((el) => el.data.data).flat();
+      return newMessageList;
     },
   });
+
+  // 바텀 자동 패칭
+  const { isInView, elementRef } = useScrollObserver({ isOnlyTop: false });
+
+  useEffect(() => {
+    if (isInView) {
+      !isFetching && hasNextPage && fetchNextPage();
+    }
+  }, [isInView, hasNextPage, isFetching, fetchNextPage]);
 
   if (isError) return <Box color="text.secondary">Fetching Error</Box>;
 
@@ -174,9 +208,18 @@ const OrderHistory = () => {
             bgcolor: 'none',
           }}
         >
-          {historyList?.map((el: OrderCardProps) => (
-            <OrderHistoryCard orderInfo={el} key={el.order_idx} />
-          ))}
+          {historyList?.length !== 0 ? (
+            historyList?.map((el: OrderCardProps) => (
+              <OrderHistoryCard orderInfo={el} key={el.order_idx} />
+            ))
+          ) : (
+            <Typography color="primary" textAlign="center">
+              내역이 없습니다.
+            </Typography>
+          )}
+          {status !== 'pending' && (
+            <div ref={elementRef} style={{ width: '0', height: '0', visibility: 'hidden' }} />
+          )}
         </ContentBox>
       </Box>
     </Box>

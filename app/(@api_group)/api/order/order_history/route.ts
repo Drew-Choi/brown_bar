@@ -6,6 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     const start_time = req.nextUrl.searchParams.get('start_time');
     const end_time = req.nextUrl.searchParams.get('end_time');
+    const page = req.nextUrl.searchParams.get('page');
 
     if (!start_time)
       return NextResponse.json(
@@ -19,6 +20,9 @@ export async function GET(req: NextRequest) {
         { status: 400 },
       );
 
+    if (!page)
+      return NextResponse.json({ message: '새로고침 후 다시 시도해주세요' }, { status: 400 });
+
     await connectDB();
 
     const result: OrderCardProps[] = await Order.find({
@@ -28,7 +32,11 @@ export async function GET(req: NextRequest) {
         $gte: start_time,
         $lte: end_time,
       },
-    }).select('-_id -__v -updated_at');
+    })
+      .sort({ updated_at: -1 })
+      .skip((Number(page) - 1) * 10)
+      .limit(10)
+      .select('-_id -__v -updated_at');
 
     if (!result) return NextResponse.json({ message: 'DB Error' }, { status: 500 });
 

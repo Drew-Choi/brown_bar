@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "global.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "asset/muiTheme/theme.tsx", "constant/NAV_DATA.tsㅌ", "asset/muiTheme/EmotionCache.tsㅌ", "app/(@api_group)/api/_test/mongodbcopy.mjs", "app/(@api_group)/api/_test/db_insert.mjsapp/(@api_group)/api/_test/Productcopy.mjs.mjs"],
+  "include": ["next-env.d.ts", "global.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "asset/muiTheme/theme.tsx", "constant/NAV_DATA.tsㅌ", "asset/muiTheme/EmotionCache.tsㅌ", "app/(@api_group)/api/_test/mongodbcopy.mjs", "app/(@api_group)/api/_test/db_insert.mjsapp/(@api_group)/api/_test/Productcopy.mjs.mjs", "app/(@api_group)/api/_test/Order.mjs", "app/(@api_group)/api/_test/mometDayAndTime.mjs"],
   "exclude": ["node_modules"]
 }
