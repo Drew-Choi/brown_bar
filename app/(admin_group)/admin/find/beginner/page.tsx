@@ -1,8 +1,9 @@
-import Box from '@mui/material/Box';
+'use client';
 import React from 'react';
+import FindLayout from '../_findComponents/FindLayout';
 
 const Beginner = () => {
-  return <Box sx={{ color: 'white' }}>Beginner</Box>;
+  return <FindLayout>Beginner(초심자)</FindLayout>;
 };
 
 export default Beginner;

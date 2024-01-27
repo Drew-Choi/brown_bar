@@ -84,8 +84,7 @@ const Recommend = ({ searchParams }: { searchParams: { class: string; choice: st
           </Typography>
           <ContentBox>
             <Typography color="text.secondary" sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}>
-              처음부터 고가의 위스키 보다는 부드러우며, 가격이 비교적 저렴한위스키들로
-              구성하였습니다
+              처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처
             </Typography>
           </ContentBox>
         </Box>

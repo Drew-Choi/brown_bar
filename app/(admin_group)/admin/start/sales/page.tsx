@@ -122,7 +122,11 @@ const Sales = () => {
   if (isError || isStartError) return <Box color="text.secondary">Fetching Error</Box>;
 
   if (!isStart.data && !startLoading)
-    return <Box color="text.secondary">영업시작 상태가 아닙니다.</Box>;
+    return (
+      <Box color="text.secondary" padding="20px">
+        영업시작 상태가 아닙니다.
+      </Box>
+    );
 
   return (
     <Grid

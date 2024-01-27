@@ -192,9 +192,9 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
     });
   };
 
+  // 캐쉬에서 데이터가져오기
   const cacheList: CacheListType | undefined = queryClient.getQueryData([
-    !category_idx ? QUERY_KEY.PRODUCT_LIST : QUERY_KEY.MENU_PRODUCT_LIST,
-    String(category_idx),
+    !category_idx ? QUERY_KEY.PRODUCT_LIST : (QUERY_KEY.MENU_PRODUCT_LIST, String(category_idx)),
   ]);
 
   // 수정용 세팅 -----------

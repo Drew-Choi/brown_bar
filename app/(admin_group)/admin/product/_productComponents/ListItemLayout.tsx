@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import React from 'react';
-import ImageLayout from './ImageLayout';
-import ContentBox from './ContentBox';
+import ImageLayout from '../../../../../components/layout/ImageLayout';
+import ContentBox from '../../../../../components/layout/ContentBox';
 import { Typography } from '@mui/material';
 import { ImCancelCircle } from 'react-icons/im';
 import { COLORS } from '@/asset/style';

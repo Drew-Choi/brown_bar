@@ -7,7 +7,7 @@ import React from 'react';
 
 const Analysis = () => {
   const router = useRouter();
-  return <Box sx={{ color: 'text.secondary' }}>통계</Box>;
+  return <Box sx={{ color: 'text.secondary', padding: '20px' }}>서비스 준비 중</Box>;
 };
 
 export default Analysis;

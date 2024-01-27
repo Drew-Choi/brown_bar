@@ -1,8 +1,9 @@
-import Box from '@mui/material/Box';
+'use client';
 import React from 'react';
+import FindLayout from '../_findComponents/FindLayout';
 
 const OldWater = () => {
-  return <Box sx={{ color: 'white' }}>OldWater</Box>;
+  return <FindLayout>OldWater(고인물)</FindLayout>;
 };
 
 export default OldWater;

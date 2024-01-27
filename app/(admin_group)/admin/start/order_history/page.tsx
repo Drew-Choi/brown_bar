@@ -6,23 +6,18 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import moment, { Moment } from 'moment-timezone';
 import { COLORS } from '@/asset/style';
-import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { USE_QUERY_POINT } from '@/constant/END_POINT';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import Typography from '@mui/material/Typography';
-import ButtonNomal from '@/components/buttons/ButtonNomal';
 import { FaSearch } from 'react-icons/fa';
 import ContentBox from '@/components/layout/ContentBox';
 import Grid from '@mui/material/Unstable_Grid2';
 import { After } from '@/asset/After';
 import { Before } from '@/asset/Before';
-import { FaRegCheckCircle } from 'react-icons/fa';
-import { BiReset } from 'react-icons/bi';
 import { convertUtcToKst, nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axiosInstance from '@/axios/instance';
-import { LastPage } from '@mui/icons-material';
 import useScrollObserver from '@/hook/useObserver/useScrollObserver';
 
 const isInOneMonth = (startTime: string, endTime: string) => {
@@ -38,7 +33,6 @@ const OrderHistory = () => {
   );
 
   const [endTime, setEndTime] = useState<Moment | null>(moment().tz('Asia/Seoul'));
-  // console.log(startTime?.format('YYYYMMDDHHmm') < endTime?.format('YYYYMMDDHHmm'));
 
   const [searchDate, setSearchDate] = useState<{ start: Moment | null; end: Moment | null }>({
     start: moment().tz('Asia/Seoul').subtract(1, 'days'),

@@ -1,8 +1,9 @@
-import Box from '@mui/material/Box';
+'use client';
 import React from 'react';
+import FindLayout from '../_findComponents/FindLayout';
 
 const Explorer = () => {
-  return <Box sx={{ color: 'white' }}>Explorer</Box>;
+  return <FindLayout>Explorer(탐험가)</FindLayout>;
 };
 
 export default Explorer;

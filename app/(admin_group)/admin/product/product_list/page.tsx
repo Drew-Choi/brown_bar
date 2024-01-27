@@ -2,7 +2,7 @@
 import axiosInstance from '@/axios/instance';
 import Empty from '@/components/Empty';
 import ToTopButton from '@/components/buttons/ToTopButton';
-import ListItemLayout from '@/components/layout/ListItemLayout';
+import ListItemLayout from '@/app/(admin_group)/admin/product/_productComponents/ListItemLayout';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import useScrollObserver from '@/hook/useObserver/useScrollObserver';
