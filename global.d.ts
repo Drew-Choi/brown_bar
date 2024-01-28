@@ -87,6 +87,23 @@ declare global {
     tb_idx: number;
     bar: boolean;
   };
+
+  type FindingIntroType = {
+    _id?: string;
+    finding_idx: number;
+    intro_text: string;
+  };
+
+  interface FindingSectionType {
+    finding_idx: number;
+    sub_category_idx: number;
+    section_list:
+      | {
+          section_idx: number;
+          title: string;
+        }[]
+      | [];
+  }
 }
 
 export {};

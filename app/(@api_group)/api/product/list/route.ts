@@ -1,10 +1,10 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Product from '@/app/(@api_group)/api/_models/Product';
 import { NextRequest, NextResponse } from 'next/server';
-import Menu from '../../_models/Menu';
+import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { Document } from 'mongoose';
-import { REDIS_CACHE_KEY } from '../../_constant/KEY';
-import { getRedisClient } from '../../_lib/redis';
+import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
+import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 
 const newListGenerate = (
   productList: ProductInfoType[],

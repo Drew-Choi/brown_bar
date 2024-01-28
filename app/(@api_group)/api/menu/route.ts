@@ -1,8 +1,8 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { NextRequest, NextResponse } from 'next/server';
-import { REDIS_CACHE_KEY } from '../_constant/KEY';
-import { getRedisClient } from '../_lib/redis';
+import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
+import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 
 // 메뉴 카테고리 추가
 export async function POST(req: NextRequest) {

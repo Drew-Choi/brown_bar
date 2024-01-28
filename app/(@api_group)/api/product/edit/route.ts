@@ -1,7 +1,7 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Product from '@/app/(@api_group)/api/_models/Product';
 import { NextRequest, NextResponse } from 'next/server';
-import { deleteS3, saveS3 } from '../../_lib/s3';
+import { deleteS3, saveS3 } from '@/app/(@api_group)/api/_lib/s3';
 import { S3BUCKET_PATH } from '@/constant/PATH';
 import { nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
 

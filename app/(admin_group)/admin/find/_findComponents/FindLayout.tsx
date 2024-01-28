@@ -14,37 +14,209 @@ interface FindLayoutProps {
   children: ReactNode;
 }
 
-const data = {
+const introData = {
+  finding_idx: 10,
   intro_text: '처음은 어저구 저쩌구처음은',
-  sub_cagtegory: {
-    MaltWhiskey: [
-      {
-        title: '처음 접하기 좋은 3종',
-        products: [
-          {
-            _id: '',
-            pd_name: 'BB&R',
-            price: 13000,
-            desc: '좋음',
-            img_url: '',
-          },
-        ],
-      },
-    ],
-    AmericanWhiskey: [],
-    Wine: [],
-    Brandy: [],
-    Rum: [],
-    Tequila: [],
-  },
 };
+
+const subCategoryData = {
+  finding_idx: 10,
+  sub_category_idx: 100,
+  sub_category_list: [
+    {
+      title: '처음 접하기 좋은 3종',
+      products: [
+        {
+          _id: '',
+          pd_name: 'BB&R',
+          price: 13000,
+          desc: '좋음1',
+          img_url: '',
+        },
+        {
+          _id: '',
+          pd_name: 'BB&R셰리',
+          price: 13000,
+          desc: '좋음2',
+          img_url: '',
+        },
+        {
+          _id: '',
+          pd_name: 'BB&R피트',
+          price: 13000,
+          desc: '좋음3',
+          img_url: '',
+        },
+      ],
+    },
+    {
+      title: '완전추천',
+      products: [
+        {
+          _id: '',
+          pd_name: '맥켈란12년',
+          price: 13000,
+          desc: '좋음6',
+          img_url: '',
+        },
+        {
+          _id: '',
+          pd_name: '맥켈란15년',
+          price: 13000,
+          desc: '좋음7',
+          img_url: '',
+        },
+      ],
+    },
+  ],
+};
+
+// sub_cagtegory: {
+//   MaltWhiskey: [
+//     {
+//       title: '처음 접하기 좋은 3종',
+//       products: [
+//         {
+//           _id: '',
+//           pd_name: 'BB&R',
+//           price: 13000,
+//           desc: '좋음1',
+//           img_url: '',
+//         },
+//         {
+//           _id: '',
+//           pd_name: 'BB&R셰리',
+//           price: 13000,
+//           desc: '좋음2',
+//           img_url: '',
+//         },
+//         {
+//           _id: '',
+//           pd_name: 'BB&R피트',
+//           price: 13000,
+//           desc: '좋음3',
+//           img_url: '',
+//         },
+//       ],
+//     },
+//     {
+//       title: '완전추천',
+//       products: [
+//         {
+//           _id: '',
+//           pd_name: '맥켈란12년',
+//           price: 13000,
+//           desc: '좋음6',
+//           img_url: '',
+//         },
+//         {
+//           _id: '',
+//           pd_name: '맥켈란15년',
+//           price: 13000,
+//           desc: '좋음7',
+//           img_url: '',
+//         },
+//       ],
+//     },
+//   ],
+//   AmericanWhiskey: [
+//     {
+//       title: '안돼',
+//       products: [
+//         {
+//           _id: '',
+//           pd_name: '브랜디',
+//           price: 13000,
+//           desc: '좋음6',
+//           img_url: '',
+//         },
+//         {
+//           _id: '',
+//           pd_name: '하하',
+//           price: 13000,
+//           desc: '좋음7',
+//           img_url: '',
+//         },
+//       ],
+//     },
+//   ],
+//   Wine: [
+//     {
+//       title: '이야',
+//       products: [
+//         {
+//           _id: '',
+//           pd_name: 'BB&R',
+//           price: 13000,
+//           desc: '좋음1',
+//           img_url: '',
+//         },
+//         {
+//           _id: '',
+//           pd_name: 'BB&R셰리',
+//           price: 13000,
+//           desc: '좋음2',
+//           img_url: '',
+//         },
+//         {
+//           _id: '',
+//           pd_name: 'BB&R피트',
+//           price: 13000,
+//           desc: '좋음3',
+//           img_url: '',
+//         },
+//       ],
+//     },
+//     {
+//       title: '오예',
+//       products: [
+//         {
+//           _id: '',
+//           pd_name: '맥켈란12년',
+//           price: 13000,
+//           desc: '좋음6',
+//           img_url: '',
+//         },
+//         {
+//           _id: '',
+//           pd_name: '맥켈란15년',
+//           price: 13000,
+//           desc: '좋음7',
+//           img_url: '',
+//         },
+//       ],
+//     },
+//     {
+//       title: '샵',
+//       products: [
+//         {
+//           _id: '',
+//           pd_name: '맥켈란12년',
+//           price: 13000,
+//           desc: '좋음6',
+//           img_url: '',
+//         },
+//         {
+//           _id: '',
+//           pd_name: '맥켈란15년',
+//           price: 13000,
+//           desc: '좋음7',
+//           img_url: '',
+//         },
+//       ],
+//     },
+//   ],
+//   Brandy: [],
+//   Rum: [],
+//   Tequila: [],
+// },
 
 const FindLayout = ({ children }: FindLayoutProps) => {
   const { openPopup } = usePopup();
   const introTextRef = useRef<HTMLInputElement>(null);
   const [introEdit, setIntroEdit] = useState<boolean>(false);
   // sub카테고리 선택
-  const [subCategory, setSubCategory] = useState<string>('MaltWhiskey');
+  const [subCategory, setSubCategory] = useState<number>(100);
 
   // 문구 수정 핸들러
   // api 추가 예정
@@ -53,10 +225,10 @@ const FindLayout = ({ children }: FindLayoutProps) => {
 
     if (!textValue) return openPopup({ title: '오류', content: '인트로 문구를 작성해주세요.' });
 
-    if (textValue !== data.intro_text && textValue?.length > 50)
+    if (textValue !== introData.intro_text && textValue?.length > 50)
       return openPopup({ title: '오류', content: '띄어쓰기 포함 50자 이내로 작성해주세요.' });
 
-    if (textValue === data.intro_text) return setIntroEdit(false);
+    if (textValue === introData.intro_text) return setIntroEdit(false);
 
     // apiset
 
@@ -81,7 +253,7 @@ const FindLayout = ({ children }: FindLayoutProps) => {
         {/* 50자 한도 */}
         {!introEdit ? (
           <Typography color="text.secondary" fontSize="14px">
-            {data.intro_text}
+            {introData.intro_text}
           </Typography>
         ) : (
           <InputText
@@ -92,7 +264,7 @@ const FindLayout = ({ children }: FindLayoutProps) => {
               fontSize: '14px',
             }}
             conSx={{ padding: '0' }}
-            defaultValue={data.intro_text}
+            defaultValue={introData.intro_text}
             multiline
             ref={introTextRef}
           />
@@ -119,7 +291,7 @@ const FindLayout = ({ children }: FindLayoutProps) => {
       <Box>
         <Selector
           value={subCategory}
-          onChangeEvent={(e) => setSubCategory(e.target.value as string)}
+          onChangeEvent={(e) => setSubCategory(e.target.value as number)}
           optionArr={FINDING_SUB_CATEGORIES}
         />
         <Box></Box>

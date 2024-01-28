@@ -1,6 +1,6 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
-import Order from '../../_models/Order';
+import Order from '@/app/(@api_group)/api/_models/Order';
 
 export async function GET(req: NextRequest) {
   try {
