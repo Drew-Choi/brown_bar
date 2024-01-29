@@ -23,4 +23,5 @@ export const USE_MUTATE_POINT = {
   ORDER_PAY: 'order/order_list/complete/pay',
   ORDER_DELETE: 'order/order_list/delete',
   FINDING_INTRO: 'finding/intro',
+  FINDING_SECTION_LIST_ADD: 'finding/section_list/add',
 };

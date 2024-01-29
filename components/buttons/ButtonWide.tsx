@@ -12,6 +12,7 @@ interface ButtonWideProps {
   justifyContent?: string;
   display?: string;
   onClickEvent?: () => void;
+  margin?: string;
 }
 
 const ButtonWide = ({
@@ -24,6 +25,7 @@ const ButtonWide = ({
   fontWeight = '700',
   justifyContent = 'center',
   display = 'flex',
+  margin = '0',
   onClickEvent,
 }: ButtonWideProps) => {
   return (
@@ -42,6 +44,7 @@ const ButtonWide = ({
         boxSizing: 'border-box',
         borderRadius: borderRadius,
         justifyContent: justifyContent,
+        margin: margin,
       }}
     >
       {children}

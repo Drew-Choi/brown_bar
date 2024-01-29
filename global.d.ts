@@ -94,16 +94,16 @@ declare global {
     intro_text: string;
   };
 
+  type SectionListType = {
+    _id: string;
+    title: string;
+  };
+
   interface FindingSectionType {
     _id?: string;
     finding_idx: number;
     sub_category_idx: number;
-    section_list:
-      | {
-          _id: string;
-          title: string;
-        }[]
-      | [];
+    section_list: SectionListType[] | [];
   }
 }
 

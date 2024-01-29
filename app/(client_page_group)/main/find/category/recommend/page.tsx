@@ -18,7 +18,7 @@ const MainContainer = styled('main')`
 `;
 
 const data = [
-  { class: 'beginner', section: '취향 찾기 좋은 위스키 3종', idx: 1 },
+  { class: 'beginner', section: '하하하하하하하하하하하하하하하하하하하하', idx: 1 },
   { class: 'beginner', section: '과일 & 우디 & 허니', idx: 2 },
   { class: 'beginner', section: '과일 & 스모키', idx: 3 },
   { class: 'explorer', section: '쉐리캐스크 or 버번캐스크', idx: 4 },
