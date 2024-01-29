@@ -58,3 +58,37 @@ export async function GET(req: NextRequest) {
     }
   }
 }
+
+export async function POST(req: NextRequest) {
+  try {
+    const { finding_idx, intro_text } = await req.json();
+
+    if (!finding_idx)
+      return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });
+
+    if (!intro_text)
+      return NextResponse.json({ message: '인트로 문구를 입력해주세요.' }, { status: 400 });
+
+    await connectDB();
+
+    const result = await FindingIntro.updateOne(
+      {
+        finding_idx,
+      },
+      { $set: { intro_text } },
+    );
+
+    if (result.acknowledged && result.modifiedCount === 1)
+      return NextResponse.json({ message: '인트로 문구 변경 성공' }, { status: 200 });
+
+    return NextResponse.json({ message: 'DB Error' }, { status: 500 });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
+      return NextResponse.json({ message: error.message }, { status: 500 });
+    } else {
+      console.error(error);
+      return NextResponse.json({ message: 'server error' }, { status: 500 });
+    }
+  }
+}

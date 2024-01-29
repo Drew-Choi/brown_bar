@@ -1,7 +1,6 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import FindingSection from '@/app/(@api_group)/api/_models/FindingSection';
-import { nanoid } from 'nanoid';
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,11 +19,13 @@ export async function POST(req: NextRequest) {
 
     const result = await FindingSection.updateOne(
       { finding_idx, sub_category_idx },
-      { $push: { section_list: { section_idx: 1, title } } },
+      { $push: { section_list: { title } } },
     );
-    console.log('결과', result);
 
-    return NextResponse.json({ message: '섹션 추가 성공' }, { status: 200 });
+    if (result.acknowledged && result.modifiedCount === 1)
+      return NextResponse.json({ message: '섹션 추가 성공' }, { status: 200 });
+
+    return NextResponse.json({ message: 'DB Error' }, { status: 500 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

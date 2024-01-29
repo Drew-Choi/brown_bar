@@ -4,6 +4,8 @@ export const USE_QUERY_POINT = {
   MENU: 'menu',
   ORDER_LIST: 'order/order_list',
   ORDER_HISTORY: 'order/order_history',
+  FINDING_INTRO: 'finding/intro',
+  FINDING_SECTION_LIST: 'finding/section_list',
 };
 
 // ---------------------------------------
@@ -20,4 +22,5 @@ export const USE_MUTATE_POINT = {
   ORDER_ROLLBACK: 'order/order_list/complete/rollback',
   ORDER_PAY: 'order/order_list/complete/pay',
   ORDER_DELETE: 'order/order_list/delete',
+  FINDING_INTRO: 'finding/intro',
 };

@@ -1,12 +1,11 @@
 import mongoose, { Schema } from 'mongoose';
 
 const findingSectionSchema = new Schema({
-  finding_idx: { type: Number, required: true, unique: true },
+  finding_idx: { type: Number, required: true },
   sub_category_idx: { type: Number, required: true },
   section_list: {
     type: [
       {
-        section_idx: { type: Number, required: true, unique: true },
         title: { type: String, required: true },
       },
     ],

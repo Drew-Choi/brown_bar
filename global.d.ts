@@ -95,11 +95,12 @@ declare global {
   };
 
   interface FindingSectionType {
+    _id?: string;
     finding_idx: number;
     sub_category_idx: number;
     section_list:
       | {
-          section_idx: number;
+          _id: string;
           title: string;
         }[]
       | [];

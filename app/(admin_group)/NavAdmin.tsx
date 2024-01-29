@@ -25,6 +25,7 @@ import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
+import { FINDING_IDX } from '@/constant/FINDING_MY_TASTE_LIST';
 
 const navMenuData = [
   {
@@ -60,11 +61,11 @@ const navMenuData = [
     label: '내 취향 찾기',
     icon: <SavedSearchIcon />,
     url: null,
-    urlGroupName: 'find',
+    urlGroupName: 'finding',
     sub: [
-      { subLabel: 'ㄴ 초심자', url: '/admin/find/beginner' },
-      { subLabel: 'ㄴ 탐험가', url: '/admin/find/explorer' },
-      { subLabel: 'ㄴ 고인물', url: '/admin/find/old_water' },
+      { subLabel: 'ㄴ 초심자', url: `/admin/finding/${FINDING_IDX.BEGINNER}` },
+      { subLabel: 'ㄴ 탐험가', url: `/admin/finding/${FINDING_IDX.EXPLORER}` },
+      { subLabel: 'ㄴ 고인물', url: `/admin/finding/${FINDING_IDX.OLD_WATER}` },
     ],
   },
   {

@@ -19,7 +19,6 @@ export async function GET(req: NextRequest) {
       finding_idx,
       sub_category_idx,
     }).select('-_id -__v')) as FindingSectionType;
-    console.log('db있음', result);
 
     if (!result) {
       const newFindingSection = new FindingSection({

@@ -1,3 +1,9 @@
+export const FINDING_IDX = {
+  BEGINNER: 10,
+  EXPLORER: 20,
+  OLD_WATER: 30,
+};
+
 export const FINDING_SUB_CATEGORIES = [
   { label: '몰트 위스키 류', value: 100 },
   { label: '아메리칸 위스키 류', value: 200 },
