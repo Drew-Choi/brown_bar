@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
 import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 
-// 메뉴 카테고리 삭제
+// 메뉴 카테고리 변경
 export async function POST(req: NextRequest) {
   try {
     const { category_idx, new_label } = await req.json();
