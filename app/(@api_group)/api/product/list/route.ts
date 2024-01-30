@@ -33,13 +33,20 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const page = searchParams.get('page');
+    const search = searchParams.get('search');
 
     if (!page)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요' }, { status: 400 });
 
     await connectDB();
 
-    const list: ProductInfoType[] = await Product.find()
+    // 검색어 구분
+    let query = {};
+    if (search) {
+      query = { pd_name: { $regex: search, $options: 'i' } };
+    }
+
+    const list: ProductInfoType[] = await Product.find(query)
       .sort({ updated_at: -1 })
       .skip((Number(page) - 1) * 10)
       .limit(10)

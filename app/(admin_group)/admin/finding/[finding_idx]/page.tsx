@@ -33,7 +33,12 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
   // sub카테고리 선택
   const [subCategory, setSubCategory] = useState<number>(100);
   // 메뉴리스트팝업
-  const [onProductList, setOnProductList] = useState<boolean>(false);
+  const [onProductList, setOnProductList] = useState<{ on: boolean; title: string }>({
+    on: false,
+    title: '',
+  });
+
+  console.log(onProductList);
 
   // 섹션 컨트롤
   // 섹션명 수정시 사용자 입력 데이터 저장
@@ -214,11 +219,12 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
     <Box
       sx={{ position: 'relative', width: '100%', padding: { xs: '40px 20px', sm: '40px 50px' } }}
     >
-      {onProductList && (
+      {onProductList.on && (
         <ListPopup
+          sectionTitle={onProductList.title}
           conSx={{ height: '70vh' }}
-          onClickEvent={() => setOnProductList(false)}
-          title="추천 메뉴 리스트"
+          onClickEvent={() => setOnProductList((cur) => ({ ...cur, on: false, title: '' }))}
+          title="추천 메뉴 추가"
           titleSx={{ color: COLORS.text.secondary, fontWeight: '600', fontSize: '15px' }}
         />
       )}
@@ -357,7 +363,9 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
                 sxTitle={{
                   color: !openValues[el._id] ? COLORS.text.primary : COLORS.text.secondary,
                 }}
-                onClickPluse={() => setOnProductList(true)}
+                onClickPluse={() =>
+                  setOnProductList((cur) => ({ ...cur, on: true, title: el.title }))
+                }
               >
                 <List></List>
               </CollapseBarMap>

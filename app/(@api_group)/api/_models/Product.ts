@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 const productSchema = new Schema(
   {
-    pd_name: { type: String, required: true },
+    pd_name: { type: String, required: true, unique: true },
     price: { type: Number, required: true },
     desc: { type: String, require: true },
     img_url: { type: String, required: true },

@@ -44,6 +44,7 @@ declare global {
     created_at?: date;
     updated_at?: date;
     option_arr: ProductOptionType[] | [];
+    finding_section?: string[] | [];
   }
 
   interface ProductNewListType extends Omit<ProductInfoType, 'created_at' | 'updated_at'> {

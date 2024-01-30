@@ -68,13 +68,13 @@ export async function POST(req: NextRequest) {
       }
       if (response?.status === 500) throw new Error('image information Error in Server');
     }
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error);
-      return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error: any) {
+    // Mongoose 유니크 인덱스 위반 에러 처리
+    if (error.code === 11000) {
+      return NextResponse.json({ message: '상품명이 존재합니다.' }, { status: 400 });
     } else {
       console.error(error);
-      return NextResponse.json({ message: 'Unknown server error' }, { status: 500 });
+      return NextResponse.json({ message: error.message }, { status: 500 });
     }
   }
 }

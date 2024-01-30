@@ -97,6 +97,7 @@ const ProductWrite = () => {
         setImgFile(null);
         queryClient.removeQueries({ queryKey: [QUERY_KEY.PRODUCT_LIST] });
         queryClient.removeQueries({ queryKey: [QUERY_KEY.MENU_PRODUCT_LIST] });
+        openPopup({ title: '완료', content: '등록성공' });
         return;
       }
     },
