@@ -29,6 +29,8 @@ const InputText = forwardRef<
       | 'tel'
       | 'text'
       | 'time';
+    labelColor?: 'info' | 'error' | 'primary' | 'secondary' | 'success' | 'warning';
+    inputColor?: 'error' | 'primary' | 'secondary' | 'info' | 'success' | 'warning';
     onChangeEvent?: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined;
     value?: string | number;
     placeholderText?: string;
@@ -51,15 +53,23 @@ const InputText = forwardRef<
       defaultValue,
       onKeyUp,
       labelFocused = true,
+      labelColor = 'info',
+      inputColor,
     },
     ref,
   ) => {
     return (
       <FormControl sx={{ width: '100%', ...conSx }} variant="standard">
-        <InputLabel focused={labelFocused} htmlFor="standard" color="info" sx={{ ...labelSx }}>
+        <InputLabel
+          focused={labelFocused}
+          htmlFor="standard"
+          color={labelColor}
+          sx={{ ...labelSx }}
+        >
           {title} {'-'}
         </InputLabel>
         <Input
+          color={inputColor}
           defaultValue={defaultValue}
           placeholder={placeholderText}
           multiline={multiline}

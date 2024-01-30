@@ -7,6 +7,7 @@ const productSchema = new Schema(
     desc: { type: String, require: true },
     img_url: { type: String, required: true },
     option_arr: { type: [{ label: String, value: Number, price: Number }], default: [] },
+    finding_section: { type: [String], default: [] },
     category_idx: { type: Number, require: true },
   },
   {

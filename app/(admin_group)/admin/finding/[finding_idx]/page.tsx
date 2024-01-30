@@ -1,7 +1,7 @@
 'use client';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import React, { FormEvent, useCallback, useRef, useState } from 'react';
+import React, { FormEvent, KeyboardEvent, useRef, useState } from 'react';
 import ContentBox from '@/components/layout/ContentBox';
 import { FaRegEdit } from 'react-icons/fa';
 import { GiConfirmed } from 'react-icons/gi';
@@ -18,6 +18,9 @@ import ButtonWide from '@/components/buttons/ButtonWide';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import { FaPlus } from 'react-icons/fa6';
 import ListPopup from '@/app/(admin_group)/admin/finding/_findingComponents/ListPopup';
+import CollapseBarMap from '@/components/layout/CollapseBarMap';
+import List from '@mui/material/List';
+import Empty from '@/components/Empty';
 
 const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
   const finding_idx = Number(params.finding_idx);
@@ -30,11 +33,23 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
   // sub카테고리 선택
   const [subCategory, setSubCategory] = useState<number>(100);
   // 메뉴리스트팝업
-  const [onMenuList, setOnMenuList] = useState<boolean>(false);
-  // 섹션클릭핸들러
-  const sectionClickHandler = (id: string) => {
-    console.log(id);
-    setOnMenuList(true);
+  const [onProductList, setOnProductList] = useState<boolean>(false);
+
+  // 섹션 컨트롤
+  // 섹션명 수정시 사용자 입력 데이터 저장
+  const editInputRef = useRef<{ [key: number | string]: HTMLInputElement | null }>({});
+
+  // Collapse 액티브 체크
+  const [openValues, setOpenValues] = useState<Record<string, boolean>>({});
+  const oneDepthHandler = (idx: string) => {
+    setOpenValues((cur) => ({ ...cur, [idx]: cur[idx] ? !cur[idx] : true }));
+  };
+
+  // 에딧 세팅
+  const [onEdit, setOnEdit] = useState<Record<string, boolean>>({});
+  const onEditHandler = (idx: string) => {
+    setOnEdit((cur) => ({ ...cur, [idx]: cur[idx] ? !cur[idx] : true }));
+    setOpenValues((cur) => ({ ...cur, [idx]: false }));
   };
 
   // 인트로문구
@@ -67,6 +82,19 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
       }
     },
   });
+  // 문구 수정 핸들러
+  const introEditConfirmHandler = () => {
+    const textValue = introTextRef.current?.value.replace(/\n/g, ' ');
+
+    if (!textValue) return openPopup({ title: '오류', content: '인트로 문구를 작성해주세요.' });
+
+    if (textValue !== introTextData?.intro_text && textValue?.length > 50)
+      return openPopup({ title: '오류', content: '띄어쓰기 포함 50자 이내로 작성해주세요.' });
+
+    if (textValue === introTextData?.intro_text) return setIntroEdit(false);
+
+    editIntroTextAPI({ apiBody: { finding_idx, intro_text: textValue } });
+  };
 
   // 주류별 하위메뉴 불러오기
   const {
@@ -105,21 +133,6 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
       }
     },
   });
-
-  // 문구 수정 핸들러
-  const introEditConfirmHandler = () => {
-    const textValue = introTextRef.current?.value.replace(/\n/g, ' ');
-
-    if (!textValue) return openPopup({ title: '오류', content: '인트로 문구를 작성해주세요.' });
-
-    if (textValue !== introTextData?.intro_text && textValue?.length > 50)
-      return openPopup({ title: '오류', content: '띄어쓰기 포함 50자 이내로 작성해주세요.' });
-
-    if (textValue === introTextData?.intro_text) return setIntroEdit(false);
-
-    editIntroTextAPI({ apiBody: { finding_idx, intro_text: textValue } });
-  };
-
   // 섹션추가 핸들러
   const addSectionHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -140,15 +153,71 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
     });
   };
 
+  // 주류별 하위 섹션 수정
+  const { mutate: editSectionAPI } = useMutationInstance({
+    apiMethod: 'post',
+    apiEndPoint: USE_MUTATE_POINT.FINDING_SECTION_LIST_EDIT,
+    onSuccessFn: (response) => {
+      if (response?.data) {
+        const id = response.data;
+        setOnEdit((cur) => ({ ...cur, [id]: false }));
+        setOpenValues((cur) => ({ ...cur, [id]: false }));
+        sectionListRefetch();
+      }
+    },
+    onErrorFn: (err: any) => {
+      if (err.response.status === 400) {
+        openPopup({ title: '오류', content: err.response.data.message });
+      } else {
+        openPopup({ title: '오류', content: '다시 시도해주세요.' });
+      }
+    },
+  });
+  //  주류별 하위 섹션 수정 핸들러
+  const submitEditHandler = (
+    e: KeyboardEvent<HTMLInputElement> | null,
+    id: string,
+    preName: string,
+  ) => {
+    if ((e && e.key === 'Enter') || !e) {
+      if (preName === editInputRef.current[id]?.value)
+        return openPopup({ title: '오류', content: '변경사항이 없습니다.' });
+
+      const newTitle = editInputRef.current[id]?.value;
+
+      editSectionAPI({
+        apiBody: { finding_idx, sub_category_idx: subCategory, section_id: id, title: newTitle },
+      });
+    }
+  };
+
+  // 주류별 하위 섹션 삭제
+  const { mutate: removeSectionAPI } = useMutationInstance({
+    apiMethod: 'delete',
+    apiEndPoint: USE_MUTATE_POINT.FINDING_SECTION_LIST_DELETE,
+    onSuccessFn: () => {
+      openPopup({ title: '안내', content: '삭제 성공' });
+      sectionListRefetch();
+    },
+    onErrorFn: (err: any) => {
+      if (err.response.status === 400) {
+        openPopup({ title: '오류', content: err.response.data.message });
+      } else {
+        openPopup({ title: '오류', content: '다시 시도해주세요.' });
+      }
+    },
+  });
+
   if (introIsError || sectionListError) return <Box color="text.secondary">Fetching Error</Box>;
 
   return (
     <Box
       sx={{ position: 'relative', width: '100%', padding: { xs: '40px 20px', sm: '40px 50px' } }}
     >
-      {onMenuList && (
+      {onProductList && (
         <ListPopup
-          onClickEvent={() => setOnMenuList(false)}
+          conSx={{ height: '70vh' }}
+          onClickEvent={() => setOnProductList(false)}
           title="추천 메뉴 리스트"
           titleSx={{ color: COLORS.text.secondary, fontWeight: '600', fontSize: '15px' }}
         />
@@ -244,23 +313,54 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
           </ButtonNomal>
         </Box>
 
-        <Box sx={{ padding: '20px 40px' }}>
+        <Box sx={{ padding: { xs: '20px 0', md: '20px 40px' } }}>
           {sectionListData?.length === 0 ? (
-            <Typography color="text.secondary" fontSize="16px">
-              섹션이 없습니다. 추가해주세요.
-            </Typography>
+            <Empty title="등록된 섹션이 없습니다." />
           ) : (
             sectionListData?.map((el: SectionListType) => (
-              <ButtonWide
+              <CollapseBarMap
+                labelColor="primary"
+                inputLabelSx={{ fontWeight: '600' }}
+                inputTextSx={{ color: 'text.primary' }}
                 key={el._id}
-                margin="0 0 15px 0"
-                padding="10px"
-                onClickEvent={() => sectionClickHandler(el._id)}
+                onClickEditMode={() => onEditHandler(el._id)}
+                onEdit={onEdit[el._id]}
+                onClickEditConfirm={() => submitEditHandler(null, el._id, el.title)}
+                onKeyDownEditConfirm={(e) => submitEditHandler(e, el._id, el.title)}
+                onClickCollapse={() => !onEdit[el._id] && oneDepthHandler(el._id)}
+                openCollapseValue={openValues[el._id]}
+                onClickRemove={() =>
+                  openPopup({
+                    title: '안내',
+                    content: (
+                      <span style={{ whiteSpace: 'pre-line' }}>
+                        {`[${el.title}]\n*추천 메뉴도 모두 삭제 됩니다.\n정말 삭제하시겠습니까?`}
+                      </span>
+                    ),
+                    onConfirm: () => {
+                      removeSectionAPI({
+                        apiQueryParams: {
+                          finding_idx,
+                          sub_category_idx: subCategory,
+                          section_id: el._id,
+                        },
+                      });
+                    },
+                  })
+                }
+                title={el.title}
+                editModeTitle="섹션명 수정"
+                editInputRef={(dom) => {
+                  editInputRef.current[el._id] = dom;
+                }}
+                sxBar={{ bgcolor: COLORS.background.paper }}
+                sxTitle={{
+                  color: !openValues[el._id] ? COLORS.text.primary : COLORS.text.secondary,
+                }}
+                onClickPluse={() => setOnProductList(true)}
               >
-                <Typography textAlign="center" fontWeight="700" sx={{ fontSize: '20px' }}>
-                  {el.title}
-                </Typography>
-              </ButtonWide>
+                <List></List>
+              </CollapseBarMap>
             ))
           )}
         </Box>

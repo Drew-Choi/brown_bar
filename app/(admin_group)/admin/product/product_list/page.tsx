@@ -88,7 +88,13 @@ const ProductList = () => {
                           {`[${el.pd_name}]\n정말 삭제하시겠습니까?`}
                         </span>
                       ),
-                      onConfirm: () => deleteAPI({ apiPathParams: el._id }),
+                      onConfirm: () =>
+                        deleteAPI({
+                          apiQueryParams: {
+                            id: el._id,
+                            img_url: el.img_url,
+                          },
+                        }),
                     })
                   }
                   productData={el}

@@ -12,12 +12,7 @@ interface ListPopupProps {
   conSx?: SxProps;
 }
 
-const ListPopup = ({
-  title = '',
-  onClickEvent,
-  titleSx,
-  conSx = { top: '50px', left: '50%', transform: 'translateX(-50%)' },
-}: ListPopupProps) => {
+const ListPopup = ({ title = '', onClickEvent, titleSx, conSx }: ListPopupProps) => {
   return (
     <Box
       sx={{
@@ -28,6 +23,9 @@ const ListPopup = ({
         borderRadius: '10px',
         border: '1px solid white',
         zIndex: '999',
+        top: '50px',
+        left: '50%',
+        transform: 'translateX(-50%)',
         ...conSx,
       }}
     >

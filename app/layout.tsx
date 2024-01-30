@@ -19,6 +19,7 @@ import Nav from './Nav';
 import UsePopupComponent from '@/hook/usePopup/UsePopupComponent';
 import RecoilProvider from '@/providers/RecoilProvider';
 import ThemeRegistry from '@/asset/muiTheme/ThemeRegistry';
+import Spinner from '@/components/spinner/Spinner';
 
 const crimson_Text = Crimson_Text({
   weight: ['400', '600', '700'],
@@ -40,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ReactQueryProvider>
             <RecoilProvider>
               {/* 레이아웃 */}
-
+              <Spinner position="fixed" top="50%" />
               <Container
                 maxWidth="lg"
                 disableGutters={true}

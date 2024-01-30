@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import { useIsMutating } from '@tanstack/react-query';
 import React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
+import { usePathname } from 'next/navigation';
 
 const Spinner = ({
   width = '100vw',
@@ -17,6 +18,8 @@ const Spinner = ({
   top?: string;
   left?: string;
 }) => {
+  const pathName = usePathname();
+
   // useMutate시 스피너 훅
   const isMutating = useIsMutating();
 
@@ -35,7 +38,9 @@ const Spinner = ({
             position: 'absolute',
             left: left,
             top: top,
-            transform: 'translate(-50%, -50%)',
+            transform: pathName?.includes('/admin')
+              ? { xs: 'translate(-50%, -50%)', sm: 'translate(80%, -50%)' }
+              : 'translate(-50%, -50%)',
           }}
         >
           <CircularProgress color="info" size={70} />

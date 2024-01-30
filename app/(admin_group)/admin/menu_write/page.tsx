@@ -2,14 +2,12 @@
 import ContentBox from '@/components/layout/ContentBox';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
-import React, { FormEvent, KeyboardEvent, useRef, useState } from 'react';
+import React, { FormEvent, KeyboardEvent, ReactNode, RefObject, useRef, useState } from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import Collapse from '@mui/material/Collapse';
 import { COLORS } from '@/asset/style';
 import Typography from '@mui/material/Typography';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
-import { FaMinus, FaPlus } from 'react-icons/fa6';
+import { FaPlus } from 'react-icons/fa6';
 import InputText from '@/components/inputs/InputText';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
@@ -17,16 +15,15 @@ import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import Empty from '@/components/Empty';
-import { FaRegEdit } from 'react-icons/fa';
-import { GiConfirmed } from 'react-icons/gi';
 import { useRouter } from 'next/navigation';
 import LoadingMenuWrite from './loading';
+import CollapseBarMap from '@/components/layout/CollapseBarMap';
 
 const MenuWrite = () => {
   const { openPopup } = usePopup();
 
   // 메뉴명 수정시 사용자 입력 데이터 저장
-  const editInputRef = useRef<(HTMLInputElement | null)[]>([]);
+  const editInputRef = useRef<{ [key: number | string]: HTMLInputElement | null }>({});
 
   // Collapse 액티브 체크
   const [openValues, setOpenValues] = useState<Record<number, boolean>>({});
@@ -164,118 +161,38 @@ const MenuWrite = () => {
       <ContentBox sx={{ padding: '20px' }}>
         {menuList?.length !== 0 ? (
           menuList?.map((el: MenuCategoryType) => (
-            <List
-              key={el.category_idx}
-              component="ul"
-              sx={{
-                fontSize: '16px',
-                padding: '10px 0',
-                marginBottom: '0px',
+            <CollapseBarMap
+              key={el?.category_idx}
+              onClickEditMode={() => onEditHandler(el.category_idx)}
+              onClickRemove={() =>
+                openPopup({
+                  title: '안내',
+                  content: (
+                    <span style={{ whiteSpace: 'pre-line' }}>
+                      {`[${el.label}]\n정말 삭제하시겠습니까?`}
+                    </span>
+                  ),
+                  onConfirm: () => categoryDeleteAPI({ apiPathParams: el.category_idx }),
+                })
+              }
+              onEdit={onEdit[el.category_idx]}
+              openCollapseValue={openValues[el.category_idx]}
+              onClickCollapse={() => !onEdit[el.category_idx] && oneDepthHandler(el.category_idx)}
+              title={el.label}
+              editModeTitle="카테고리명 수정"
+              editInputRef={(dom) => {
+                editInputRef.current[el.category_idx] = dom;
               }}
+              onClickEditConfirm={() => {
+                submitEditHandler(null, el.category_idx, el.label);
+              }}
+              onKeyDownEditConfirm={(e) => submitEditHandler(e, el.category_idx, el.label)}
             >
-              <Box component="li" sx={{ marginBottom: '10px' }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    gap: '20px',
-                    marginBottom: '10px',
-                  }}
-                >
-                  <FaRegEdit
-                    color={COLORS.text.secondary}
-                    size={25}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => onEditHandler(el.category_idx)}
-                  />
-                  {!onEdit[el.category_idx] && (
-                    <FaMinus
-                      size={20}
-                      color={COLORS.text.secondary}
-                      style={{ cursor: 'pointer' }}
-                      onClick={() =>
-                        openPopup({
-                          title: '안내',
-                          content: (
-                            <div style={{ whiteSpace: 'pre-line' }}>
-                              {`[${el.label}]\n정말 삭제하시겠습니까?`}
-                            </div>
-                          ),
-                          onConfirm: () => categoryDeleteAPI({ apiPathParams: el.category_idx }),
-                        })
-                      }
-                    />
-                  )}
-                </Box>
-                <ListItemButton
-                  sx={{
-                    gap: '10px',
-                    justifyContent: 'space-between',
-                    fontWeight: '600',
-                    bgcolor: COLORS.primary,
-                    borderRadius: '10px',
-                    cursor: !onEdit[el.category_idx] ? 'pointer' : 'default',
-                  }}
-                  selected={openValues[el.category_idx] || false}
-                  onClick={() => !onEdit[el.category_idx] && oneDepthHandler(el.category_idx)}
-                >
-                  {!onEdit[el.category_idx] ? (
-                    <Typography
-                      sx={{
-                        flex: '9',
-                        fontWeight: '600',
-                        fontSize: '16px',
-                        color: 'text.secondary',
-                      }}
-                    >
-                      {el.label}
-                    </Typography>
-                  ) : (
-                    <InputText
-                      title="카테고리명 수정"
-                      textSx={{ color: 'text.secondary', fontSize: '16px', fontWeight: '600' }}
-                      defaultValue={el.label}
-                      ref={(dom) => {
-                        editInputRef.current[el.category_idx] = dom;
-                      }}
-                      onKeyUp={(e) => submitEditHandler(e, el.category_idx, el.label)}
-                    />
-                  )}
-
-                  {openValues[el.category_idx] && !onEdit[el.category_idx] ? (
-                    <ExpandLess sx={{ flex: '1', justifySelf: 'right' }} />
-                  ) : !openValues[el.category_idx] && !onEdit[el.category_idx] ? (
-                    <ExpandMore sx={{ flex: '1', justifySelf: 'right' }} />
-                  ) : (
-                    <GiConfirmed
-                      size={30}
-                      color={COLORS.text.secondary}
-                      style={{ cursor: 'pointer', zindex: '10' }}
-                      onClick={() => {
-                        submitEditHandler(null, el.category_idx, el.label);
-                      }}
-                    />
-                  )}
-                </ListItemButton>
-                <Collapse
-                  sx={{
-                    bgcolor: COLORS.info,
-                    width: '95%',
-                    margin: 'auto',
-                    borderRadius: '0 0 10px 10px',
-                  }}
-                  in={openValues[el.category_idx] || false}
-                  timeout="auto"
-                  unmountOnExit
-                >
-                  <CollapseSubMenu
-                    el_category_idx={el.category_idx}
-                    openValues={openValues[el.category_idx]}
-                  />
-                </Collapse>
-              </Box>
-            </List>
+              <CollapseSubMenu
+                el_category_idx={el?.category_idx}
+                openValue={openValues[el.category_idx]}
+              />
+            </CollapseBarMap>
           ))
         ) : (
           <Empty title="등록된 메뉴판 카테고리가 없습니다." />
@@ -287,8 +204,9 @@ const MenuWrite = () => {
 
 export default MenuWrite;
 
+// Ui 개별성
 const CollapseSubMenu = React.memo(
-  ({ el_category_idx, openValues }: { el_category_idx: number; openValues: boolean }) => {
+  ({ el_category_idx, openValue }: { el_category_idx: number; openValue: boolean }) => {
     const {
       data: { data: productList },
       isError,
@@ -298,7 +216,7 @@ const CollapseSubMenu = React.memo(
       apiEndPoint: USE_QUERY_POINT.PRODUCT_LIST,
       apiMethod: 'get',
       apiPathParams: el_category_idx,
-      queryEnable: openValues,
+      queryEnable: openValue,
     });
     const router = useRouter();
 
