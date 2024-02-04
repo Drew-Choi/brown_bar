@@ -5,6 +5,7 @@ import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { Document } from 'mongoose';
 import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
 import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
+import mongoose from 'mongoose';
 
 const newListGenerate = (
   productList: ProductInfoType[],
@@ -34,16 +35,32 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const page = searchParams.get('page');
     const search = searchParams.get('search');
+    const id = searchParams.get('id');
 
     if (!page)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요' }, { status: 400 });
 
     await connectDB();
 
+    const { ObjectId } = mongoose.Types;
+
     // 검색어 구분
     let query = {};
-    if (search) {
+    if (search && !id) {
       query = { pd_name: { $regex: search, $options: 'i' } };
+    } else if (search && id) {
+      const objId = new ObjectId(id);
+      query = {
+        pd_name: { $regex: search, $options: 'i' },
+        $or: [{ finding_section: { $exists: false } }, { finding_section: { $nin: [objId] } }],
+      };
+    } else if (!search && id) {
+      const objId = new ObjectId(id);
+      query = {
+        $or: [{ finding_section: { $exists: false } }, { finding_section: { $nin: [objId] } }],
+      };
+    } else {
+      query = {};
     }
 
     const list: ProductInfoType[] = await Product.find(query)

@@ -11,9 +11,11 @@ import useScrollObserver from '@/hook/useObserver/useScrollObserver';
 import Grid from '@mui/material/Unstable_Grid2';
 import InputText from '@/components/inputs/InputText';
 import { FaSearch } from 'react-icons/fa';
-import { usePopup } from '@/hook/usePopup/usePopup';
 import ContentBox from '@/components/layout/ContentBox';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
+import { useMutationInstance } from '@/react-query/useMutationInstance';
+import { USE_MUTATE_POINT } from '@/constant/END_POINT';
+import { usePopup } from '@/hook/usePopup/usePopup';
 
 interface ListPopupProps {
   title?: string;
@@ -37,26 +39,31 @@ const ListPopup = ({
   const { openPopup } = usePopup();
 
   const fetch = async ({ pageParam }: { pageParam: number }) => {
-    const response = await axiosInstance.get(`product/list?page=${pageParam}&search=${searchTerm}`);
+    const response = await axiosInstance.get(
+      `product/list?page=${pageParam}&search=${searchTerm}&id=${sectionId}`,
+    );
 
     return response;
   };
 
-  const { data, status, fetchNextPage, hasNextPage, isFetching, isError } = useInfiniteQuery({
-    queryKey: searchTerm ? [QUERY_KEY.PRODUCT_LIST, searchTerm] : [QUERY_KEY.PRODUCT_LIST],
-    queryFn: fetch,
-    initialPageParam: 1,
-    getNextPageParam: (LastPage, allPage) => {
-      if (LastPage.data.data?.length < 10) return undefined;
+  const { data, status, fetchNextPage, hasNextPage, isFetching, isError, refetch } =
+    useInfiniteQuery({
+      queryKey: searchTerm
+        ? [QUERY_KEY.PRODUCT_LIST, searchTerm, sectionId]
+        : [QUERY_KEY.PRODUCT_LIST, sectionId],
+      queryFn: fetch,
+      initialPageParam: 1,
+      getNextPageParam: (LastPage, allPage) => {
+        if (LastPage.data.data?.length < 10) return undefined;
 
-      const nextPage = allPage.length + 1;
-      return nextPage;
-    },
-    select: (data) => {
-      const newMessageList = data.pages.map((el) => el.data.data).flat();
-      return newMessageList;
-    },
-  });
+        const nextPage = allPage.length + 1;
+        return nextPage;
+      },
+      select: (data) => {
+        const newMessageList = data.pages.map((el) => el.data.data).flat();
+        return newMessageList;
+      },
+    });
 
   const searchHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,8 +94,30 @@ const ListPopup = ({
   };
 
   // 상품등록 API
+  const { mutate: addProductAPI } = useMutationInstance({
+    apiMethod: 'post',
+    apiEndPoint: USE_MUTATE_POINT.FINDING_ADD_PRODUCT,
+    onSuccessFn: () => {
+      refetch();
+    },
+    onErrorFn: (err: any) => {
+      if (err.response.status === 400) {
+        openPopup({ title: '오류', content: err.response.data.message });
+      } else {
+        openPopup({ title: '오류', content: '다시 시도해주세요.' });
+      }
+    },
+  });
+  // 상품등록 API 핸들러
   const addProductHandler = () => {
     const productIdList = Object.keys(selected).filter((key) => selected[key].value === true);
+
+    addProductAPI({
+      apiBody: {
+        product_list: productIdList,
+        section_id: sectionId,
+      },
+    });
   };
 
   if (isError) return <Box sx={{ padding: '20px' }}>Fetching Error</Box>;

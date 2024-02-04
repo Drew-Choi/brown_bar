@@ -26,4 +26,5 @@ export const USE_MUTATE_POINT = {
   FINDING_SECTION_LIST_ADD: 'finding/section_list/add',
   FINDING_SECTION_LIST_EDIT: 'finding/section_list/edit',
   FINDING_SECTION_LIST_DELETE: 'finding/section_list/delete',
+  FINDING_ADD_PRODUCT: 'finding/add_product',
 };
