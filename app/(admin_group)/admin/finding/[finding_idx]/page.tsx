@@ -33,11 +33,11 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
   // sub카테고리 선택
   const [subCategory, setSubCategory] = useState<number>(100);
   // 메뉴리스트팝업
-  const [onProductList, setOnProductList] = useState<{ on: boolean; title: string }>({
+  const [onProductList, setOnProductList] = useState<{ on: boolean; title: string; id: string }>({
     on: false,
     title: '',
+    id: '',
   });
-
   console.log(onProductList);
 
   // 섹션 컨트롤
@@ -222,8 +222,9 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
       {onProductList.on && (
         <ListPopup
           sectionTitle={onProductList.title}
+          sectionId={onProductList.id}
           conSx={{ height: '70vh' }}
-          onClickEvent={() => setOnProductList((cur) => ({ ...cur, on: false, title: '' }))}
+          onClickEvent={() => setOnProductList((cur) => ({ ...cur, on: false, title: '', id: '' }))}
           title="추천 메뉴 추가"
           titleSx={{ color: COLORS.text.secondary, fontWeight: '600', fontSize: '15px' }}
         />
@@ -364,7 +365,7 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
                   color: !openValues[el._id] ? COLORS.text.primary : COLORS.text.secondary,
                 }}
                 onClickPluse={() =>
-                  setOnProductList((cur) => ({ ...cur, on: true, title: el.title }))
+                  setOnProductList((cur) => ({ ...cur, on: true, title: el.title, id: el._id }))
                 }
               >
                 <List></List>

@@ -13,19 +13,27 @@ import InputText from '@/components/inputs/InputText';
 import { FaSearch } from 'react-icons/fa';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import ContentBox from '@/components/layout/ContentBox';
+import ButtonNomal from '@/components/buttons/ButtonNomal';
 
 interface ListPopupProps {
   title?: string;
   onClickEvent?: () => void;
   titleSx?: SxProps;
   conSx?: SxProps;
-  sectionTitle?: string;
+  sectionTitle: string;
+  sectionId: string;
 }
 
-const ListPopup = ({ title = '', onClickEvent, titleSx, conSx, sectionTitle }: ListPopupProps) => {
+const ListPopup = ({
+  title = '',
+  onClickEvent,
+  titleSx,
+  conSx,
+  sectionTitle,
+  sectionId,
+}: ListPopupProps) => {
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
-
   const { openPopup } = usePopup();
 
   const fetch = async ({ pageParam }: { pageParam: number }) => {
@@ -73,10 +81,14 @@ const ListPopup = ({ title = '', onClickEvent, titleSx, conSx, sectionTitle }: L
 
     setSelected((cur) => ({ ...cur, [id]: { value, name } }));
   };
-  console.log(selected);
 
   const crossHandler = (id: string) => {
     setSelected((cur) => ({ ...cur, [id]: { value: false, name: cur[id].name } }));
+  };
+
+  // 상품등록 API
+  const addProductHandler = () => {
+    const productIdList = Object.keys(selected).filter((key) => selected[key].value === true);
   };
 
   if (isError) return <Box sx={{ padding: '20px' }}>Fetching Error</Box>;
@@ -207,7 +219,16 @@ const ListPopup = ({ title = '', onClickEvent, titleSx, conSx, sectionTitle }: L
             ))}
         </ContentBox>
 
-        <Grid container rowSpacing={1} sx={{ width: '100%', padding: '30px 10px' }}>
+        <Box sx={{ marginTop: '5px', padding: '0 15px', textAlign: 'right' }}>
+          <ButtonNomal
+            sx={{ padding: '0', fontSize: '12px', fontWeight: '600' }}
+            onClickEvent={addProductHandler}
+          >
+            등록
+          </ButtonNomal>
+        </Box>
+
+        <Grid container rowSpacing={1} sx={{ width: '100%', padding: '20px 10px 30px 10px' }}>
           {data?.map((el: ProductNewListType) => (
             <Grid key={el._id} xs={12}>
               <Box
