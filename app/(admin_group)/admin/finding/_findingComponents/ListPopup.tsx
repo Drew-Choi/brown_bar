@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { ImCancelCircle, ImCross } from 'react-icons/im';
 import { SxProps } from '@mui/material';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import axiosInstance from '@/axios/instance';
 import useScrollObserver from '@/hook/useObserver/useScrollObserver';
@@ -16,6 +16,7 @@ import ButtonNomal from '@/components/buttons/ButtonNomal';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
+import { PRODUCT_LIST_TYPE } from '@/constant/TYPE';
 
 interface ListPopupProps {
   title?: string;
@@ -37,10 +38,11 @@ const ListPopup = ({
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { openPopup } = usePopup();
+  const queryClient = useQueryClient();
 
   const fetch = async ({ pageParam }: { pageParam: number }) => {
     const response = await axiosInstance.get(
-      `product/list?page=${pageParam}&search=${searchTerm}&id=${sectionId}`,
+      `product/list?page=${pageParam}&search=${searchTerm}&section_id=${sectionId}`,
     );
 
     return response;
@@ -99,6 +101,11 @@ const ListPopup = ({
     apiEndPoint: USE_MUTATE_POINT.FINDING_ADD_PRODUCT,
     onSuccessFn: () => {
       refetch();
+      queryClient.refetchQueries({
+        queryKey: [QUERY_KEY.PRODUCT_LIST, sectionId, String(PRODUCT_LIST_TYPE.IS_SUB_LIST)],
+        exact: true,
+      });
+      setSelected({});
     },
     onErrorFn: (err: any) => {
       if (err.response.status === 400) {
@@ -125,16 +132,17 @@ const ListPopup = ({
   return (
     <Box
       sx={{
-        position: 'absolute',
+        position: 'fixed',
         width: '300px',
         height: '500px',
         bgcolor: COLORS.divider,
         borderRadius: '10px',
         border: '1px solid white',
         zIndex: '900',
-        top: '50px',
+        top: '100px',
         left: '50%',
-        transform: 'translateX(-50%)',
+        transform: { xs: 'translateX(-50%)', sm: 'translateX(-20%)' },
+        transition: '1s transform ease',
         ...conSx,
       }}
     >

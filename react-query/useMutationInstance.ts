@@ -3,9 +3,9 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 interface UseMutationProps {
-  onSuccessFn?: (response: any) => void | undefined;
-  onErrorFn?: (error: Error | AxiosError | unknown) => void | undefined;
-  onMutateFn?: (data: any) => void | undefined;
+  onSuccessFn?: ((response: any, variables: any) => void) | undefined;
+  onErrorFn?: ((error: Error | AxiosError | unknown) => void) | undefined;
+  onMutateFn?: (data: any) => void;
   apiMethod: 'post' | 'get' | 'delete';
   apiEndPoint: string | undefined;
   apiMultipartPost?: boolean | undefined;

@@ -9,3 +9,7 @@ export const IMAGE_TYPE = {
 export const FILE_TYPE = {
   PDF: 'application/pdf',
 };
+
+export const PRODUCT_LIST_TYPE = {
+  IS_SUB_LIST: 1,
+};

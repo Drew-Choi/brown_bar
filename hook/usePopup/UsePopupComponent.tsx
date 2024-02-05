@@ -80,7 +80,10 @@ const UsePopupComponent = () => {
               취소
             </ButtonNomal>
             <ButtonNomal
-              onClickEvent={onConfirm}
+              onClickEvent={async () => {
+                await onConfirm();
+                closePopup();
+              }}
               color="secondary"
               sx={{
                 fontSize: '14px',

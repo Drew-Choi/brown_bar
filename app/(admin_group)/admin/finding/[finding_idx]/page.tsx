@@ -14,16 +14,18 @@ import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
-import ButtonWide from '@/components/buttons/ButtonWide';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import { FaPlus } from 'react-icons/fa6';
 import ListPopup from '@/app/(admin_group)/admin/finding/_findingComponents/ListPopup';
 import CollapseBarMap from '@/components/layout/CollapseBarMap';
-import List from '@mui/material/List';
 import Empty from '@/components/Empty';
+import SubProductList from '@/app/(admin_group)/admin/finding/_findingComponents/SubProductList';
+import { useQueryClient } from '@tanstack/react-query';
+import { PRODUCT_LIST_TYPE } from '@/constant/TYPE';
 
 const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
   const finding_idx = Number(params.finding_idx);
+  const queryClient = useQueryClient();
 
   const { openPopup } = usePopup();
 
@@ -38,7 +40,6 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
     title: '',
     id: '',
   });
-  console.log(onProductList);
 
   // 섹션 컨트롤
   // 섹션명 수정시 사용자 입력 데이터 저장
@@ -200,8 +201,18 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
   const { mutate: removeSectionAPI } = useMutationInstance({
     apiMethod: 'delete',
     apiEndPoint: USE_MUTATE_POINT.FINDING_SECTION_LIST_DELETE,
-    onSuccessFn: () => {
+    onSuccessFn: (_, variables) => {
+      const { section_id } = variables.apiQueryParams;
+
       openPopup({ title: '안내', content: '삭제 성공' });
+      queryClient.removeQueries({
+        queryKey: [QUERY_KEY.PRODUCT_LIST, section_id, String(PRODUCT_LIST_TYPE.IS_SUB_LIST)],
+        exact: true,
+      });
+      queryClient.removeQueries({
+        queryKey: [QUERY_KEY.PRODUCT_LIST, section_id],
+        exact: true,
+      });
       sectionListRefetch();
     },
     onErrorFn: (err: any) => {
@@ -368,7 +379,7 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
                   setOnProductList((cur) => ({ ...cur, on: true, title: el.title, id: el._id }))
                 }
               >
-                <List></List>
+                <SubProductList sectionId={el._id} sectionTitle={el.title} />
               </CollapseBarMap>
             ))
           )}

@@ -2,6 +2,7 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import FindingSection from '@/app/(@api_group)/api/_models/FindingSection';
 import Product from '@/app/(@api_group)/api/_models/Product';
+import mongoose from 'mongoose';
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -22,10 +23,18 @@ export async function DELETE(req: NextRequest) {
 
     const productRemove = await Product.updateMany({}, { $pull: { finding_section: section_id } });
 
-    if (productRemove.acknowledged) {
-      const result = await FindingSection.deleteOne({ finding_idx, sub_category_idx });
+    const { ObjectId } = mongoose.Types;
 
-      if (result.acknowledged && result.deletedCount > 0) {
+    if (productRemove.acknowledged) {
+      const result = await FindingSection.updateOne(
+        {
+          finding_idx,
+          sub_category_idx,
+        },
+        { $pull: { section_list: { _id: new ObjectId(section_id) } } },
+      );
+
+      if (result.acknowledged) {
         return NextResponse.json({ message: '삭제 성공' }, { status: 200 });
       }
       return NextResponse.json({ message: 'DB Error' }, { status: 500 });

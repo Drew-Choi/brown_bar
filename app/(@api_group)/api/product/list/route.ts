@@ -35,9 +35,10 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const page = searchParams.get('page');
     const search = searchParams.get('search');
-    const id = searchParams.get('id');
+    const section_id = searchParams.get('section_id');
+    const type = searchParams.get('type');
 
-    if (!page)
+    if (!page && !type)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요' }, { status: 400 });
 
     await connectDB();
@@ -46,28 +47,42 @@ export async function GET(req: NextRequest) {
 
     // 검색어 구분
     let query = {};
-    if (search && !id) {
+    // 제외할 항목 구분
+    let exception = '';
+
+    if (search && !section_id && !type) {
       query = { pd_name: { $regex: search, $options: 'i' } };
-    } else if (search && id) {
-      const objId = new ObjectId(id);
+    } else if (search && section_id) {
+      const objId = new ObjectId(section_id);
       query = {
         pd_name: { $regex: search, $options: 'i' },
         $or: [{ finding_section: { $exists: false } }, { finding_section: { $nin: [objId] } }],
       };
-    } else if (!search && id) {
-      const objId = new ObjectId(id);
+      exception = '-desc -img_url -option_arr -category_idx -category -finding_section';
+    } else if (!search && section_id && !type) {
+      const objId = new ObjectId(section_id);
       query = {
         $or: [{ finding_section: { $exists: false } }, { finding_section: { $nin: [objId] } }],
       };
+      exception = '-desc -img_url -option_arr -category_idx -category -finding_section';
+    } else if (!search && section_id && type) {
+      const objId = new ObjectId(section_id);
+      query = { finding_section: objId };
+      exception = '-desc -img_url -option_arr -finding_section';
     } else {
       query = {};
     }
 
     const list: ProductInfoType[] = await Product.find(query)
       .sort({ updated_at: -1 })
-      .skip((Number(page) - 1) * 10)
-      .limit(10)
-      .select('-created_at -updated_at -__v');
+      .skip(!type ? (Number(page) - 1) * 10 : 0)
+      .limit(!type ? 10 : 0)
+      .select(`-created_at -updated_at -__v ${exception}`);
+
+    // 아이디가 있다면 하위 섹션 리스트 이므로 바로 종료
+    if (section_id && !type) {
+      return NextResponse.json({ message: '상품 리스트업 성공', data: list }, { status: 200 });
+    }
 
     const redisClient = await getRedisClient();
     // 메뉴카테고리 캐싱 확인

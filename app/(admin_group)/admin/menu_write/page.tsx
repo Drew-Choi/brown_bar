@@ -2,7 +2,7 @@
 import ContentBox from '@/components/layout/ContentBox';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
-import React, { FormEvent, KeyboardEvent, ReactNode, RefObject, useRef, useState } from 'react';
+import React, { FormEvent, KeyboardEvent, useRef, useState } from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
 import { COLORS } from '@/asset/style';
 import Typography from '@mui/material/Typography';
@@ -231,9 +231,13 @@ const CollapseSubMenu = React.memo(
         }}
       >
         {isLoading ? (
-          <Box color="text.secondary">Loading...</Box>
+          <Box component="li" color="text.primary">
+            Loading...
+          </Box>
         ) : isError ? (
-          <Box color="text.secondary">Fetching Error</Box>
+          <Box component="li" color="text.primary">
+            Fetching Error
+          </Box>
         ) : productList?.length === 0 ? (
           <ListItemButton dense component="li" sx={{ whiteSpace: 'nowrap' }}>
             등록된 상품이 없습니다.

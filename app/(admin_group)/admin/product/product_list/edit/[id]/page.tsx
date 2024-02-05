@@ -47,6 +47,7 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
   const search = useSearchParams();
   const { id } = params;
   const category_idx = Number(search.get('category_idx'));
+  const type = Number(search.get('type'));
 
   // 메뉴리스트 패칭
   const {
