@@ -71,12 +71,9 @@ const navMenuData = [
   {
     label: '시음회',
     icon: <LocalBarIcon />,
-    url: null,
-    urlGroupName: 'tasting',
-    sub: [
-      { subLabel: 'ㄴ 일정등록', url: '/admin/tasting/write' },
-      { subLabel: 'ㄴ 오픈카톡등록', url: '/admin/tasting/chat' },
-    ],
+    sub: [],
+    urlGroupName: null,
+    url: '/admin/tasting',
   },
   {
     label: '관리자 설정',

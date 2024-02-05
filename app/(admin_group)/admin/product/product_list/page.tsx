@@ -10,20 +10,26 @@ import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import React, { useEffect, useRef } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
+import InputText from '@/components/inputs/InputText';
+import Box from '@mui/material/Box';
+import { COLORS } from '@/asset/style';
 
 const ProductList = () => {
   const { openPopup } = usePopup();
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const fetch = async ({ pageParam }: { pageParam: number }) => {
-    const response = await axiosInstance.get(`product/list?page=${pageParam}`);
+    const response = await axiosInstance.get(`product/list?page=${pageParam}&search=${searchTerm}`);
 
     return response;
   };
 
   const { data, status, fetchNextPage, hasNextPage, refetch, isFetching, isError } =
     useInfiniteQuery({
-      queryKey: [QUERY_KEY.PRODUCT_LIST],
+      queryKey: searchTerm ? [QUERY_KEY.PRODUCT_LIST, searchTerm] : [QUERY_KEY.PRODUCT_LIST],
       queryFn: fetch,
       initialPageParam: 1,
       getNextPageParam: (LastPage, allPage) => {
@@ -69,11 +75,53 @@ const ProductList = () => {
     }
   };
 
+  // 검색핸들ㄹ러
+  const searchHandler = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const newSearchTerm = searchRef.current?.value;
+    setSearchTerm(newSearchTerm ? newSearchTerm : '');
+  };
+
   if (isError) return;
 
   return (
     <>
       <div ref={navTopRef} style={{ height: '0', width: '0', visibility: 'hidden' }} />
+      <Box
+        component="form"
+        onSubmit={searchHandler}
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          padding: '0 30px',
+          marginTop: '10px',
+        }}
+      >
+        <InputText
+          title="상품검색"
+          labelSx={{ fontSize: '15px' }}
+          textSx={{ color: 'text.secondary', fontSize: '15px' }}
+          ref={searchRef}
+        />
+        <button
+          type="submit"
+          style={{
+            display: 'block',
+            position: 'relative',
+            width: 'fit-content',
+            height: 'fit-content',
+            textDecoration: 'unset',
+            backgroundColor: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '0',
+            marginBottom: '5px',
+          }}
+        >
+          <FaSearch color={COLORS.text.secondary} size={15} />
+        </button>
+      </Box>
       <Grid container rowSpacing={2} sx={{ width: '100%', padding: '30px' }}>
         {data?.pages[0].data.data.length !== 0 ? (
           data?.pages.map((arr) =>

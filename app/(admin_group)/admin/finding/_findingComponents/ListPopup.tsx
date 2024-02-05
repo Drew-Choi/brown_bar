@@ -62,8 +62,8 @@ const ListPopup = ({
         return nextPage;
       },
       select: (data) => {
-        const newMessageList = data.pages.map((el) => el.data.data).flat();
-        return newMessageList;
+        const newList = data.pages.map((el) => el.data.data).flat();
+        return newList;
       },
     });
 
