@@ -4,14 +4,23 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import Light from '@/components/svg/Light';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SectionContainer from '@/components/layout/SectionContainer';
+import { useSetRecoilState } from 'recoil';
+import { tbState } from '@/recoil/tbState';
 
 const Screen = () => {
   const [intro, setIntro] = useState<boolean>(true);
   const router = useRouter();
+  const tb = Number(useSearchParams().get('tb'));
+  // 테이블번호 전역스테이트보관
+  const setTb = useSetRecoilState(tbState);
 
   useEffect(() => {
+    if (tb) {
+      setTb(tb);
+    }
+
     const time = setTimeout(() => {
       setIntro(false);
     }, 500);

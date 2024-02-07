@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-export const scrollState = atom({
+export const scrollState = atom<boolean>({
   key: 'scrollState',
   default: false,
 });

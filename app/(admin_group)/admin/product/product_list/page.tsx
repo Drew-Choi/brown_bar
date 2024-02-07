@@ -50,7 +50,13 @@ const ProductList = () => {
   }, [isInView, hasNextPage, isFetching, fetchNextPage]);
 
   // 아이템삭제
-  const { mutate: deleteAPI } = useMutationInstance({
+  const { mutate: deleteAPI } = useMutationInstance<
+    undefined,
+    {
+      id: string;
+      img_url: string;
+    }
+  >({
     apiMethod: 'delete',
     apiEndPoint: USE_MUTATE_POINT.PRODUCT_DELETE,
     onErrorFn: (err: any) => {

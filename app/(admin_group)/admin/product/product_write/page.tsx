@@ -38,7 +38,7 @@ const ProductWrite = () => {
     data: menuList,
     isError,
     isLoading,
-  } = useQueryInstance({
+  } = useQueryInstance<{ data: MenuCategoryType[] }, { label: string; value: number }[]>({
     queryKey: [QUERY_KEY.MENU_LIST],
     apiEndPoint: USE_QUERY_POINT.MENU,
     apiMethod: 'get',
@@ -49,7 +49,7 @@ const ProductWrite = () => {
         value: category_idx,
       }));
     },
-    onSuccess: (response) => {
+    onSuccessFn: (response) => {
       if (response?.length !== 0) return setMenuCategoryValue(response[0].value);
 
       return setMenuCategoryValue(0);
@@ -72,7 +72,7 @@ const ProductWrite = () => {
   const queryClient = useQueryClient();
 
   // 상품등록 API
-  const { mutate: writeProductAPI } = useMutationInstance({
+  const { mutate: writeProductAPI } = useMutationInstance<undefined, undefined, FormData>({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.PRODUCT_WRITE,
     apiMultipartPost: true,
@@ -277,7 +277,7 @@ const ProductWrite = () => {
         <Box>Loading...</Box>
       ) : (
         <Selector
-          optionArr={menuList}
+          optionArr={menuList || []}
           value={menuCategoryValue}
           width="110%"
           textAlign="center"

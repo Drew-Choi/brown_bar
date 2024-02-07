@@ -354,7 +354,7 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
               <CollapseBarMap
                 labelColor="primary"
                 inputLabelSx={{ fontWeight: '600' }}
-                inputTextSx={{ color: 'text.primary' }}
+                inputTextSx={{ color: !onEdit[el._id] ? 'text.primary' : 'text.secondary' }}
                 key={el._id}
                 onClickEditMode={() => onEditHandler(el._id)}
                 onEdit={onEdit[el._id]}

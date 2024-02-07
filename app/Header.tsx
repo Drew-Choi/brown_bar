@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -170,7 +170,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
                   padding: '0 10px',
                 }}
               >
-                Menu
+                Menu | T
               </Box>
             ) : pathName === '/main/menu/order' || pathName === '/main/menu/order/final' ? (
               <Box fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">

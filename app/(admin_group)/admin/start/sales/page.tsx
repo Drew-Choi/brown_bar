@@ -21,10 +21,10 @@ const Sales = () => {
 
   // 영업상태 초기설정
   const {
-    data: isStart,
+    data: { data: isStart } = { data: false },
     isError: isStartError,
     isLoading: startLoading,
-  } = useQueryInstance({
+  } = useQueryInstance<{ data: boolean }>({
     queryKey: [QUERY_KEY.IS_START],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.START,
@@ -32,10 +32,10 @@ const Sales = () => {
 
   // 주문내역 부르기
   const {
-    data: orderListData,
+    data: { data: orderListData } = { data: [] },
     isError,
     refetch,
-  } = useQueryInstance({
+  } = useQueryInstance<{ data: OrderCardProps[] }>({
     queryKey: [QUERY_KEY.ORDER_LIST],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.ORDER_LIST,
@@ -46,7 +46,7 @@ const Sales = () => {
   });
 
   // 서빙완료
-  const { mutate: completeAPI } = useMutationInstance({
+  const { mutate: completeAPI } = useMutationInstance<undefined, undefined, { order_idx: string }>({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.ORDER_COMPLETE,
     onErrorFn: (err: any) => {
@@ -61,7 +61,13 @@ const Sales = () => {
   });
 
   // 서빙된거 롤백
-  const { mutate: rollbackAPI } = useMutationInstance({
+  const { mutate: rollbackAPI } = useMutationInstance<
+    undefined,
+    undefined,
+    {
+      tb_idx: number;
+    }
+  >({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.ORDER_ROLLBACK,
     onErrorFn: (err: any) => {
@@ -76,7 +82,14 @@ const Sales = () => {
   });
 
   // 결제완료
-  const { mutate: payAPI } = useMutationInstance({
+  const { mutate: payAPI } = useMutationInstance<
+    { message: string },
+    undefined,
+    {
+      tb_idx: number;
+      menu: MenuType[];
+    }
+  >({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.ORDER_PAY,
     onErrorFn: (err: any) => {
@@ -121,7 +134,7 @@ const Sales = () => {
 
   if (isError || isStartError) return <Box color="text.secondary">Fetching Error</Box>;
 
-  if (!isStart.data && !startLoading)
+  if (!isStart && !startLoading)
     return (
       <Box color="text.secondary" padding="20px">
         영업시작 상태가 아닙니다.
@@ -166,7 +179,7 @@ const Sales = () => {
           <Box
             sx={{ height: { xs: '1000px', md: '100%' }, overflowY: { xs: 'scroll', md: 'auto' } }}
           >
-            {orderListData.data?.map(
+            {orderListData?.map(
               (el: OrderCardProps) =>
                 !el.complete && (
                   <OrderCard
@@ -220,7 +233,7 @@ const Sales = () => {
             <CompleteCard
               key={el.tb_idx}
               tableData={el}
-              orderData={orderListData.data}
+              orderData={orderListData}
               onClickReset={() =>
                 rollbackAPI({
                   apiBody: {

@@ -34,6 +34,7 @@ interface CollapseBarMapProps {
   inputTextSx?: SxProps;
   labelColor?: 'error' | 'primary' | 'secondary' | 'info' | 'success' | 'warning';
   inputColor?: 'error' | 'primary' | 'secondary' | 'info' | 'success' | 'warning';
+  inputlabelFocused?: boolean;
 }
 
 const CollapseBarMap = ({
@@ -57,6 +58,7 @@ const CollapseBarMap = ({
   inputTextSx,
   labelColor,
   inputColor,
+  inputlabelFocused = true,
 }: CollapseBarMapProps) => {
   return (
     <List
@@ -136,6 +138,7 @@ const CollapseBarMap = ({
             </Typography>
           ) : (
             <InputText
+              labelFocused={inputlabelFocused}
               labelColor={labelColor}
               inputColor={inputColor}
               labelSx={{ ...inputLabelSx }}
