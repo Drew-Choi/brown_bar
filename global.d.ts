@@ -107,12 +107,17 @@ declare global {
     section_list: SectionListType[] | [];
   }
 
-  interface SubProductList {
+  interface SubProductListType {
     _id: string;
     pd_name: string;
     price: number;
     category_idx?: number;
     category?: string;
+  }
+
+  interface ErrorResponse {
+    message?: string;
+    status?: number;
   }
 }
 

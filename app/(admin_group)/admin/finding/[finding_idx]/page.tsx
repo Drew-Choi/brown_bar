@@ -60,10 +60,10 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
 
   // 인트로문구
   const {
-    data: { data: introTextData },
+    data: { data: introTextData } = { data: undefined },
     isError: introIsError,
     refetch: introRefetch,
-  } = useQueryInstance({
+  } = useQueryInstance<{ data: FindingIntroType }>({
     queryKey: [QUERY_KEY.FINDING_INTRO, String(finding_idx)],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.FINDING_INTRO,
@@ -73,7 +73,11 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
   });
 
   // 인트로 문구 수정
-  const { mutate: editIntroTextAPI } = useMutationInstance({
+  const { mutate: editIntroTextAPI } = useMutationInstance<
+    undefined,
+    undefined,
+    { finding_idx: number; intro_text: string }
+  >({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.FINDING_INTRO,
     onSuccessFn: () => {
@@ -104,10 +108,10 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
 
   // 주류별 하위메뉴 불러오기
   const {
-    data: sectionListData,
+    data: { data: { section_list: sectionListData } } = { data: { section_list: [] } },
     isError: sectionListError,
     refetch: sectionListRefetch,
-  } = useQueryInstance({
+  } = useQueryInstance<{ data: FindingSectionType }>({
     queryKey: [QUERY_KEY.FINDING_SECTION_LIST, String(finding_idx), String(subCategory)],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.FINDING_SECTION_LIST,
@@ -115,14 +119,18 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
       finding_idx,
       sub_category_idx: subCategory,
     },
-    selectFn: (data) => {
-      const { section_list } = data.data;
-      return section_list;
-    },
   });
 
   // 주류별 하위 섹션 추가
-  const { mutate: addSectionAPI } = useMutationInstance({
+  const { mutate: addSectionAPI } = useMutationInstance<
+    undefined,
+    undefined,
+    {
+      finding_idx: number;
+      sub_category_idx: number;
+      title: string;
+    }
+  >({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.FINDING_SECTION_LIST_ADD,
     onSuccessFn: () => {
@@ -160,7 +168,11 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
   };
 
   // 주류별 하위 섹션 수정
-  const { mutate: editSectionAPI } = useMutationInstance({
+  const { mutate: editSectionAPI } = useMutationInstance<
+    { data: string },
+    undefined,
+    { finding_idx: number; sub_category_idx: number; section_id: string; title: string | undefined }
+  >({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.FINDING_SECTION_LIST_EDIT,
     onSuccessFn: (response) => {
@@ -198,11 +210,14 @@ const FindLayout = ({ params }: { params: { finding_idx: string } }) => {
   };
 
   // 주류별 하위 섹션 삭제
-  const { mutate: removeSectionAPI } = useMutationInstance({
+  const { mutate: removeSectionAPI } = useMutationInstance<
+    { message: string },
+    { finding_idx: number; sub_category_idx: number; section_id: string }
+  >({
     apiMethod: 'delete',
     apiEndPoint: USE_MUTATE_POINT.FINDING_SECTION_LIST_DELETE,
     onSuccessFn: (_, variables) => {
-      const { section_id } = variables.apiQueryParams;
+      const { section_id } = variables.apiQueryParams ?? {};
 
       openPopup({ title: '안내', content: '삭제 성공' });
       queryClient.removeQueries({

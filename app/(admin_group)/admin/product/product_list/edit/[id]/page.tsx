@@ -54,13 +54,13 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
     data: menuList,
     isError,
     isLoading,
-  } = useQueryInstance({
+  } = useQueryInstance<{ data: MenuCategoryType[] }, { label: string; value: number }[]>({
     queryKey: [QUERY_KEY.MENU_LIST],
     apiEndPoint: USE_QUERY_POINT.MENU,
     apiMethod: 'get',
     selectFn: (data) => {
       // 셀렉터에 맞게 변형
-      return data.data?.map(({ category_idx, ...rest }: MenuCategoryType) => ({
+      return data.data?.map(({ category_idx, ...rest }) => ({
         ...rest,
         value: category_idx,
       }));
@@ -99,7 +99,7 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
 
   // 상품수정 API
-  const { mutate: editProductAPI } = useMutationInstance({
+  const { mutate: editProductAPI } = useMutationInstance<undefined, undefined, FormData>({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.PRODUCT_EDIT,
     apiMultipartPost: true,
@@ -202,7 +202,7 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     if (!category_idx && cacheList && 'pageParams' in cacheList) {
       const list =
-        cacheList && cacheList?.pageParams?.length === 1 && menuList?.length > 0
+        cacheList && cacheList?.pageParams?.length === 1 && menuList && menuList?.length > 0
           ? cacheList.pages[0].data.data
           : cacheList?.pages.map((el) => [...el.data.data]).flat();
       const findProduct: ProductNewListType | undefined = list?.find((el) => el._id === id);
@@ -348,7 +348,7 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
       </Typography>
     );
 
-  if (menuList?.length <= 0 && !isLoading)
+  if (menuList && menuList?.length <= 0 && !isLoading)
     return (
       <Typography sx={{ color: 'text.secondary', textAlign: 'center', padding: '100px 20px' }}>
         - 메뉴 카테고리 오류 -<br />
@@ -400,7 +400,7 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
         <Box>Loading...</Box>
       ) : (
         <Selector
-          optionArr={menuList}
+          optionArr={menuList || []}
           value={menuCategoryValue}
           width="110%"
           textAlign="center"

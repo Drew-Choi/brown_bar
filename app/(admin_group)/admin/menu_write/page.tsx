@@ -40,11 +40,11 @@ const MenuWrite = () => {
 
   // 메뉴리스트 패칭
   const {
-    data: { data: menuList },
+    data: { data: menuList } = { data: [] },
     isError,
     refetch,
     isLoading,
-  } = useQueryInstance({
+  } = useQueryInstance<{ data: MenuCategoryType[] }>({
     queryKey: [QUERY_KEY.MENU_LIST],
     apiEndPoint: USE_QUERY_POINT.MENU,
     apiMethod: 'get',
@@ -52,7 +52,11 @@ const MenuWrite = () => {
 
   // 카테고리 추가 api
   const categoryLabelRef = useRef<HTMLInputElement>(null);
-  const { mutate: addCategoryLabelAPI } = useMutationInstance({
+  const { mutate: addCategoryLabelAPI } = useMutationInstance<
+    undefined,
+    undefined,
+    { label: string }
+  >({
     apiEndPoint: USE_MUTATE_POINT.MENU,
     apiMethod: 'post',
     onErrorFn: (err: any) => {
@@ -96,7 +100,11 @@ const MenuWrite = () => {
   });
 
   // 에딧 핸들러 및 API
-  const { mutate: editAPI } = useMutationInstance({
+  const { mutate: editAPI } = useMutationInstance<
+    { category_idx: number },
+    undefined,
+    { category_idx: number; new_label: string | undefined }
+  >({
     apiEndPoint: USE_MUTATE_POINT.MENU_EDIT,
     apiMethod: 'post',
     onErrorFn: (err: any) => {
@@ -208,10 +216,10 @@ export default MenuWrite;
 const CollapseSubMenu = React.memo(
   ({ el_category_idx, openValue }: { el_category_idx: number; openValue: boolean }) => {
     const {
-      data: { data: productList },
+      data: { data: productList } = { data: [] },
       isError,
       isLoading,
-    } = useQueryInstance({
+    } = useQueryInstance<{ data: ProductInfoType[] }>({
       queryKey: [QUERY_KEY.MENU_PRODUCT_LIST, String(el_category_idx)],
       apiEndPoint: USE_QUERY_POINT.PRODUCT_LIST,
       apiMethod: 'get',

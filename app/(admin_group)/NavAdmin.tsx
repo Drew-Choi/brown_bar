@@ -96,7 +96,7 @@ export const NavAdmin = () => {
     data: isStart,
     isError,
     refetch,
-  } = useQueryInstance({
+  } = useQueryInstance<{ data: boolean }>({
     queryKey: [QUERY_KEY.IS_START],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.START,
@@ -104,7 +104,7 @@ export const NavAdmin = () => {
   });
 
   // 영업상태변경 요청
-  const { mutate: isStartAPI } = useMutationInstance({
+  const { mutate: isStartAPI } = useMutationInstance<undefined, undefined, { is_start: boolean }>({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.START,
     onErrorFn: () => {

@@ -96,7 +96,14 @@ const ListPopup = ({
   };
 
   // 상품등록 API
-  const { mutate: addProductAPI } = useMutationInstance({
+  const { mutate: addProductAPI } = useMutationInstance<
+    undefined,
+    undefined,
+    {
+      product_list: string[];
+      section_id: string;
+    }
+  >({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.FINDING_ADD_PRODUCT,
     onSuccessFn: () => {

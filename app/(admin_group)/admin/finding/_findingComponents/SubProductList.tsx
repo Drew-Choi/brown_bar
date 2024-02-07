@@ -26,11 +26,11 @@ const SubProductList = ({
   const queryClient = useQueryClient();
 
   const {
-    data: { data: subProductList },
+    data: { data: subProductList } = { data: [] },
     refetch,
     isLoading,
     isError,
-  } = useQueryInstance({
+  } = useQueryInstance<{ data: SubProductListType[] }>({
     queryKey: [QUERY_KEY.PRODUCT_LIST, sectionId, String(PRODUCT_LIST_TYPE.IS_SUB_LIST)],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.PRODUCT_LIST,
@@ -40,7 +40,13 @@ const SubProductList = ({
     },
   });
 
-  const { mutate: removeSubProductAPI } = useMutationInstance({
+  const { mutate: removeSubProductAPI } = useMutationInstance<
+    undefined,
+    {
+      product_id: string;
+      section_id: string;
+    }
+  >({
     apiMethod: 'delete',
     apiEndPoint: USE_MUTATE_POINT.FINDING_DELETE_PRODUCT,
     onErrorFn: (err: any) => {
@@ -100,7 +106,7 @@ const SubProductList = ({
           등록된 상품이 없습니다.
         </ListItemButton>
       ) : (
-        subProductList?.map((pd: SubProductList) => (
+        subProductList?.map((pd: SubProductListType) => (
           <ListItemButton
             key={pd._id}
             dense

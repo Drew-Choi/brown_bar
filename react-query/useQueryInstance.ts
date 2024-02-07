@@ -1,19 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryKey, useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 
 import axiosInstance from '@/axios/instance';
+import { AxiosError } from 'axios';
 
-interface UseQueryProps {
-  queryKey: string[];
-  onSuccess?: (data: any) => void | undefined;
-  selectFn?: (data: any) => void | undefined;
-  initialDataFn?: (() => any) | undefined;
+interface UseQueryProps<T, R = T> {
+  queryKey: QueryKey;
+  onSuccessFn?: (data: R) => void;
+  selectFn?: (data: T) => R;
   apiMethod: 'get' | 'post';
   apiEndPoint: string;
-  apiQueryParams?: Object | undefined;
-  apiPathParams?: string | number | undefined;
+  apiQueryParams?: Object;
+  apiPathParams?: string | number;
   apiBody?: Object | null;
-  apiMultipartPost?: boolean | undefined;
+  apiMultipartPost?: boolean;
   queryEnable?: boolean;
   refetchOnMount?: boolean;
   refetchOnReconnect?: boolean;
@@ -21,11 +21,10 @@ interface UseQueryProps {
   gcTime?: number;
 }
 
-export const useQueryInstance = ({
+export const useQueryInstance = <T, R = T>({
   queryKey,
-  onSuccess,
+  onSuccessFn,
   selectFn,
-  initialDataFn,
   apiMethod,
   apiEndPoint,
   apiQueryParams,
@@ -37,7 +36,7 @@ export const useQueryInstance = ({
   refetchOnReconnect = false,
   staleTime = Infinity,
   gcTime = Infinity,
-}: UseQueryProps) => {
+}: UseQueryProps<T, R>) => {
   // api 세팅
   const apiSet = async () => {
     switch (apiMethod) {
@@ -66,15 +65,11 @@ export const useQueryInstance = ({
   };
 
   // useQuery 세팅 및 요청
-  const fallback: any = [];
-  const {
-    data = fallback,
-    isError,
-    error,
-    refetch,
-    isRefetching,
-    isLoading,
-  } = useQuery({
+  const { data, isError, error, refetch, isRefetching, isLoading } = useQuery<
+    T,
+    Error | AxiosError<ErrorResponse>,
+    R
+  >({
     queryKey,
     queryFn: apiSet,
     enabled: queryEnable,
@@ -83,15 +78,13 @@ export const useQueryInstance = ({
     staleTime,
     gcTime,
     select: selectFn,
-    initialData: initialDataFn,
   });
 
   // 커스텀 onSuccess
   useEffect(() => {
-    if (queryEnable && data && !isRefetching && typeof onSuccess === 'function') {
-      onSuccess(data);
+    if (queryEnable && data && !isRefetching && typeof onSuccessFn === 'function') {
+      onSuccessFn(data);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isRefetching, queryEnable]);
 
   return { data, isError, error, refetch, isLoading };

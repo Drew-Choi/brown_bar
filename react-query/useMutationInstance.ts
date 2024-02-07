@@ -2,31 +2,33 @@ import axiosInstance from '@/axios/instance';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-interface UseMutationProps {
-  onSuccessFn?: ((response: any, variables: any) => void) | undefined;
-  onErrorFn?: ((error: Error | AxiosError | unknown) => void) | undefined;
-  onMutateFn?: (data: any) => void;
-  apiMethod: 'post' | 'get' | 'delete';
-  apiEndPoint: string | undefined;
-  apiMultipartPost?: boolean | undefined;
-}
-
-interface ApiSetProps {
-  apiQueryParams?: Object;
+interface ApiSetProps<QueryParamsType = undefined, BodyType = undefined> {
+  apiQueryParams?: QueryParamsType;
   apiPathParams?: string | number;
-  apiBody?: Object | null;
+  apiBody?: BodyType | null;
 }
 
-export const useMutationInstance = ({
+interface UseMutationProps<T, QueryParamsType = undefined, BodyType = undefined> {
+  onSuccessFn?: (response: T, variables: ApiSetProps<QueryParamsType, BodyType>) => void;
+  onErrorFn?: (error: AxiosError<ErrorResponse>) => void;
+  apiMethod: 'post' | 'get' | 'delete';
+  apiEndPoint: string;
+  apiMultipartPost?: boolean;
+}
+
+export const useMutationInstance = <T, QueryParamsType = undefined, BodyType = undefined>({
   onSuccessFn,
   onErrorFn,
-  onMutateFn,
   apiMethod,
   apiEndPoint,
   apiMultipartPost,
-}: UseMutationProps) => {
+}: UseMutationProps<T, QueryParamsType, BodyType>) => {
   // api 세팅
-  const apiSet = async ({ apiQueryParams, apiPathParams, apiBody = null }: ApiSetProps) => {
+  const apiSet = async ({
+    apiQueryParams,
+    apiPathParams,
+    apiBody = null,
+  }: ApiSetProps<QueryParamsType, BodyType>) => {
     switch (apiMethod) {
       case 'get': {
         const response = await axiosInstance.get(
@@ -66,12 +68,12 @@ export const useMutationInstance = ({
   };
 
   // useMutation 세팅 및 요청
-  const { mutate, isPending } = useMutation({
-    mutationFn: async ({
-      apiQueryParams,
-      apiPathParams,
-      apiBody,
-    }: ApiSetProps): Promise<ApiSetProps | null> => {
+  const { mutate, isPending } = useMutation<
+    T,
+    AxiosError<ErrorResponse>,
+    ApiSetProps<QueryParamsType, BodyType>
+  >({
+    mutationFn: async ({ apiQueryParams, apiPathParams, apiBody }) => {
       if (isPending) {
         return null;
       } else {
@@ -85,7 +87,6 @@ export const useMutationInstance = ({
     },
     onError: onErrorFn,
     onSuccess: onSuccessFn,
-    onMutate: onMutateFn,
   });
 
   return { mutate };
