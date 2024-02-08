@@ -6,32 +6,42 @@ import Image from 'next/image';
 import Light from '@/components/svg/Light';
 import { useRouter, useSearchParams } from 'next/navigation';
 import SectionContainer from '@/components/layout/SectionContainer';
-import { useSetRecoilState } from 'recoil';
-import { tbState } from '@/recoil/tbState';
 
 const Screen = () => {
   const [intro, setIntro] = useState<boolean>(true);
   const router = useRouter();
-  const tb = Number(useSearchParams().get('tb'));
-  // 테이블번호 전역스테이트보관
-  const setTb = useSetRecoilState(tbState);
+  const tb = useSearchParams().get('tb');
 
   useEffect(() => {
-    if (tb) {
-      setTb(tb);
+    if (!tb) {
+      sessionStorage.removeItem('tb');
+      return router.push('/not-found');
     }
+
+    const nowTime = new Date().getTime();
+    //5시간
+    const expireInterval = 5 * 60 * 60 * 1000;
+    const expire = new Date(nowTime + expireInterval).toUTCString();
+    const tbDate = {
+      tb,
+      expire,
+    };
+
+    sessionStorage.setItem('tb', JSON.stringify(tbDate));
 
     const time = setTimeout(() => {
       setIntro(false);
     }, 500);
+
     const timeTwo = setTimeout(() => {
       router.push('/main');
     }, 1500);
+
     return () => {
       clearTimeout(time);
       clearTimeout(timeTwo);
     };
-  }, [router]);
+  }, []);
 
   return (
     <SectionContainer

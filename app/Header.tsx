@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import ButtonBack from '@/components/buttons/ButtonBack';
 import { useParams, usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { SxProps } from '@mui/material';
+import { useGetSession } from '@/hook/useGetSession/useGetSession';
 
 const Tag = ({
   children,
@@ -68,6 +69,10 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
   const eng = search.get('eng');
   const kor = search.get('kor');
   const { idx, about_idx } = useParams();
+
+  const { tb } = useGetSession<string>({ dependency: pathName });
+
+  console.log('훅으로부터', tb);
 
   if (pathName === '/') return;
 
@@ -170,11 +175,11 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
                   padding: '0 10px',
                 }}
               >
-                Menu | T
+                Menu | T {tb}
               </Box>
             ) : pathName === '/main/menu/order' || pathName === '/main/menu/order/final' ? (
               <Box fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
-                Order | <SubText fontSize="8vw" mdFontSize="72px">{`T 5`}</SubText>
+                Order | <SubText fontSize="8vw" mdFontSize="72px">{`T ${tb}`}</SubText>
               </Box>
             ) : pathName === '/main/find/category' ||
               pathName === '/main/find/category/recommend' ||
