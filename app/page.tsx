@@ -6,16 +6,19 @@ import Image from 'next/image';
 import Light from '@/components/svg/Light';
 import { useRouter, useSearchParams } from 'next/navigation';
 import SectionContainer from '@/components/layout/SectionContainer';
+import { usePopup } from '@/hook/usePopup/usePopup';
 
 const Screen = () => {
   const [intro, setIntro] = useState<boolean>(true);
   const router = useRouter();
   const tb = useSearchParams().get('tb');
+  const { openPopup } = usePopup();
 
   useEffect(() => {
     if (!tb) {
       sessionStorage.removeItem('tb');
-      return router.push('/not-found');
+      router.push('/not_tb');
+      return;
     }
 
     const nowTime = new Date().getTime();

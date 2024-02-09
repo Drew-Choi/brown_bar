@@ -18,6 +18,10 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
 
   if (pathName === '/') return;
 
+  if (pathName === '/not-found') return;
+
+  if (pathName === '/not_tb') return;
+
   if (pathName.startsWith('/admin')) return;
 
   return (

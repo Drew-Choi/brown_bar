@@ -15,6 +15,7 @@ import { FaSearch } from 'react-icons/fa';
 import InputText from '@/components/inputs/InputText';
 import Box from '@mui/material/Box';
 import { COLORS } from '@/asset/style';
+import _ from 'lodash';
 
 const ProductList = () => {
   const { openPopup } = usePopup();
@@ -44,9 +45,17 @@ const ProductList = () => {
   const { isInView, elementRef } = useScrollObserver({ isOnlyTop: false });
 
   useEffect(() => {
-    if (isInView) {
-      !isFetching && hasNextPage && fetchNextPage();
-    }
+    const debounceAPI = _.debounce(() => {
+      if (isInView) {
+        !isFetching && hasNextPage && fetchNextPage();
+      }
+    }, 300);
+
+    debounceAPI();
+
+    return () => {
+      debounceAPI.cancel();
+    };
   }, [isInView, hasNextPage, isFetching, fetchNextPage]);
 
   // 아이템삭제

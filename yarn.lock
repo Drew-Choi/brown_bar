@@ -2489,6 +2489,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4":
+  version: 4.14.202
+  resolution: "@types/lodash@npm:4.14.202"
+  checksum: 1bb9760a5b1dda120132c4b987330d67979c95dbc22612678682cd61b00302e190f4207228f3728580059cdab5582362262e3819aea59960c1017bd2b9fb26f6
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*, @types/node@npm:^20":
   version: 20.10.5
   resolution: "@types/node@npm:20.10.5"
@@ -3101,6 +3108,7 @@ __metadata:
     "@tanstack/react-query-devtools": "npm:^5.13.5"
     "@types/bcrypt": "npm:^5"
     "@types/jsonwebtoken": "npm:^9"
+    "@types/lodash": "npm:^4"
     "@types/node": "npm:^20"
     "@types/punycode": "npm:^2"
     "@types/react": "npm:^18"
@@ -3111,6 +3119,7 @@ __metadata:
     eslint: "npm:^8"
     eslint-config-next: "npm:14.0.4"
     jsonwebtoken: "npm:^9.0.2"
+    lodash: "npm:^4.17.21"
     moment-timezone: "npm:^0.5.44"
     mongoose: "npm:^8.0.3"
     next: "npm:14.0.4"
@@ -5119,6 +5128,13 @@ __metadata:
   version: 4.1.1
   resolution: "lodash.once@npm:4.1.1"
   checksum: 202f2c8c3d45e401b148a96de228e50ea6951ee5a9315ca5e15733d5a07a6b1a02d9da1e7fdf6950679e17e8ca8f7190ec33cae47beb249b0c50019d753f38f3
+  languageName: node
+  linkType: hard
+
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: c08619c038846ea6ac754abd6dd29d2568aa705feb69339e836dfa8d8b09abbb2f859371e86863eda41848221f9af43714491467b5b0299122431e202bb0c532
   languageName: node
   linkType: hard
 

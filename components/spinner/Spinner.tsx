@@ -1,6 +1,6 @@
 'use client';
 import Box from '@mui/material/Box';
-import { useIsMutating } from '@tanstack/react-query';
+import { useIsFetching, useIsMutating } from '@tanstack/react-query';
 import React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { usePathname } from 'next/navigation';
@@ -22,8 +22,9 @@ const Spinner = ({
 
   // useMutate시 스피너 훅
   const isMutating = useIsMutating();
+  const isFetching = useIsFetching();
 
-  if (isMutating)
+  if (isMutating || isFetching)
     return (
       <Box
         sx={{

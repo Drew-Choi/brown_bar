@@ -8,7 +8,7 @@ const useScrollObserver = ({
   isOnlyTop?: boolean;
 }) => {
   const [isInView, setIsInView] = useState(false);
-  const elementRef = useRef(null);
+  const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!elementRef.current) return;

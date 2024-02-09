@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -7,7 +7,11 @@ import Typography from '@mui/material/Typography';
 import ButtonBack from '@/components/buttons/ButtonBack';
 import { useParams, usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { SxProps } from '@mui/material';
-import { useGetSession } from '@/hook/useGetSession/useGetSession';
+
+type TbDataTpye = {
+  tb: string;
+  expire: string;
+};
 
 const Tag = ({
   children,
@@ -70,11 +74,34 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
   const kor = search.get('kor');
   const { idx, about_idx } = useParams();
 
-  const { tb } = useGetSession<string>({ dependency: pathName });
+  const [tb, setTb] = useState<string | null>(null);
 
-  console.log('훅으로부터', tb);
+  useEffect(() => {
+    if (pathName === '/main/menu') {
+      const tbData = sessionStorage.getItem('tb');
+
+      if (!tbData) {
+        setTb(null);
+        return router.push('/not_tb');
+      }
+
+      const tbParse: TbDataTpye = JSON.parse(tbData);
+      const now = new Date().toUTCString();
+
+      if (now < tbParse.expire) return setTb(tbParse.tb);
+
+      sessionStorage.removeItem('tb');
+      setTb(null);
+      return router.push('/not_tb');
+    }
+    return;
+  }, [pathName]);
 
   if (pathName === '/') return;
+
+  if (pathName === '/not-found') return;
+
+  if (pathName === '/not_tb') return;
 
   if (pathName.startsWith('/admin'))
     return (

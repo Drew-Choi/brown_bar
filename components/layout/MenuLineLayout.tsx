@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { LegacyRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { COLORS } from '@/asset/style';
@@ -10,15 +10,16 @@ import { SelectChangeEvent } from '@mui/material';
 
 interface MenuLineProps {
   data: {
-    name: string;
+    pd_name: string;
     desc: string;
     price: number;
-    optionArr?: { label: string; value: string | number; price?: number }[];
+    option_arr?: { label: string; value: string | number; price?: number; _id: string }[];
   };
   changeOrderList?: boolean;
+  divRef?: LegacyRef<HTMLDivElement> | undefined;
 }
 
-const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
+const MenuLineLayout = ({ data, changeOrderList = false, divRef }: MenuLineProps) => {
   const [optionValue, setOptionValue] = useState<string | number>(0);
 
   const indiMenuOptionSelectorHandler = (e: SelectChangeEvent<string | number>) => {
@@ -28,7 +29,7 @@ const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
 
   return (
     <ContentBox>
-      <div style={{ marginBottom: '5px' }}>
+      <div style={{ marginBottom: '5px' }} ref={divRef}>
         <Typography
           marginBottom={changeOrderList ? '8px' : '0'}
           color="text.secondary"
@@ -36,7 +37,7 @@ const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
           fontWeight={400}
           sx={{ fontSize: { xs: '4vw', md: '36px' } }}
         >
-          {data?.name}
+          {data?.pd_name}
         </Typography>
         {!changeOrderList && (
           <Typography
@@ -52,16 +53,16 @@ const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
         style={{
           display: 'flex',
           justifyContent:
-            (data?.optionArr && data?.optionArr?.length !== 0) || changeOrderList
+            (data?.option_arr && data?.option_arr?.length !== 0) || changeOrderList
               ? 'space-between'
               : 'right',
           alignItems: 'center',
         }}
       >
-        {data?.optionArr && !changeOrderList && data?.optionArr?.length !== 0 && (
+        {data?.option_arr && !changeOrderList && data?.option_arr?.length !== 0 && (
           <Selector
             value={optionValue}
-            optionArr={data?.optionArr}
+            optionArr={data?.option_arr}
             onChangeEvent={indiMenuOptionSelectorHandler}
             height="30px"
             xsFontSize="14px"
@@ -107,8 +108,8 @@ const MenuLineLayout = ({ data, changeOrderList = false }: MenuLineProps) => {
         >
           {(
             data?.price +
-            (data.optionArr?.length !== 0
-              ? Number(data.optionArr?.find((el) => el.value === optionValue)?.price)
+            (data.option_arr?.length !== 0
+              ? Number(data.option_arr?.find((el) => el.value === optionValue)?.price)
               : 0)
           ).toLocaleString('ko-KR')}{' '}
           ₩

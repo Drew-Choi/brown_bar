@@ -19,6 +19,7 @@ import { usePopup } from '@/hook/usePopup/usePopup';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axiosInstance from '@/axios/instance';
 import useScrollObserver from '@/hook/useObserver/useScrollObserver';
+import _ from 'lodash';
 
 const isInOneMonth = (startTime: string, endTime: string) => {
   const oneMonth = moment(startTime).add(1, 'months');
@@ -78,7 +79,6 @@ const OrderHistory = () => {
     status,
     fetchNextPage,
     hasNextPage,
-    refetch,
     isFetching,
     isError,
   } = useInfiniteQuery({
@@ -105,9 +105,17 @@ const OrderHistory = () => {
   const { isInView, elementRef } = useScrollObserver({ isOnlyTop: false });
 
   useEffect(() => {
-    if (isInView) {
-      !isFetching && hasNextPage && fetchNextPage();
-    }
+    const debounceAPI = _.debounce(() => {
+      if (isInView) {
+        !isFetching && hasNextPage && fetchNextPage();
+      }
+    }, 300);
+
+    debounceAPI();
+
+    return () => {
+      debounceAPI.cancel();
+    };
   }, [isInView, hasNextPage, isFetching, fetchNextPage]);
 
   if (isError) return <Box color="text.secondary">Fetching Error</Box>;

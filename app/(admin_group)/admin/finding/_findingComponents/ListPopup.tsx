@@ -17,6 +17,7 @@ import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { PRODUCT_LIST_TYPE } from '@/constant/TYPE';
+import _ from 'lodash';
 
 interface ListPopupProps {
   title?: string;
@@ -77,9 +78,17 @@ const ListPopup = ({
   const { isInView, elementRef } = useScrollObserver({ isOnlyTop: false });
 
   useEffect(() => {
-    if (isInView) {
-      !isFetching && hasNextPage && fetchNextPage();
-    }
+    const debounceAPI = _.debounce(() => {
+      if (isInView) {
+        !isFetching && hasNextPage && fetchNextPage();
+      }
+    }, 300);
+
+    debounceAPI();
+
+    return () => {
+      debounceAPI.cancel();
+    };
   }, [isInView, hasNextPage, isFetching, fetchNextPage]);
 
   // 체크박스
