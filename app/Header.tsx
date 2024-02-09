@@ -77,7 +77,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
   const [tb, setTb] = useState<string | null>(null);
 
   useEffect(() => {
-    if (pathName === '/main/menu') {
+    if (pathName === '/main/menu' || pathName === '/main/menu/order') {
       const tbData = sessionStorage.getItem('tb');
 
       if (!tbData) {
@@ -202,11 +202,12 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
                   padding: '0 10px',
                 }}
               >
-                Menu | T {tb}
+                Menu | T {tb === null ? '' : tb}
               </Box>
             ) : pathName === '/main/menu/order' || pathName === '/main/menu/order/final' ? (
               <Box fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
-                Order | <SubText fontSize="8vw" mdFontSize="72px">{`T ${tb}`}</SubText>
+                Order |{' '}
+                <SubText fontSize="8vw" mdFontSize="72px">{`T ${tb === null ? '' : tb}`}</SubText>
               </Box>
             ) : pathName === '/main/find/category' ||
               pathName === '/main/find/category/recommend' ||

@@ -1,8 +1,11 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material';
+import Box from '@mui/material/Box';
 import MenuLineLayout from '@/components/layout/MenuLineLayout';
 import Container from '@mui/material/Container';
+import { useRecoilState } from 'recoil';
+import { cartData } from '@/recoil/cart';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -10,67 +13,44 @@ const MainContainer = styled('main')`
   overflow: scroll;
 `;
 
-const data = [
-  {
-    name: '코일레 싱글빈야 까르베네쇼비뇽',
-    desc: '칠렌ㅁㅇㄴㅇㅇㅇㄴㅁㄴㅇㅁㄴㅇㅁㄴㅇㄴㅁㅇ',
-    price: 56000,
-    optionArr: [
-      { label: '- 옵션선택 -', value: 0 },
-      { label: '베일리스 + 1,000', value: 1000 },
-      { label: '베일리스 + 1,000', value: 1000 },
-      { label: '베일리스aaa + 1,000', value: 1000 },
-    ],
-  },
-  {
-    name: '코일레 싱글빈야 까르베네쇼비뇽',
-    desc: '칠렌ㅁㅇㄴㅇㅇㅇㄴㅁㄴㅇㅁㄴㅇㅁㄴㅇㄴㅁㅇ',
-    price: 56000,
-    optionArr: [{ label: '- 옵션선택 -', value: 0 }],
-  },
-  {
-    name: '코일레 싱글빈야 까르베네쇼비뇽',
-    desc: '칠렌ㅁㅇㄴㅇㅇㅇㄴㅁㄴㅇㅁㄴㅇㅁㄴㅇㄴㅁㅇ',
-    price: 56000,
-    optionArr: [],
-  },
-  {
-    name: '코일레 싱글빈야 까르베네쇼비뇽',
-    desc: '칠렌ㅁㅇㄴㅇㅇㅇㄴㅁㄴㅇㅁㄴㅇㅁㄴㅇㄴㅁㅇ',
-    price: 56000,
-    optionArr: [
-      { label: '- 옵션선택 -', value: 0 },
-      { label: '베일리스 + 3,000', value: 3000 },
-      { label: '베일리스 + 3,500', value: 3500 },
-      { label: '베일리스aaa + 5,000', value: 5000 },
-    ],
-  },
-  {
-    name: '코일레 싱글빈야 까르베네쇼비뇽',
-    desc: '칠렌ㅁㅇㄴㅇㅇㅇㄴㅁㄴㅇㅁㄴㅇㅁㄴㅇㄴㅁㅇ',
-    price: 56000,
-    optionArr: [],
-  },
-  {
-    name: '코일레 싱글빈야 까르베네쇼비뇽',
-    desc: '칠렌ㅁㅇㄴㅇㅇㅇㄴㅁㄴㅇㅁㄴㅇㅁㄴㅇㄴㅁㅇ',
-    price: 56000,
-    optionArr: [],
-  },
-  {
-    name: '코일레 싱글빈야 까르베네쇼비뇽',
-    desc: '칠렌ㅁㅇㄴㅇㅇㅇㄴㅁㄴㅇㅁㄴㅇㅁㄴㅇㄴㅁㅇ',
-    price: 56000,
-    optionArr: [],
-  },
-  {
-    name: '코일레 싱글빈야 까르베네쇼비뇽',
-    desc: '칠렌ㅁㅇㄴㅇㅇㅇㄴㅁㄴㅇㅁㄴㅇㅁㄴㅇㄴㅁㅇ',
-    price: 56000,
-    optionArr: [],
-  },
-];
 const Order = () => {
+  const [cartValue, setCartValue] = useRecoilState(cartData);
+  const [resetting, setResetting] = useState<boolean>(false);
+
+  useEffect(() => {
+    const cartValue = localStorage.getItem('cart');
+
+    if (cartValue) return setCartValue(JSON.parse(cartValue));
+  }, [resetting]);
+
+  const cartMenuRemoveHandler = (index: number) => {
+    const sessionData = localStorage.getItem('cart');
+
+    if (sessionData) {
+      const cartData: MenuType[] = JSON.parse(sessionData);
+      const newDataArr = cartData.filter((_, dataIndex) => dataIndex !== index);
+      localStorage.setItem('cart', JSON.stringify(newDataArr));
+      setResetting((cur) => !cur);
+    }
+  };
+
+  const cartQuantityHandler = (plus: boolean = true, index: number) => {
+    const sessionData = localStorage.getItem('cart');
+
+    if (sessionData) {
+      const cartData: MenuType[] = JSON.parse(sessionData);
+      const newDataArr = cartData.map((menu: MenuType, dataIndex) =>
+        dataIndex === index
+          ? plus
+            ? { ...menu, ea: menu.ea + 1 }
+            : { ...menu, ea: menu.ea === 1 ? 1 : menu.ea - 1 }
+          : menu,
+      );
+      localStorage.setItem('cart', JSON.stringify(newDataArr));
+      setResetting((cur) => !cur);
+    }
+  };
+
   return (
     <MainContainer>
       <Container
@@ -85,9 +65,25 @@ const Order = () => {
           height: '60vh',
         }}
       >
-        {data.map((el, index) => (
-          <MenuLineLayout data={el} key={index} changeOrderList={true} />
-        ))}
+        {cartValue?.length === 0 ? (
+          <Box
+            sx={{ color: 'text.secondary', fontSize: { xs: '4vw', md: '30px' } }}
+            textAlign="center"
+          >
+            카트가 비어있습니다.
+          </Box>
+        ) : (
+          cartValue.map((el, index) => (
+            <MenuLineLayout
+              data={el}
+              key={index}
+              changeOrderList={true}
+              onClickCartMenuRemove={() => cartMenuRemoveHandler(index)}
+              onClickCartPlus={() => cartQuantityHandler(true, index)}
+              onClickCartMinus={() => cartQuantityHandler(false, index)}
+            />
+          ))
+        )}
       </Container>
     </MainContainer>
   );

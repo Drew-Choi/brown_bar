@@ -72,6 +72,14 @@ declare global {
     pd_name: string;
     price: number;
     ea: number;
+    option:
+      | {
+          label?: string;
+          price?: number;
+          value?: number;
+          _id?: string;
+        }
+      | undefined;
   };
 
   interface OrderCardProps {

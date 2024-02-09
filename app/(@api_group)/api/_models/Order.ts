@@ -11,6 +11,13 @@ const orderSchema = new Schema(
         pd_name: { type: String, required: true },
         price: { type: Number, required: true },
         ea: { type: Number, required: true },
+        option: {
+          type: {
+            label: { type: String, required: true },
+            price: { type: Number, required: true },
+          },
+          default: {},
+        },
       },
     ],
     complete: { type: Boolean, required: true, default: false },

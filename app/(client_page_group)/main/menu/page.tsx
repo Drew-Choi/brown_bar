@@ -12,6 +12,8 @@ import axiosInstance from '@/axios/instance';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import useScrollObserver from '@/hook/useObserver/useScrollObserver';
 import _ from 'lodash';
+import { useSetRecoilState } from 'recoil';
+import { cartData } from '@/recoil/cart';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -21,6 +23,7 @@ const MainContainer = styled('main')`
 
 const Menu = () => {
   const [menuSelectorValue, setMenuSelectorValue] = useState<string | number | null>(null);
+  const setMenuData = useSetRecoilState(cartData);
 
   // 메뉴리스트 부르기
   const { data: menuList = [] } = useQueryInstance<
@@ -98,6 +101,48 @@ const Menu = () => {
     };
   }, [isInView, hasNextPage, isFetching, fetchNextPage]);
 
+  const addMenuHandler = (el: ProductInfoType, optionValue: string | number) => {
+    const newMenuData: MenuType = {
+      _id: el._id,
+      pd_name: el.pd_name,
+      price: el.price,
+      ea: 1,
+      option:
+        optionValue === 0 || !optionValue
+          ? {}
+          : el.option_arr?.find((el) => el.value === optionValue),
+    };
+
+    const cartData = localStorage.getItem('cart');
+
+    if (!cartData) {
+      localStorage.setItem('cart', JSON.stringify([newMenuData]));
+      setMenuData([newMenuData]);
+    } else {
+      const cartDataParse: MenuType[] = JSON.parse(cartData);
+      // // 이미 카트에 있는 메뉴 체크
+      const isExisting = cartDataParse.some((menu: MenuType) =>
+        menu.option
+          ? menu.option?._id === newMenuData.option?._id && menu._id === newMenuData._id
+          : menu._id === newMenuData._id,
+      );
+
+      let newArr: MenuType[] = [];
+      if (isExisting) {
+        newArr = cartDataParse.map((menu: MenuType) =>
+          menu._id === newMenuData._id && menu.option?._id === newMenuData.option?._id
+            ? { ...menu, ea: menu.ea + 1 }
+            : menu,
+        );
+      } else {
+        newArr = [...cartDataParse, newMenuData];
+      }
+
+      localStorage.setItem('cart', JSON.stringify(newArr));
+      setMenuData(newArr);
+    }
+  };
+
   if (isError) return <Box>Fetching Error</Box>;
 
   return (
@@ -128,7 +173,13 @@ const Menu = () => {
           subSx={{ textAlign: 'center' }}
         />
         <Box sx={{ padding: '10px 10px', height: '60vh', overflowY: 'scroll' }}>
-          {productList?.map((el, index) => <MenuLineLayout data={el} key={index} />)}
+          {productList?.map((el, index) => (
+            <MenuLineLayout
+              data={el}
+              key={index}
+              onClickMenuPlus={(optionValue) => addMenuHandler(el, optionValue)}
+            />
+          ))}
           {status !== 'pending' && (
             <div
               ref={elementRef}

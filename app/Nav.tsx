@@ -2,19 +2,32 @@
 import { COLORS } from '@/asset/style';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import Cork from '@/components/svg/Cork';
+import { cartData, cartQuantity } from '@/recoil/cart';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsCartPlusFill } from 'react-icons/bs';
 import { RiHome4Fill } from 'react-icons/ri';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const pathName = usePathname();
   const router = useRouter();
+
+  const quantity = useRecoilValue(cartQuantity);
+  const setCartValue = useSetRecoilState(cartData);
+
+  useEffect(() => {
+    if (pathName === '/main/menu') {
+      const cartValue = localStorage.getItem('cart');
+
+      if (cartValue) return setCartValue(JSON.parse(cartValue));
+    }
+  }, [pathName]);
 
   if (pathName === '/') return;
 
@@ -102,7 +115,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
                   transform: 'translate(-50%, -50%)',
                 }}
               >
-                {'10'}
+                {quantity}
               </Typography>
             </Box>
             <BsCartPlusFill size="32%" color={COLORS.info} />
