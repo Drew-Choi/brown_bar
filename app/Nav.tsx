@@ -2,13 +2,16 @@
 import { COLORS } from '@/asset/style';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import Cork from '@/components/svg/Cork';
-import { cartData, cartQuantity } from '@/recoil/cart';
+import { USE_MUTATE_POINT } from '@/constant/END_POINT';
+import { usePopup } from '@/hook/usePopup/usePopup';
+import { useMutationInstance } from '@/react-query/useMutationInstance';
+import { cartData, cartOrderData, cartQuantity } from '@/recoil/cart';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsCartPlusFill } from 'react-icons/bs';
 import { RiHome4Fill } from 'react-icons/ri';
@@ -17,9 +20,13 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const pathName = usePathname();
   const router = useRouter();
+  const [tb, setTb] = useState<string | null>(null);
+  const { openPopup } = usePopup();
 
   const quantity = useRecoilValue(cartQuantity);
   const setCartValue = useSetRecoilState(cartData);
+
+  const finalCartMenuOrder = useRecoilValue(cartOrderData);
 
   useEffect(() => {
     if (pathName === '/main/menu') {
@@ -28,6 +35,49 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
       if (cartValue) return setCartValue(JSON.parse(cartValue));
     }
   }, [pathName]);
+
+  useEffect(() => {
+    if (pathName === '/main/menu/order' || pathName === '/main') {
+      const cartValue = sessionStorage.getItem('tb');
+
+      if (cartValue) {
+        const cartParseTb = JSON.parse(cartValue)?.tb;
+        setTb(cartParseTb);
+      } else {
+        setTb(null);
+        return router.push('/not_tb');
+      }
+    }
+  }, [pathName]);
+
+  const { mutate: addOrderAPI } = useMutationInstance<
+    undefined,
+    undefined,
+    { tb_idx: number; menu: MenuCartFullType[] }
+  >({
+    apiMethod: 'post',
+    apiEndPoint: USE_MUTATE_POINT.ORDER_ADD,
+    onErrorFn: (err: any) => {
+      console.error(err);
+      if (err.response.status === 400)
+        return openPopup({ title: '오류', content: err.response.data.message });
+      openPopup({ title: '오류', content: '다시 시도해주세요.' });
+    },
+    onSuccessFn: () => {
+      localStorage.removeItem('cart');
+      setCartValue([]);
+      router.push('/main/menu/order/final');
+    },
+  });
+
+  const addOrderHandler = () => {
+    addOrderAPI({
+      apiBody: {
+        tb_idx: Number(tb),
+        menu: finalCartMenuOrder,
+      },
+    });
+  };
 
   if (pathName === '/') return;
 
@@ -123,16 +173,22 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
         )}
 
         {pathName === '/main/menu/order' && (
-          <ButtonNomal
-            sx={{ fontWeight: '700', fontSize: '5vw' }}
-            onClickEvent={() => router.push('/main/menu/order/final')}
-          >
+          <ButtonNomal sx={{ fontWeight: '700', fontSize: '5vw' }} onClickEvent={addOrderHandler}>
             주문하기
           </ButtonNomal>
         )}
 
         {pathName === '/main/menu/order/final' && (
           <RiHome4Fill size="32%" color={COLORS.info} onClick={() => router.push('/main')} />
+        )}
+
+        {pathName === '/main' && (
+          <ButtonNomal
+            sx={{ fontWeight: '600' }}
+            onClickEvent={() => router.push('/main/menu/order/final')}
+          >
+            T{tb} 주문내역
+          </ButtonNomal>
         )}
       </Box>
     </Container>

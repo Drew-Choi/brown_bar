@@ -272,7 +272,7 @@ const ListPopup = ({
             ))}
         </ContentBox>
 
-        <Box sx={{ marginTop: '5px', padding: '0 15px', textAlign: 'right' }}>
+        <Box sx={{ marginTop: '5px', marginBottom: '5px', padding: '0 15px', textAlign: 'right' }}>
           <ButtonNomal
             sx={{ padding: '0', fontSize: '12px', fontWeight: '600' }}
             onClickEvent={addProductHandler}
@@ -281,7 +281,18 @@ const ListPopup = ({
           </ButtonNomal>
         </Box>
 
-        <Grid container rowSpacing={1} sx={{ width: '100%', padding: '20px 10px 30px 10px' }}>
+        <Grid
+          container
+          rowSpacing={1}
+          sx={{
+            width: '95%',
+            height: '400px',
+            margin: 'auto',
+            overflowY: 'scroll',
+            borderRadius: '10px',
+            padding: '20px 10px 30px 10px',
+          }}
+        >
           {data?.map((el: ProductNewListType) => (
             <Grid key={el._id} xs={12}>
               <Box

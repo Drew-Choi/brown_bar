@@ -67,20 +67,27 @@ declare global {
   }
 
   // 영업시작 파트
-  type MenuType = {
+  type MenuOptionType = {
+    label?: string;
+    price?: number;
+    value?: number;
+    _id?: string;
+  };
+
+  interface MenuType {
     _id: string;
     pd_name: string;
     price: number;
     ea: number;
-    option:
-      | {
-          label?: string;
-          price?: number;
-          value?: number;
-          _id?: string;
-        }
-      | undefined;
-  };
+    option: MenuOptionType | undefined;
+  }
+
+  // 기존 메뉴타입에서 필요없느 것 제외 - client페이지 menu/order
+  type MenuCartOption = Omit<MenuOptionType, 'value'>;
+
+  interface MenuCartFullType extends Omit<MenuType, 'option'> {
+    option: MenuCartOption;
+  }
 
   interface OrderCardProps {
     order_idx: string;

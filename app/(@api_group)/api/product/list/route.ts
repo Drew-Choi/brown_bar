@@ -66,9 +66,10 @@ export async function GET(req: NextRequest) {
       };
       exception = '-desc -img_url -option_arr -category_idx -category -finding_section';
     } else if (!search && section_id && type) {
+      const typeNumber = Number(type);
       const objId = new ObjectId(section_id);
       query = { finding_section: objId };
-      exception = '-desc -img_url -option_arr -finding_section';
+      exception = typeNumber === 2 ? '' : '-desc -img_url -option_arr -finding_section';
     } else {
       query = {};
     }

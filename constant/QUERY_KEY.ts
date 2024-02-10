@@ -7,4 +7,5 @@ export const QUERY_KEY = {
   ORDER_HISTORY: 'order_history',
   FINDING_INTRO: 'finding_intro',
   FINDING_SECTION_LIST: 'finding_section_list',
+  PRODUCT_DETAIL: 'product_detail',
 };

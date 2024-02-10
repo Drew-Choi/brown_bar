@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     if (!result) return NextResponse.json({ message: 'DB Error' }, { status: 500 });
 
-    return NextResponse.json({ message: '주문 성공', data: result }, { status: 200 });
+    return NextResponse.json({ message: '주문 성공' }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

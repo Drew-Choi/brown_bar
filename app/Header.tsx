@@ -72,12 +72,16 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
   const sectionName = search.get('section_name');
   const eng = search.get('eng');
   const kor = search.get('kor');
-  const { idx, about_idx } = useParams();
+  const { id, about_idx } = useParams();
 
   const [tb, setTb] = useState<string | null>(null);
 
   useEffect(() => {
-    if (pathName === '/main/menu' || pathName === '/main/menu/order') {
+    if (
+      pathName === '/main/menu' ||
+      pathName === '/main/menu/order' ||
+      pathName === '/main/menu/order/final'
+    ) {
       const tbData = sessionStorage.getItem('tb');
 
       if (!tbData) {
@@ -212,7 +216,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             ) : pathName === '/main/find/category' ||
               pathName === '/main/find/category/recommend' ||
               pathName === '/main/find/category/recommend/section' ||
-              pathName === `/main/menu/detail/${idx}` ||
+              pathName === `/main/menu/detail/${id}` ||
               pathName === `/main/about/detail/${about_idx}` ? (
               <Box
                 sx={{ fontSize: eng && kor ? { xs: '6vw', md: '54px' } : 'inherit' }}

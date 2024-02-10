@@ -2,13 +2,24 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import Order from '@/app/(@api_group)/api/_models/Order';
 
+type FilterType = {
+  pay: boolean;
+  tb_idx?: number;
+};
+
 export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
-    const result: OrderCardProps[] = await Order.find({
-      pay: false,
-    }).select('-_id -__v');
+    const searchParams = req.nextUrl.searchParams;
+    const tb = searchParams.get('tb');
+
+    let filter: FilterType = { pay: false };
+    if (tb) {
+      filter = { ...filter, tb_idx: Number(tb) };
+    }
+
+    const result: OrderCardProps[] = await Order.find(filter).select('-_id -__v');
 
     if (!result) return NextResponse.json({ message: 'DB Error' }, { status: 500 });
 

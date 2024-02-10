@@ -7,6 +7,11 @@ import { styled } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { useQueryInstance } from '@/react-query/useQueryInstance';
+import { QUERY_KEY } from '@/constant/QUERY_KEY';
+import { USE_QUERY_POINT } from '@/constant/END_POINT';
+import { FINDING_TYPE, SUB_CATEGORY_TYPE } from '@/constant/TYPE';
+import Empty from '@/components/Empty';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -17,28 +22,58 @@ const MainContainer = styled('main')`
   transform: translateY(-50%);
 `;
 
-const data = [
-  { class: 'beginner', section: '하하하하하하하하하하하하하하하하하하하하', idx: 1 },
-  { class: 'beginner', section: '과일 & 우디 & 허니', idx: 2 },
-  { class: 'beginner', section: '과일 & 스모키', idx: 3 },
-  { class: 'explorer', section: '쉐리캐스크 or 버번캐스크', idx: 4 },
-  { class: 'explorer', section: '쉐리 & 피트', idx: 5 },
-  { class: 'explorer', section: '피트', idx: 6 },
-  { class: 'oldwater', section: '몰라1', idx: 7 },
-  { class: 'oldwater', section: '몰라2', idx: 8 },
-  { class: 'oldwater', section: '몰라3', idx: 9 },
-  { class: 'oldwater', section: '몰라1', idx: 7 },
-  { class: 'oldwater', section: '몰라2', idx: 8 },
-  { class: 'oldwater', section: '몰라3', idx: 9 },
-  { class: 'oldwater', section: '몰라1', idx: 7 },
-  { class: 'oldwater', section: '몰라2', idx: 8 },
-  { class: 'oldwater', section: '몰라3', idx: 9 },
-];
-
 const Recommend = ({ searchParams }: { searchParams: { class: string; choice: string } }) => {
   const { class: userClass, choice } = searchParams;
 
   const router = useRouter();
+
+  const finding_idx =
+    userClass === 'Beginner'
+      ? FINDING_TYPE.BEGINNER
+      : userClass === 'Explorer'
+        ? FINDING_TYPE.EXPLORER
+        : FINDING_TYPE.OLDWATER;
+
+  const sub_category_idx =
+    choice === '몰트 위스키 류'
+      ? SUB_CATEGORY_TYPE.MALT
+      : choice === '아메리칸 위스키 류'
+        ? SUB_CATEGORY_TYPE.AMERICAN
+        : choice === '와인 류'
+          ? SUB_CATEGORY_TYPE.WINE
+          : choice === '브랜디 꼬냑 류'
+            ? SUB_CATEGORY_TYPE.BRANDY
+            : choice === '럼 류'
+              ? SUB_CATEGORY_TYPE.RUM
+              : SUB_CATEGORY_TYPE.TEQUILA;
+
+  // 인트로문구 패칭
+  const { data: { data: introTextData } = { data: undefined }, isError: introIsError } =
+    useQueryInstance<{ data: FindingIntroType }>({
+      queryKey: [QUERY_KEY.FINDING_INTRO, String(finding_idx)],
+      apiMethod: 'get',
+      apiEndPoint: USE_QUERY_POINT.FINDING_INTRO,
+      apiQueryParams: {
+        finding_idx,
+      },
+    });
+
+  // 주류별 하위메뉴 불러오기
+  const {
+    data: { data: { section_list: sectionListData } } = { data: { section_list: [] } },
+    isError: sectionListError,
+  } = useQueryInstance<{ data: FindingSectionType }>({
+    queryKey: [QUERY_KEY.FINDING_SECTION_LIST, String(finding_idx), String(sub_category_idx)],
+    apiMethod: 'get',
+    apiEndPoint: USE_QUERY_POINT.FINDING_SECTION_LIST,
+    apiQueryParams: {
+      finding_idx,
+      sub_category_idx,
+    },
+  });
+
+  if (introIsError || sectionListError)
+    return <Box sx={{ color: 'text.secondary', padding: '20px' }}>Fetching Error</Box>;
 
   return (
     <MainContainer>
@@ -84,20 +119,22 @@ const Recommend = ({ searchParams }: { searchParams: { class: string; choice: st
           </Typography>
           <ContentBox>
             <Typography color="text.secondary" sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}>
-              처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처처
+              {introTextData?.intro_text}
             </Typography>
           </ContentBox>
         </Box>
 
         <Box display="flex" flexDirection="column" maxHeight="26vh" overflow="scroll" gap="5px">
-          {data?.map((el, index) =>
-            userClass?.toLocaleLowerCase() === el.class ? (
+          {sectionListData?.length === 0 ? (
+            <Empty title="등록된 카테고리가 없습니다." />
+          ) : (
+            sectionListData?.map((el, index) => (
               <ButtonWide
                 padding="3%"
                 key={index}
                 onClickEvent={() =>
                   router.push(
-                    `/main/find/category/recommend/section?class=${userClass}&choice=${choice}&section=${el.idx}&section_name=${el.section}`,
+                    `/main/find/category/recommend/section?class=${userClass}&choice=${choice}&section=${el._id}&section_name=${el.title}`,
                   )
                 }
               >
@@ -106,10 +143,10 @@ const Recommend = ({ searchParams }: { searchParams: { class: string; choice: st
                   fontWeight="700"
                   sx={{ fontSize: { xs: '4.5vw', md: '40px' } }}
                 >
-                  {el.section}
+                  {el.title}
                 </Typography>
               </ButtonWide>
-            ) : null,
+            ))
           )}
         </Box>
       </Box>

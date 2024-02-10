@@ -13,8 +13,8 @@ const orderSchema = new Schema(
         ea: { type: Number, required: true },
         option: {
           type: {
-            label: { type: String, required: true },
-            price: { type: Number, required: true },
+            label: { type: String },
+            price: { type: Number },
           },
           default: {},
         },
