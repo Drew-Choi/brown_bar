@@ -14,6 +14,7 @@ import useScrollObserver from '@/hook/useObserver/useScrollObserver';
 import _ from 'lodash';
 import { useSetRecoilState } from 'recoil';
 import { cartData } from '@/recoil/cart';
+import { useRouter } from 'next/navigation';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -22,6 +23,8 @@ const MainContainer = styled('main')`
 `;
 
 const Menu = () => {
+  const router = useRouter();
+
   const [menuSelectorValue, setMenuSelectorValue] = useState<string | number | null>(null);
   const setMenuData = useSetRecoilState(cartData);
 
@@ -178,6 +181,8 @@ const Menu = () => {
               data={el}
               key={index}
               onClickMenuPlus={(optionValue) => addMenuHandler(el, optionValue)}
+              // 디테일 페이지 이동 말고, 그냥 내부 팝업으로해서 카트 담기 좋게하자
+              onClickProductName={() => {}}
             />
           ))}
           {status !== 'pending' && (

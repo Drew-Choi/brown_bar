@@ -101,11 +101,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
     return;
   }, [pathName]);
 
-  if (pathName === '/') return;
-
-  if (pathName === '/not-found') return;
-
-  if (pathName === '/not_tb') return;
+  if (pathName === '/' || pathName === '/not-found' || pathName === '/not_tb') return;
 
   if (pathName.startsWith('/admin'))
     return (
@@ -189,7 +185,8 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
         {pathName === '/main/find' ||
         pathName === '/main' ||
         pathName === '/' ||
-        pathName === '/main/about' ? (
+        pathName === '/main/about' ||
+        (!sectionName && !useClass && !choice && !eng && !kor) ? (
           <Tag skeleton={true}>
             <Box fontSize="inherit">tag</Box>
           </Tag>

@@ -1,6 +1,7 @@
 'use client';
 import ButtonWide from '@/components/buttons/ButtonWide';
 import SectionContainer from '@/components/layout/SectionContainer';
+import { usePopup } from '@/hook/usePopup/usePopup';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
@@ -8,6 +9,8 @@ import React, { useEffect, useState } from 'react';
 
 const Main = () => {
   const router = useRouter();
+  const { openPopup } = usePopup();
+
   const [intro, setIntro] = useState<boolean>(false);
 
   useEffect(() => {
@@ -72,7 +75,8 @@ const Main = () => {
         <ButtonWide
           fontSize={{ xs: '8vw', md: '72px' }}
           padding="8% 2%"
-          onClickEvent={() => router.push('/main/about')}
+          // onClickEvent={() => router.push('/main/party')}
+          onClickEvent={() => openPopup({ title: '안내', content: '서비스 준비 중' })}
         >
           <Typography fontSize="inherit" fontWeight={700} lineHeight={1.2}>
             A TASTING PARTY

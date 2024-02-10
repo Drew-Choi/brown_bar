@@ -22,6 +22,7 @@ interface MenuLineProps {
   onClickCartPlus?: () => void;
   onClickCartMinus?: () => void;
   onClickCartMenuRemove?: () => void;
+  onClickProductName?: () => void;
 }
 
 const MenuLineLayout = ({
@@ -31,6 +32,7 @@ const MenuLineLayout = ({
   onClickCartPlus,
   onClickCartMinus,
   onClickCartMenuRemove,
+  onClickProductName,
 }: MenuLineProps) => {
   const [optionValue, setOptionValue] = useState<string | number>(0);
 
@@ -48,6 +50,7 @@ const MenuLineLayout = ({
           gutterBottom={true}
           fontWeight={400}
           sx={{ fontSize: { xs: '4vw', md: '36px' } }}
+          onClick={onClickProductName}
         >
           {data?.pd_name}
         </Typography>
