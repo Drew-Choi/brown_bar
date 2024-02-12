@@ -29,7 +29,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const finalCartMenuOrder = useRecoilValue(cartOrderData);
 
   useEffect(() => {
-    if (pathName === '/main/menu') {
+    if (pathName === '/main/menu' || pathName.startsWith('/main/menu/detail')) {
       const cartValue = localStorage.getItem('cart');
 
       if (cartValue) return setCartValue(JSON.parse(cartValue));
@@ -38,11 +38,11 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
 
   useEffect(() => {
     if (pathName === '/main/menu/order' || pathName === '/main') {
-      const cartValue = sessionStorage.getItem('tb');
+      const tbValue = sessionStorage.getItem('tb');
 
-      if (cartValue) {
-        const cartParseTb = JSON.parse(cartValue)?.tb;
-        setTb(cartParseTb);
+      if (tbValue) {
+        const parseTb = JSON.parse(tbValue)?.tb;
+        setTb(parseTb);
       } else {
         setTb(null);
         return router.push('/not_tb');
@@ -132,14 +132,15 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
           pathName !== '/main' &&
           pathName !== '/main/menu' &&
           pathName !== '/main/menu/order' &&
-          pathName !== '/main/menu/order/final' && (
+          pathName !== '/main/menu/order/final' &&
+          !pathName.startsWith('/main/menu/detail') && (
             <BiSolidFoodMenu
               size="32%"
               color={COLORS.info}
               onClick={() => router.push('/main/menu')}
             />
           )}
-        {pathName === '/main/menu' && (
+        {(pathName === '/main/menu' || pathName.startsWith('/main/menu/detail')) && (
           <Box sx={{ position: 'relative' }} onClick={() => router.push('/main/menu/order')}>
             <Box
               sx={{

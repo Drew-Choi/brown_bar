@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material';
 import Box from '@mui/material/Box';
 import MenuLineLayout from '@/components/layout/MenuLineLayout';
@@ -23,7 +23,7 @@ const Order = () => {
     if (cartValue) return setCartValue(JSON.parse(cartValue));
   }, [resetting]);
 
-  const cartMenuRemoveHandler = (index: number) => {
+  const cartMenuRemoveHandler = useCallback((index: number) => {
     const sessionData = localStorage.getItem('cart');
 
     if (sessionData) {
@@ -32,9 +32,9 @@ const Order = () => {
       localStorage.setItem('cart', JSON.stringify(newDataArr));
       setResetting((cur) => !cur);
     }
-  };
+  }, []);
 
-  const cartQuantityHandler = (plus: boolean = true, index: number) => {
+  const cartQuantityHandler = useCallback((plus: boolean = true, index: number) => {
     const sessionData = localStorage.getItem('cart');
 
     if (sessionData) {
@@ -49,7 +49,7 @@ const Order = () => {
       localStorage.setItem('cart', JSON.stringify(newDataArr));
       setResetting((cur) => !cur);
     }
-  };
+  }, []);
 
   return (
     <MainContainer>
