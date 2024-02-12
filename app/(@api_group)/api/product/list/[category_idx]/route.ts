@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: { category_idx
     // 프로젝션 구성
     let exception = `-created_at -updated_at -__v`;
     if (is_client === 1) {
-      exception += `-finding_section`;
+      exception += ` -finding_section`;
     }
 
     const List: ProductNewListType[] = await Product.find({ category_idx })

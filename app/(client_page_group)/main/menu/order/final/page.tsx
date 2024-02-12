@@ -101,7 +101,7 @@ const Fianl = () => {
           {tbOrderList?.length === 0 ? (
             <Empty title="주문내역이 없습니다." />
           ) : (
-            tbOrderList?.map((el, index) => <FianlLineLayout key={index} data={el} />)
+            tbOrderList?.map((el, index) => <FianlLineLayout key={el.order_idx} data={el} />)
           )}
         </Container>
       </MainContainer>

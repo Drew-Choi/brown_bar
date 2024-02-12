@@ -161,8 +161,8 @@ const MenuLineLayout = ({
             cursor: 'pointer',
           }}
           onClick={() => {
-            setOptionValue(0);
             onClickMenuPlus && onClickMenuPlus(optionValue);
+            setOptionValue(0);
           }}
         />
       ) : (

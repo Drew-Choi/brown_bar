@@ -77,7 +77,11 @@ const Detail = ({
         />
       </Box>
       <ContentBox sx={{ height: '32vh', overflow: 'scroll' }}>
-        <Typography padding={1} sx={{ fontSize: { xs: '4vw', md: '36px' } }} color="text.secondary">
+        <Typography
+          padding={1}
+          sx={{ fontSize: { xs: '4vw', md: '36px' }, wordBreak: 'break-all' }}
+          color="text.secondary"
+        >
           {data?.desc ? data.desc : cacheData?.desc}
         </Typography>
       </ContentBox>

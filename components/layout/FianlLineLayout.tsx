@@ -33,9 +33,9 @@ const FianlLineLayout = ({ data }: { data: OrderCardProps }) => {
         </Typography>
       </Box>
       <Box sx={{ maxHeight: '150px', overflowY: 'scroll' }}>
-        {data.menu.map((menu) => (
+        {data.menu.map((menu, index) => (
           <Box
-            key={menu._id}
+            key={`${data.order_idx}_${menu._id}_${index}`}
             sx={{
               border: '1px solid' + COLORS.background.paper,
               borderRadius: '10px',

@@ -54,9 +54,12 @@ export async function POST(req: NextRequest) {
             // 옵션항목 있을 시 파싱, 없으면 [] 빈배열
             if (option && option !== '') {
               const optionParse = typeof option === 'string' ? JSON.parse(option) : null;
-              updateData.option_arr = optionParse
-                ? [{ label: '- 옵션선택 -', value: 0, price: 0 }, ...optionParse]
-                : [];
+              updateData.option_arr =
+                optionParse && optionParse?.length === 0
+                  ? []
+                  : optionParse && optionParse.optionParse?.length !== 0
+                    ? [{ label: '- 옵션선택 -', value: 0, price: 0 }, ...optionParse]
+                    : [];
             }
             await connectDB();
 
@@ -88,9 +91,13 @@ export async function POST(req: NextRequest) {
       // 옵션항목 있을 시 파싱, 없으면 [] 빈배열
       if (option && option !== '') {
         const optionParse = typeof option === 'string' ? JSON.parse(option) : null;
-        updateData.option_arr = optionParse
-          ? [{ label: '- 옵션선택 -', value: 0, price: 0 }, ...optionParse]
-          : [];
+
+        updateData.option_arr =
+          optionParse && optionParse?.length === 0
+            ? []
+            : optionParse && optionParse.optionParse?.length !== 0
+              ? [{ label: '- 옵션선택 -', value: 0, price: 0 }, ...optionParse]
+              : [];
       }
       await connectDB();
 

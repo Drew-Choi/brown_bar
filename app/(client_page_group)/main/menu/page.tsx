@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SelectChangeEvent, styled } from '@mui/material';
 import Box from '@mui/material/Box';
 import MenuLineLayout from '@/components/layout/MenuLineLayout';
@@ -15,6 +15,9 @@ import _ from 'lodash';
 import { useSetRecoilState } from 'recoil';
 import { cartData } from '@/recoil/cart';
 import { useRouter } from 'next/navigation';
+import DetailPopup from './_menuComponents/DetailPopup';
+import { COLORS } from '@/asset/style';
+import Empty from '@/components/Empty';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -26,6 +29,25 @@ const Menu = () => {
   const router = useRouter();
 
   const [menuSelectorValue, setMenuSelectorValue] = useState<string | number | null>(null);
+  // 상품디테일 팝업
+  const [onProduct, setOnProduct] = useState<{
+    on: boolean;
+    _id: string;
+    pd_name: string;
+    price: number;
+    desc: string;
+    img_url: string;
+    option_arr: ProductOptionType[];
+  }>({
+    on: false,
+    _id: '',
+    pd_name: '',
+    price: 0,
+    desc: '',
+    img_url: '',
+    option_arr: [],
+  });
+
   const setMenuData = useSetRecoilState(cartData);
 
   // 메뉴리스트 부르기
@@ -104,52 +126,109 @@ const Menu = () => {
     };
   }, [isInView, hasNextPage, isFetching, fetchNextPage]);
 
-  const addMenuHandler = (el: ProductInfoType, optionValue: string | number) => {
-    const newMenuData: MenuType = {
-      _id: el._id,
-      pd_name: el.pd_name,
-      price: el.price,
-      ea: 1,
-      option:
-        optionValue === 0 || !optionValue
-          ? {}
-          : el.option_arr?.find((el) => el.value === optionValue),
-    };
+  const addMenuHandler = useCallback(
+    (
+      el: {
+        _id: string;
+        pd_name: string;
+        price: number;
+        option_arr: ProductOptionType[];
+      },
+      optionValue: string | number,
+      isPopup: boolean = false,
+    ) => {
+      const newMenuData: MenuType = {
+        _id: el._id,
+        pd_name: el.pd_name,
+        price: el.price,
+        ea: 1,
+        option:
+          optionValue === 0 || !optionValue
+            ? {}
+            : el.option_arr?.find((el) => el.value === optionValue),
+      };
 
-    const cartData = localStorage.getItem('cart');
+      const cartData = localStorage.getItem('cart');
 
-    if (!cartData) {
-      localStorage.setItem('cart', JSON.stringify([newMenuData]));
-      setMenuData([newMenuData]);
-    } else {
-      const cartDataParse: MenuType[] = JSON.parse(cartData);
-      // // 이미 카트에 있는 메뉴 체크
-      const isExisting = cartDataParse.some((menu: MenuType) =>
-        menu.option
-          ? menu.option?._id === newMenuData.option?._id && menu._id === newMenuData._id
-          : menu._id === newMenuData._id,
-      );
-
-      let newArr: MenuType[] = [];
-      if (isExisting) {
-        newArr = cartDataParse.map((menu: MenuType) =>
-          menu._id === newMenuData._id && menu.option?._id === newMenuData.option?._id
-            ? { ...menu, ea: menu.ea + 1 }
-            : menu,
-        );
+      if (!cartData) {
+        localStorage.setItem('cart', JSON.stringify([newMenuData]));
+        setMenuData([newMenuData]);
+        isPopup &&
+          setOnProduct((cur) => ({
+            ...cur,
+            on: false,
+            _id: '',
+            pd_name: '',
+            price: 0,
+            desc: '',
+            img_url: '',
+            option_arr: [],
+          }));
       } else {
-        newArr = [...cartDataParse, newMenuData];
-      }
+        const cartDataParse: MenuType[] = JSON.parse(cartData);
+        // // 이미 카트에 있는 메뉴 체크
+        const isExisting = cartDataParse.some((menu: MenuType) =>
+          menu.option
+            ? menu.option?._id === newMenuData.option?._id && menu._id === newMenuData._id
+            : menu._id === newMenuData._id,
+        );
 
-      localStorage.setItem('cart', JSON.stringify(newArr));
-      setMenuData(newArr);
-    }
-  };
+        let newArr: MenuType[] = [];
+        if (isExisting) {
+          newArr = cartDataParse.map((menu: MenuType) =>
+            menu._id === newMenuData._id && menu.option?._id === newMenuData.option?._id
+              ? { ...menu, ea: menu.ea + 1 }
+              : menu,
+          );
+        } else {
+          newArr = [...cartDataParse, newMenuData];
+        }
+
+        localStorage.setItem('cart', JSON.stringify(newArr));
+        setMenuData(newArr);
+        isPopup &&
+          setOnProduct((cur) => ({
+            ...cur,
+            on: false,
+            _id: '',
+            pd_name: '',
+            price: 0,
+            desc: '',
+            img_url: '',
+            option_arr: [],
+          }));
+      }
+    },
+    [],
+  );
 
   if (isError) return <Box>Fetching Error</Box>;
 
   return (
     <MainContainer>
+      {onProduct.on && (
+        <DetailPopup
+          data={onProduct}
+          onClickClose={() =>
+            setOnProduct((cur) => ({
+              ...cur,
+              on: false,
+              _id: '',
+              pd_name: '',
+              price: 0,
+              desc: '',
+              img_url: '',
+              option_arr: [],
+            }))
+          }
+          onClickAddCart={(data, optionValue) => addMenuHandler(data, optionValue, true)}
+          titleSx={{
+            color: COLORS.text.secondary,
+            fontWeight: '600',
+            fontSize: '15px',
+          }}
+        />
+      )}
       <Container
         sx={{
           position: 'relative',
@@ -164,7 +243,6 @@ const Menu = () => {
       >
         <Selector
           textAlign="center"
-          // 나중에 데이터 받아야 함
           optionArr={menuList}
           value={menuSelectorValue || 'loding'}
           fontWeight="600"
@@ -176,15 +254,29 @@ const Menu = () => {
           subSx={{ textAlign: 'center' }}
         />
         <Box sx={{ padding: '10px 10px', height: '60vh', overflowY: 'scroll' }}>
-          {productList?.map((el, index) => (
-            <MenuLineLayout
-              data={el}
-              key={index}
-              onClickMenuPlus={(optionValue) => addMenuHandler(el, optionValue)}
-              // 디테일 페이지 이동 말고, 그냥 내부 팝업으로해서 카트 담기 좋게하자
-              onClickProductName={() => {}}
-            />
-          ))}
+          {productList?.length === 0 ? (
+            <Empty title="등록된 상품이 없습니다." />
+          ) : (
+            productList?.map((el: ProductNewListType, index: number) => (
+              <MenuLineLayout
+                data={el}
+                key={index}
+                onClickMenuPlus={(optionValue) => addMenuHandler(el, optionValue)}
+                onClickProductName={() =>
+                  setOnProduct((cur) => ({
+                    ...cur,
+                    on: true,
+                    _id: el._id,
+                    pd_name: el.pd_name,
+                    price: el.price,
+                    desc: el.desc,
+                    img_url: el.img_url,
+                    option_arr: el.option_arr,
+                  }))
+                }
+              />
+            ))
+          )}
           {status !== 'pending' && (
             <div
               ref={elementRef}
