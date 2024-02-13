@@ -18,9 +18,9 @@ const Order = () => {
   const [resetting, setResetting] = useState<boolean>(false);
 
   useEffect(() => {
-    const cartValue = localStorage.getItem('cart');
+    const localCartValue = localStorage.getItem('cart');
 
-    if (cartValue) return setCartValue(JSON.parse(cartValue));
+    if (localCartValue) return setCartValue(JSON.parse(localCartValue));
   }, [resetting]);
 
   const cartMenuRemoveHandler = useCallback((index: number) => {

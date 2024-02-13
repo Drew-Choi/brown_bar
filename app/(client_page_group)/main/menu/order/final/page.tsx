@@ -41,10 +41,10 @@ const Fianl = () => {
   const [tb, setTb] = useState<string | null>(null);
 
   useEffect(() => {
-    const cartValue = sessionStorage.getItem('tb');
+    const localCartValue = sessionStorage.getItem('tb');
 
-    if (cartValue) {
-      const cartParseTb = JSON.parse(cartValue)?.tb;
+    if (localCartValue) {
+      const cartParseTb = JSON.parse(localCartValue)?.tb;
       setTb(cartParseTb);
     } else {
       setTb(null);

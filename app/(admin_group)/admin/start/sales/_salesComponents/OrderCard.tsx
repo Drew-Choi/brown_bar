@@ -69,11 +69,24 @@ const OrderCard = ({
           <React.Fragment key={index}>
             <Grid xs={4}>
               <Typography>{menu.pd_name}</Typography>
+              {menu.option?.label && (
+                <Typography sx={{ fontSize: '14px' }}>옵션: {menu.option.label}</Typography>
+              )}
             </Grid>
             <Grid xs={4}>
               <Typography textAlign="center" lineHeight="1">
-                {(menu.price * menu.ea).toLocaleString('ko-KR')} ₩ <br />
-                <span style={{ fontSize: '12px' }}>({menu.price.toLocaleString('ko-KR')})</span>
+                {(
+                  (menu.option?.price ? menu.price + menu.option.price : menu.price) * menu.ea
+                ).toLocaleString('ko-KR')}{' '}
+                ₩ <br />
+                <span style={{ fontSize: '12px' }}>
+                  (
+                  {(menu.option?.price
+                    ? menu.price + menu.option.price
+                    : menu.price
+                  ).toLocaleString('ko-KR')}
+                  )
+                </span>
               </Typography>
             </Grid>
             <Grid xs={4}>

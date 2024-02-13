@@ -82,13 +82,6 @@ declare global {
     option: MenuOptionType | undefined;
   }
 
-  // 기존 메뉴타입에서 필요없느 것 제외 - client페이지 menu/order
-  type MenuCartOption = Omit<MenuOptionType, 'value'>;
-
-  interface MenuCartFullType extends Omit<MenuType, 'option'> {
-    option: MenuCartOption;
-  }
-
   interface OrderCardProps {
     order_idx: string;
     tb_idx: number;

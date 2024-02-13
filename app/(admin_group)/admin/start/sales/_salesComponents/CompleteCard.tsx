@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import { COLORS } from '@/asset/style';
@@ -21,10 +21,18 @@ const generateMenuList = (
     .map((el) => el.menu)
     .flat()
     .reduce((acc: { [key: string]: MenuType }, item: MenuType) => {
-      if (!acc[item._id]) {
-        acc[item._id] = { ...item, ea: 0 };
+      if (!item.option?.label) {
+        if (!acc[item._id]) {
+          acc[item._id] = { ...item, ea: 0 };
+        }
+        acc[item._id].ea += item.ea; // ea 합산
+      } else {
+        if (!acc[`${item._id}_${item.option.value}`]) {
+          acc[`${item._id}_${item.option.value}`] = { ...item, ea: 0 };
+        }
+        acc[`${item._id}_${item.option.value}`].ea += item.ea;
       }
-      acc[item._id].ea += item.ea; // ea 합산
+
       return acc;
     }, {});
 
@@ -38,7 +46,13 @@ const generateMenuList = (
 };
 
 const generateTotalPrice = (menuList: MenuType[]): number => {
-  return menuList.reduce((acc, menu) => (acc += menu.price * menu.ea), 0);
+  return menuList.reduce(
+    (acc, menu) =>
+      menu.option?.price
+        ? (acc += (menu.price + menu.option.price) * menu.ea)
+        : (acc += menu.price * menu.ea),
+    0,
+  );
 };
 
 const CompleteCard = ({
@@ -120,14 +134,32 @@ const CompleteCard = ({
       </Grid>
       <Box sx={{ width: '100%', height: '180px', overflowY: 'scroll' }}>
         {menuList?.map((menu, menuIndex) => (
-          <Grid container key={`complete_menu_${menuIndex}`}>
+          <Grid container key={`complete_menu_${menuIndex}`} sx={{ marginBottom: '5px' }}>
             <Grid xs={4}>
-              <Typography>{menu.pd_name}</Typography>
+              <Typography lineHeight="1.2">
+                {menu.pd_name}
+                {menu.option?.label && (
+                  <>
+                    <br />
+                    <span style={{ fontSize: '12px' }}>+옵션: {menu.option?.label}</span>
+                  </>
+                )}
+              </Typography>
             </Grid>
             <Grid xs={4}>
               <Typography textAlign="center" lineHeight="1">
-                {(menu.price * menu.ea).toLocaleString('ko-KR')} ₩ <br />
-                <span style={{ fontSize: '12px' }}>({menu.price.toLocaleString('ko-KR')})</span>
+                {(
+                  (menu.option?.price ? menu.price + menu.option.price : menu.price) * menu.ea
+                ).toLocaleString('ko-KR')}{' '}
+                ₩ <br />
+                <span style={{ fontSize: '12px' }}>
+                  (
+                  {(menu.option?.price
+                    ? menu.price + menu.option.price
+                    : menu.price
+                  ).toLocaleString('ko-KR')}
+                  )
+                </span>
               </Typography>
             </Grid>
             <Grid xs={4}>

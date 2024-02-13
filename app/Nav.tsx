@@ -5,7 +5,7 @@ import Cork from '@/components/svg/Cork';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
-import { cartData, cartOrderData, cartQuantity } from '@/recoil/cart';
+import { cartData, cartQuantity } from '@/recoil/cart';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -15,7 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsCartPlusFill } from 'react-icons/bs';
 import { RiHome4Fill } from 'react-icons/ri';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const pathName = usePathname();
@@ -24,15 +24,13 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const { openPopup } = usePopup();
 
   const quantity = useRecoilValue(cartQuantity);
-  const setCartValue = useSetRecoilState(cartData);
-
-  const finalCartMenuOrder = useRecoilValue(cartOrderData);
+  const [cartValue, setCartValue] = useRecoilState(cartData);
 
   useEffect(() => {
     if (pathName === '/main/menu' || pathName.startsWith('/main/menu/detail')) {
-      const cartValue = localStorage.getItem('cart');
+      const localCartValue = localStorage.getItem('cart');
 
-      if (cartValue) return setCartValue(JSON.parse(cartValue));
+      if (localCartValue) return setCartValue(JSON.parse(localCartValue));
     }
   }, [pathName]);
 
@@ -53,7 +51,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const { mutate: addOrderAPI } = useMutationInstance<
     undefined,
     undefined,
-    { tb_idx: number; menu: MenuCartFullType[] }
+    { tb_idx: number; menu: MenuOptionType[] }
   >({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.ORDER_ADD,
@@ -74,7 +72,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
     addOrderAPI({
       apiBody: {
         tb_idx: Number(tb),
-        menu: finalCartMenuOrder,
+        menu: cartValue,
       },
     });
   };
