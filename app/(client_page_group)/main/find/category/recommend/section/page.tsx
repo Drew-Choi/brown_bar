@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
 import ContentBox from '@/components/layout/ContentBox';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ImageLayout from '@/components/layout/ImageLayout';
 import Typography from '@mui/material/Typography';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
@@ -22,17 +22,13 @@ const MainContainer = styled('main')`
   overflow: scroll;
 `;
 
-const Section = ({
-  searchParams,
-}: {
-  searchParams: {
-    class: string;
-    choice: string;
-    section: string;
-    section_name: string;
-  };
-}) => {
-  const { choice, class: userClass, section, section_name } = searchParams;
+const Section = () => {
+  const search = useSearchParams();
+
+  const choice = search.get('choice');
+  const userClass = search.get('class');
+  const section = search.get('section');
+  const section_name = search.get('section_name');
 
   const router = useRouter();
 

@@ -15,7 +15,7 @@ import { COLORS } from '@/asset/style';
 import { cartData } from '@/recoil/cart';
 import { useSetRecoilState } from 'recoil';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -34,8 +34,9 @@ const Detail = ({
   };
 }) => {
   const router = useRouter();
+  const search = useSearchParams();
   const { id } = params;
-  const { section } = searchParams;
+  const section = search.get('section');
   const queryClient = useQueryClient();
 
   const setMenuData = useSetRecoilState(cartData);

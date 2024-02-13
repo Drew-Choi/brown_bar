@@ -34,6 +34,6 @@ self.addEventListener('notificationclick', function(event) {
   event.notification.close(); // 알림 창 닫기
   // 필요한 경우 사용자를 특정 웹페이지로 이동시키는 로직 구현
   event.waitUntil(
-    clients.openWindow('/admin/start/sales')
+    clients.openWindow('http://localhost:3002/admin/start/sales')
   );
 });

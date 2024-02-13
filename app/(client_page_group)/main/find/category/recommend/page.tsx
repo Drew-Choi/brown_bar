@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
@@ -22,8 +22,10 @@ const MainContainer = styled('main')`
   transform: translateY(-50%);
 `;
 
-const Recommend = ({ searchParams }: { searchParams: { class: string; choice: string } }) => {
-  const { class: userClass, choice } = searchParams;
+const Recommend = () => {
+  const search = useSearchParams();
+  const userClass = search.get('class');
+  const choice = search.get('choice');
 
   const router = useRouter();
 
