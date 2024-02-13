@@ -11,15 +11,13 @@ import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import Typography from '@mui/material/Typography';
 import { FaSearch } from 'react-icons/fa';
 import ContentBox from '@/components/layout/ContentBox';
-import Grid from '@mui/material/Unstable_Grid2';
-import { After } from '@/asset/After';
-import { Before } from '@/asset/Before';
-import { convertUtcToKst, nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
+import { nowDayAndTimeOnlyNumber } from '@/utils/mometDayAndTime';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axiosInstance from '@/axios/instance';
 import useScrollObserver from '@/hook/useObserver/useScrollObserver';
 import _ from 'lodash';
+import OrderHistoryCard from './_orderHistoryComponents/OrderHistoryCard';
 
 const isInOneMonth = (startTime: string, endTime: string) => {
   const oneMonth = moment(startTime).add(1, 'months');
@@ -229,87 +227,3 @@ const OrderHistory = () => {
 };
 
 export default OrderHistory;
-
-const generateTotalPrice = (menuList: MenuType[]): number => {
-  return menuList.reduce((acc, menu) => (acc += menu.price * menu.ea), 0);
-};
-
-const OrderHistoryCard = React.memo(({ orderInfo }: { orderInfo: OrderCardProps }) => {
-  return (
-    <Box
-      sx={{
-        boxSizing: 'border-box',
-        width: '90%',
-        padding: '20px',
-        bgcolor: COLORS.info,
-        margin: '20px auto',
-        borderRadius: '10px',
-        height: 'fit-content',
-      }}
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Box>
-          <Typography sx={{ fontSize: '15px', color: 'text.primary' }}>
-            주문번호: {orderInfo.order_idx}
-          </Typography>{' '}
-          <Typography sx={{ fontSize: '15px', color: 'text.primary' }}>
-            날짜: {convertUtcToKst({ utcTime: orderInfo?.created_at, format: 'YYYY-MM-DD HH:mm' })}
-          </Typography>
-        </Box>
-        <Typography sx={{ fontSize: '15px', color: 'text.primary' }}>
-          {orderInfo.tb_idx}번 테이블
-        </Typography>
-      </Box>
-
-      <Typography textAlign="right" sx={{ color: COLORS.text.primary }}>
-        Total: {generateTotalPrice(orderInfo.menu).toLocaleString('ko-KR')} ₩
-      </Typography>
-
-      <Grid container rowGap={1} color="text.primary">
-        <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
-          <After height="15px">
-            <Typography textAlign="center" sx={{ fontSize: '15px', fontWeight: '600' }}>
-              메뉴
-            </Typography>
-          </After>
-        </Grid>
-        <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
-          <Typography textAlign="center" sx={{ fontSize: '15px', fontWeight: '600' }}>
-            총가격
-          </Typography>
-        </Grid>
-        <Grid xs={4} sx={{ borderBottom: '0.5px solid' + COLORS.text.disabled, padding: '5px' }}>
-          <Before height="15px">
-            <Typography textAlign="center" sx={{ fontSize: '15px', fontWeight: '600' }}>
-              수량
-            </Typography>
-          </Before>
-        </Grid>
-      </Grid>
-      <Box sx={{ width: '100%', height: '100px', overflowY: 'scroll', color: COLORS.text.primary }}>
-        {orderInfo?.menu?.map((menu, menuIndex) => (
-          <Grid container key={`complete_menu_${menuIndex}`}>
-            <Grid xs={4}>
-              <Typography>{menu.pd_name}</Typography>
-            </Grid>
-            <Grid xs={4}>
-              <Typography textAlign="center" lineHeight="1">
-                {(menu.price * menu.ea).toLocaleString('ko-KR')} ₩ <br />
-                <span style={{ fontSize: '12px' }}>({menu.price.toLocaleString('ko-KR')})</span>
-              </Typography>
-            </Grid>
-            <Grid xs={4}>
-              <Typography textAlign="center">{menu.ea.toLocaleString('ko-KR')} 개</Typography>
-            </Grid>
-          </Grid>
-        ))}
-      </Box>
-      {/* {menuList?.length !== 0 && (
-        <Typography color={COLORS.divider} textAlign="right" sx={{ fontSize: '14px' }}>
-          {orderDate}
-        </Typography>
-      )} */}
-    </Box>
-  );
-});
-OrderHistoryCard.displayName = 'OrderHistoryCard';

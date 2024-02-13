@@ -134,7 +134,7 @@ const CompleteCard = ({
       </Grid>
       <Box sx={{ width: '100%', height: '180px', overflowY: 'scroll' }}>
         {menuList?.map((menu, menuIndex) => (
-          <Grid container key={`complete_menu_${menuIndex}`} sx={{ marginBottom: '5px' }}>
+          <Grid container key={`complete_menu_${menuIndex}`} sx={{ marginBottom: '10px' }}>
             <Grid xs={4}>
               <Typography lineHeight="1.2">
                 {menu.pd_name}
