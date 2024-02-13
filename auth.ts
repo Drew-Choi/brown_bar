@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { Profile } from 'next-auth';
 import Kakao from 'next-auth/providers/kakao';
 
 export const {
@@ -21,11 +21,15 @@ export const {
   ],
 
   callbacks: {
-    jwt: async ({ token, account }) => {
+    jwt: async ({ token, account, user }) => {
       // 초기 로그인 설정
       if (account && account.refresh_token && account.expires_in) {
         token.access_expires_at = Date.now() + account.expires_in * 1000;
         token.refresh_token = account.refresh_token;
+      }
+
+      if (user) {
+        token.user_id = user.id;
       }
 
       if (token && token.access_expires_at && Date.now() > (token.access_expires_at as number)) {
@@ -61,6 +65,9 @@ export const {
     session: async ({ session, token }) => {
       if (token.error) {
         (session as SessionAdd).error = token.error as string;
+      }
+      if (token.user_id) {
+        (session as SessionAdd).user_id = token.user_id as string;
       }
       return session;
     },

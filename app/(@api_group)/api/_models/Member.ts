@@ -1,10 +1,9 @@
 import mongoose, { Schema } from 'mongoose';
 
 const memberSchema = new Schema({
-  id: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  name: { type: String, required: true },
-  auth: { type: String, default: '' },
+  id: { type: String, require: true },
+  is_admin: { type: Boolean, default: false },
+  fcm: { type: [String], default: [] },
 });
 
 // 모델이 이미 존재하는지 확인

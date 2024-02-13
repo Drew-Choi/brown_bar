@@ -32,7 +32,10 @@ const UsePopupComponent = () => {
           height: '260px',
           bgcolor: 'background.paper',
           top: '40%',
-          left: !pathName.includes('/admin') ? '50%' : { xs: '50%', sm: '57.5%' },
+          left:
+            !pathName.includes('/admin') || pathName.includes('/admin/login')
+              ? '50%'
+              : { xs: '50%', sm: '57.5%' },
           transform: 'translate(-50%, -50%)',
           borderRadius: '10px',
           boxShadow: SHADOW.boxShadowMainColor,

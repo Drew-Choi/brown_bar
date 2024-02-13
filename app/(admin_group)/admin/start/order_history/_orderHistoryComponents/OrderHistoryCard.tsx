@@ -74,7 +74,7 @@ const OrderHistoryCard = ({ orderInfo }: { orderInfo: OrderCardProps }) => {
         {orderInfo?.menu?.map((menu, menuIndex) => (
           <Grid container key={`complete_menu_${menuIndex}`} sx={{ marginBottom: '10px' }}>
             <Grid xs={4}>
-              <Typography>
+              <Typography lineHeight="1.2">
                 {menu.pd_name}
                 {menu.option?.label && (
                   <>

@@ -18,6 +18,7 @@ declare global {
 
   interface SessionAdd extends Session {
     error?: string;
+    user_id?: string;
   }
 
   interface UsePopupProps {
