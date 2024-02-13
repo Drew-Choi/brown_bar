@@ -13,7 +13,8 @@ const Login = () => {
   const error = search.get('error');
 
   useEffect(() => {
-    if (error !== '403') return openPopup({ title: '로그인 오류', content: '다시 시도해주세요.' });
+    if (error && error !== '403')
+      return openPopup({ title: '로그인 오류', content: '다시 시도해주세요.' });
 
     if (error === '403')
       return openPopup({ title: '권한 오류', content: '관리자 계정이 아닙니다.' });

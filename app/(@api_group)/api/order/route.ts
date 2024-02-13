@@ -1,6 +1,24 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import Order from '@/app/(@api_group)/api/_models/Order';
+import * as admin from 'firebase-admin';
+import Member from '@/app/(@api_group)/api/_models/Member';
+
+// Firebase Admin 초기화
+if (!admin.apps.length) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        // 여기에 Firebase 서비스 계정 키 정보를 넣습니다
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
+    });
+  } catch (error: any) {
+    console.error('Firebase admin initialization error', error.stack);
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,7 +40,38 @@ export async function POST(req: NextRequest) {
 
     if (!result) return NextResponse.json({ message: 'DB Error' }, { status: 500 });
 
-    return NextResponse.json({ message: '주문 성공' }, { status: 200 });
+    const deviceToken = await Member.find({ is_admin: true }).select('+deviceToken');
+    const newArr = deviceToken.map((el) => el.fcm).flat();
+
+    if (newArr?.length === 0) return NextResponse.json({ message: '주문 성공' }, { status: 200 });
+
+    const message = {
+      notification: {
+        title: '!주문!',
+        body: '주문이 들어왔습니다.',
+        image: '/pwa_icon/icon-192x192.png',
+      },
+      // Android용 설정
+      android: {
+        notification: {
+          sound: 'default', // 기본 소리
+        },
+      },
+      // iOS용 설정
+      apns: {
+        payload: {
+          aps: {
+            sound: 'default', // 기본 소리
+          },
+        },
+      },
+      tokens: newArr,
+    };
+
+    const response = await admin.messaging().sendMulticast(message);
+
+    if (response.responses.some((el) => el.success === true))
+      return NextResponse.json({ message: '주문 성공' }, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

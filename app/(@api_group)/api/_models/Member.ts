@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 const memberSchema = new Schema({
-  id: { type: String, require: true },
+  id: { type: String, require: true, unique: true },
   is_admin: { type: Boolean, default: false },
   fcm: { type: [String], default: [] },
 });

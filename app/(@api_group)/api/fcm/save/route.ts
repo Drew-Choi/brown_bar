@@ -6,36 +6,23 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
-    const { id } = await req.json();
+    const { id, device_token } = await req.json();
 
     if (!id) return NextResponse.json({ message: '아이디를 입력해주세요.' }, { status: 400 });
 
-    const user = await Member.findOne({ id });
+    if (!device_token) return NextResponse.json({ message: '디바이스 토큰 오류' }, { status: 400 });
 
-    if (!user) {
-      const newUser = new Member({ id: String(id) });
-      const result = await newUser.save();
+    const result = await Member.updateOne({ id }, { $addToSet: { fcm: device_token } });
 
-      if (result)
-        return NextResponse.json(
-          { message: '관리자 계정이 아닙니다.' },
-          {
-            status: 403,
-          },
-        );
-
-      return NextResponse.json({ message: 'server error' }, { status: 500 });
-    }
-
-    if (user.is_admin)
+    if (result.acknowledged)
       return NextResponse.json(
-        { message: '로그인 성공' },
+        { message: '성공' },
         {
           status: 200,
         },
       );
 
-    return NextResponse.json({ message: '관리자 계정이 아닙니다.' }, { status: 403 });
+    return NextResponse.json({ message: 'DB Error' }, { status: 500 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

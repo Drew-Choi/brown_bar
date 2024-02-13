@@ -12,6 +12,7 @@ export const USE_QUERY_POINT = {
 // ---------------------------------------
 
 export const USE_MUTATE_POINT = {
+  FCM_SAVE: 'fcm/save',
   LOGIN: 'login',
   PRODUCT_WRITE: 'product/write',
   PRODUCT_EDIT: 'product/edit',
