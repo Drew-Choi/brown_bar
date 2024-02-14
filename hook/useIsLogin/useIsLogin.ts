@@ -79,7 +79,6 @@ export const useIsLogin = () => {
     },
   });
 
-  //--
   useEffect(() => {
     if (status !== 'loading') {
       if ((data as SessionAdd)?.error === 'RefreshAccessTokenError') {
