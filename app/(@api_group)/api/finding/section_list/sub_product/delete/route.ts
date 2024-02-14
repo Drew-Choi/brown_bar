@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import Product from '@/app/(@api_group)/api/_models/Product';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+
 export async function DELETE(req: NextRequest) {
   try {
     const url = new URL(req.nextUrl.href);

@@ -4,6 +4,8 @@ import FindingSection from '@/app/(@api_group)/api/_models/FindingSection';
 import Product from '@/app/(@api_group)/api/_models/Product';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+
 export async function DELETE(req: NextRequest) {
   try {
     // URL에서 전체 경로 추출

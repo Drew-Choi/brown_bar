@@ -7,6 +7,8 @@ import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
 import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+
 const newListGenerate = (
   productList: ProductInfoType[],
   menuList: MenuCategoryType[],

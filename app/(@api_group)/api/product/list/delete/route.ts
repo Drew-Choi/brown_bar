@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import { NextRequest, NextResponse } from 'next/server';
 import { deleteS3 } from '@/app/(@api_group)/api/_lib/s3';
 
+export const dynamic = 'force-dynamic';
+
 export async function DELETE(req: NextRequest) {
   try {
     const url = new URL(req.nextUrl.href);

@@ -2,6 +2,8 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Product from '@/app/(@api_group)/api/_models/Product';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 // 카테고리별 상품 불러오기
 export async function GET(req: NextRequest, { params }: { params: { category_idx: string } }) {
   try {

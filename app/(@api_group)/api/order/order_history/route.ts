@@ -2,6 +2,8 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import Order from '@/app/(@api_group)/api/_models/Order';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.nextUrl.href);

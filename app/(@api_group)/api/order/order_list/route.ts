@@ -2,6 +2,8 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import Order from '@/app/(@api_group)/api/_models/Order';
 
+export const dynamic = 'force-dynamic';
+
 type FilterType = {
   pay: boolean;
   tb_idx?: number;

@@ -4,6 +4,8 @@ import FindingIntro from '@/app/(@api_group)/api/_models/FindingIntro';
 import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 import { REDIS_CACHE_KEY } from '../../_constant/KEY';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.nextUrl.href);
