@@ -24,15 +24,7 @@ const MainContainer = styled('main')`
   padding: 20px;
 `;
 
-const Detail = ({
-  params,
-  searchParams,
-}: {
-  params: { id: string };
-  searchParams: {
-    section?: string;
-  };
-}) => {
+const Detail = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const search = useSearchParams();
   const { id } = params;

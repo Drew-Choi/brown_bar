@@ -92,7 +92,6 @@ const FindCategory = () => {
   const router = useRouter();
   const search = useSearchParams();
   const useClass = search.get('class');
-  console.log(useClass);
 
   return (
     <MainContainer>

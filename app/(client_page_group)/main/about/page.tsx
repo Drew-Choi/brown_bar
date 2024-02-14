@@ -3,7 +3,7 @@ import ButtonWide from '@/components/buttons/ButtonWide';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
 import Image from 'next/image';
@@ -123,9 +123,10 @@ const categories = [
   },
 ];
 
-const About = ({ searchParams }: { searchParams: { class: string } }) => {
+const About = () => {
   const router = useRouter();
-  const useClass = searchParams.class;
+  const search = useSearchParams();
+  const useClass = search.get('class');
 
   return (
     <MainContainer>
