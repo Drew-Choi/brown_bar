@@ -32,7 +32,8 @@ const newListGenerate = (
 
 export async function GET(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams;
+    const url = new URL(req.nextUrl.href);
+    const searchParams = url.searchParams;
     const page = searchParams.get('page');
     const search = searchParams.get('search');
     const section_id = searchParams.get('section_id');

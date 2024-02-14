@@ -6,8 +6,10 @@ import { deleteS3 } from '@/app/(@api_group)/api/_lib/s3';
 
 export async function DELETE(req: NextRequest) {
   try {
-    const id = req.nextUrl.searchParams.get('id');
-    const img_url = req.nextUrl.searchParams.get('img_url');
+    const url = new URL(req.nextUrl.href);
+
+    const id = url.searchParams.get('id');
+    const img_url = url.searchParams.get('img_url');
 
     if (!id)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });

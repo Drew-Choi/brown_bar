@@ -5,8 +5,10 @@ import mongoose from 'mongoose';
 
 export async function DELETE(req: NextRequest) {
   try {
-    const product_id = req.nextUrl.searchParams.get('product_id');
-    const section_id = req.nextUrl.searchParams.get('section_id');
+    const url = new URL(req.nextUrl.href);
+
+    const product_id = url.searchParams.get('product_id');
+    const section_id = url.searchParams.get('section_id');
 
     if (!product_id || !section_id)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });

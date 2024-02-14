@@ -4,8 +4,10 @@ import FindingSection from '@/app/(@api_group)/api/_models/FindingSection';
 
 export async function GET(req: NextRequest) {
   try {
-    const finding_idx = Number(req.nextUrl.searchParams.get('finding_idx'));
-    const sub_category_idx = Number(req.nextUrl.searchParams.get('sub_category_idx'));
+    const url = new URL(req.nextUrl.href);
+
+    const finding_idx = Number(url.searchParams.get('finding_idx'));
+    const sub_category_idx = Number(url.searchParams.get('sub_category_idx'));
 
     if (!finding_idx)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });

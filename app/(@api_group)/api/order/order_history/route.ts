@@ -4,9 +4,10 @@ import Order from '@/app/(@api_group)/api/_models/Order';
 
 export async function GET(req: NextRequest) {
   try {
-    const start_time = req.nextUrl.searchParams.get('start_time');
-    const end_time = req.nextUrl.searchParams.get('end_time');
-    const page = req.nextUrl.searchParams.get('page');
+    const url = new URL(req.nextUrl.href);
+    const start_time = url.searchParams.get('start_time');
+    const end_time = url.searchParams.get('end_time');
+    const page = url.searchParams.get('page');
 
     if (!start_time)
       return NextResponse.json(

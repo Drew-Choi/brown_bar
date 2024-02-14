@@ -6,9 +6,13 @@ import mongoose from 'mongoose';
 
 export async function DELETE(req: NextRequest) {
   try {
-    const finding_idx = req.nextUrl.searchParams.get('finding_idx');
-    const sub_category_idx = req.nextUrl.searchParams.get('sub_category_idx');
-    const section_id = req.nextUrl.searchParams.get('section_id');
+    // URL에서 전체 경로 추출
+    const url = new URL(req.nextUrl.href);
+
+    // URL 쿼리 스트링에서 파라미터 추출
+    const finding_idx = url.searchParams.get('finding_idx');
+    const sub_category_idx = url.searchParams.get('sub_category_idx');
+    const section_id = url.searchParams.get('section_id');
 
     if (!finding_idx)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });

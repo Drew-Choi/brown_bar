@@ -5,8 +5,9 @@ import { NextRequest, NextResponse } from 'next/server';
 // 카테고리별 상품 불러오기
 export async function GET(req: NextRequest, { params }: { params: { category_idx: string } }) {
   try {
+    const url = new URL(req.nextUrl.href);
     const category_idx = Number(params.category_idx);
-    const searchParams = req.nextUrl.searchParams;
+    const searchParams = url.searchParams;
     const is_client = Number(searchParams.get('is_client'));
     const page = Number(searchParams.get('page'));
 

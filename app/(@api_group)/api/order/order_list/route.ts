@@ -11,7 +11,8 @@ export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
-    const searchParams = req.nextUrl.searchParams;
+    const url = new URL(req.nextUrl.href);
+    const searchParams = url.searchParams;
     const tb = searchParams.get('tb');
 
     let filter: FilterType = { pay: false };
