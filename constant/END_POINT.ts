@@ -7,6 +7,7 @@ export const USE_QUERY_POINT = {
   FINDING_INTRO: 'finding/intro',
   FINDING_SECTION_LIST: 'finding/section_list',
   PRODUCT_DETAIL: 'product/detail',
+  MEMBER: 'member',
 };
 
 // ---------------------------------------
@@ -32,4 +33,5 @@ export const USE_MUTATE_POINT = {
   FINDING_SECTION_LIST_DELETE: 'finding/section_list/delete',
   FINDING_ADD_PRODUCT: 'finding/add_product',
   FINDING_DELETE_PRODUCT: 'finding/section_list/sub_product/delete',
+  MEMBER_EDIT: 'member/edit',
 };

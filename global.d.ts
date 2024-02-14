@@ -128,6 +128,13 @@ declare global {
     message?: string;
     status?: number;
   }
+
+  interface MemberType {
+    id: string;
+    nick_name: string;
+    profile_img?: string;
+    is_admin: boolean;
+  }
 }
 
 export {};

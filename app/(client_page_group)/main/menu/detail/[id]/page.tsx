@@ -58,7 +58,9 @@ const Detail = ({ params }: { params: { id: string } }) => {
     }
   }, [section]);
 
-  const { data: { data } = { data: undefined } } = useQueryInstance<{ data: ProductNewListType }>({
+  const { data: { data } = { data: undefined }, isError } = useQueryInstance<{
+    data: ProductNewListType;
+  }>({
     queryKey: [QUERY_KEY.PRODUCT_DETAIL, id],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.PRODUCT_DETAIL,
@@ -116,6 +118,13 @@ const Detail = ({ params }: { params: { id: string } }) => {
     },
     [optionValue],
   );
+
+  if (isError)
+    return (
+      <Box color="text.secondary" sx={{ padding: '20px' }}>
+        Fetching Error
+      </Box>
+    );
 
   return (
     <MainContainer>

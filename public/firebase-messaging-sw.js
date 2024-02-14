@@ -12,7 +12,7 @@ firebase.initializeApp({
   measurementId: "G-74LE4WF146"
 });
 
-// Firebase Messaging 인스턴스를 가져옴
+
 const messaging = firebase.messaging();
 
 // 푸시 메시지 수신 시 처리
@@ -32,7 +32,7 @@ self.addEventListener('push', function(event) {
 // 사용자가 알림을 클릭했을 때의 처리
 self.addEventListener('notificationclick', function(event) {
   event.notification.close(); // 알림 창 닫기
-  // 필요한 경우 사용자를 특정 웹페이지로 이동시키는 로직 구현
+  // 페이지 이동
   event.waitUntil(
     clients.openWindow('http://localhost:3002/admin/start/sales')
   );

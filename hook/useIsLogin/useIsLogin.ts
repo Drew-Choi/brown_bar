@@ -26,7 +26,7 @@ if (typeof window !== 'undefined' && typeof window.navigator !== 'undefined') {
 }
 
 export const useIsLogin = () => {
-  const { data } = useSession();
+  const { data, status } = useSession();
   const router = useRouter();
 
   const { mutate: fcmDevieTokenAPI } = useMutationInstance<
@@ -63,7 +63,11 @@ export const useIsLogin = () => {
     }
   }, [data]);
 
-  const { mutate: idCheckAPI } = useMutationInstance<undefined, undefined, { id: string }>({
+  const { mutate: idCheckAPI } = useMutationInstance<
+    undefined,
+    undefined,
+    { id: string; nick_name: string; profile_img: string }
+  >({
     apiMethod: 'post',
     apiEndPoint: USE_MUTATE_POINT.LOGIN,
     onErrorFn: (error: any) => {
@@ -76,14 +80,22 @@ export const useIsLogin = () => {
   });
 
   useEffect(() => {
-    if ((data as SessionAdd)?.error === 'RefreshAccessTokenError') {
-      router.replace('/admin/login');
-    }
+    if (status !== 'loading') {
+      if ((data as SessionAdd)?.error === 'RefreshAccessTokenError') {
+        router.replace('/admin/login');
+      }
 
-    if ((data as SessionAdd)?.user_id) {
-      idCheckAPI({ apiBody: { id: (data as SessionAdd)?.user_id as string } });
+      if ((data as SessionAdd)?.user_id) {
+        idCheckAPI({
+          apiBody: {
+            id: String((data as SessionAdd)?.user_id),
+            nick_name: String(data?.user?.name),
+            profile_img: String(data?.user?.image),
+          },
+        });
+      }
     }
-  }, [data]);
+  }, [data, status]);
 
-  return { data };
+  return { data, status };
 };

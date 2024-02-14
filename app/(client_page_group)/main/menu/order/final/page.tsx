@@ -12,6 +12,7 @@ import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { useRouter } from 'next/navigation';
 import { GC_TIME } from '@/constant/NUMBER';
 import Empty from '@/components/Empty';
+import { useIsStart } from '@/hook/useIsStart/useIsStart';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -37,6 +38,8 @@ const totalPrice = (orderList: OrderCardProps[]) => {
 };
 
 const Fianl = () => {
+  const { isStart, isError: startError } = useIsStart({});
+
   const router = useRouter();
   const [tb, setTb] = useState<string | null>(null);
 
@@ -52,13 +55,17 @@ const Fianl = () => {
     }
   }, []);
 
-  const { data: { data: tbOrderList } = { data: [] }, isError } = useQueryInstance<{
+  const {
+    data: { data: tbOrderList } = { data: [] },
+    isError,
+    isLoading,
+  } = useQueryInstance<{
     data: OrderCardProps[];
   }>({
     queryKey: [QUERY_KEY.ORDER_LIST, tb],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.ORDER_LIST,
-    queryEnable: tb !== null,
+    queryEnable: tb !== null && isStart === true,
     apiQueryParams: { tb },
     staleTime: 0,
     gcTime: GC_TIME.DEFAULT,
@@ -66,7 +73,19 @@ const Fianl = () => {
     refetchOnReconnect: true,
   });
 
-  if (isError) return <Box sx={{ color: 'text.secondary', padding: '20px' }}>Fetching Error</Box>;
+  if (!isStart && !isLoading)
+    return (
+      <Box color="text.secondary" sx={{ padding: '20px' }}>
+        현재 영업이 종료되었습니다.
+      </Box>
+    );
+
+  if (isError || startError)
+    return (
+      <Box color="text.secondary" sx={{ padding: '20px' }}>
+        Fetching Error
+      </Box>
+    );
 
   return (
     <>

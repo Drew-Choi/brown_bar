@@ -4,16 +4,19 @@ import Member from '@/app/(@api_group)/api/_models/Member';
 
 export async function POST(req: NextRequest) {
   try {
-    await connectDB();
-
-    const { id } = await req.json();
+    const { id, nick_name, profile_img } = await req.json();
 
     if (!id) return NextResponse.json({ message: '아이디를 입력해주세요.' }, { status: 400 });
+
+    if (!nick_name)
+      return NextResponse.json({ message: '닉네입을 입력해주세요.' }, { status: 400 });
+
+    await connectDB();
 
     const user = await Member.findOne({ id });
 
     if (!user) {
-      const newUser = new Member({ id: String(id) });
+      const newUser = new Member({ id: String(id), nick_name, profile_img });
       const result = await newUser.save();
 
       if (result)

@@ -6,6 +6,7 @@ import MenuLineLayout from '@/components/layout/MenuLineLayout';
 import Container from '@mui/material/Container';
 import { useRecoilState } from 'recoil';
 import { cartData } from '@/recoil/cart';
+import { useIsStart } from '@/hook/useIsStart/useIsStart';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -14,6 +15,8 @@ const MainContainer = styled('main')`
 `;
 
 const Order = () => {
+  const { isStart, isError } = useIsStart({});
+
   const [cartValue, setCartValue] = useRecoilState(cartData);
   const [resetting, setResetting] = useState<boolean>(false);
 
@@ -50,6 +53,20 @@ const Order = () => {
       setResetting((cur) => !cur);
     }
   }, []);
+
+  if (!isStart)
+    return (
+      <Box color="text.secondary" sx={{ padding: '20px' }}>
+        현재 영업이 종료되었습니다.
+      </Box>
+    );
+
+  if (isError)
+    return (
+      <Box color="text.secondary" sx={{ padding: '20px' }}>
+        Fetching Error
+      </Box>
+    );
 
   return (
     <MainContainer>

@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import DetailPopup from './_menuComponents/DetailPopup';
 import { COLORS } from '@/asset/style';
 import Empty from '@/components/Empty';
+import { useIsStart } from '@/hook/useIsStart/useIsStart';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -26,7 +27,7 @@ const MainContainer = styled('main')`
 `;
 
 const Menu = () => {
-  const router = useRouter();
+  const { isStart, isError: startError } = useIsStart({});
 
   const [menuSelectorValue, setMenuSelectorValue] = useState<string | number | null>(null);
   // 상품디테일 팝업
@@ -51,7 +52,7 @@ const Menu = () => {
   const setMenuData = useSetRecoilState(cartData);
 
   // 메뉴리스트 부르기
-  const { data: menuList = [] } = useQueryInstance<
+  const { data: menuList = [], isLoading } = useQueryInstance<
     {
       data: MenuCategoryType[];
     },
@@ -69,6 +70,7 @@ const Menu = () => {
     onSuccessFn: (data) => {
       setMenuSelectorValue(data[0]?.value);
     },
+    queryEnable: isStart,
   });
 
   const menuSelectorHandler = (e: SelectChangeEvent<string | number>) => {
@@ -202,7 +204,19 @@ const Menu = () => {
     [],
   );
 
-  if (isError) return <Box>Fetching Error</Box>;
+  if (!isStart && !isLoading)
+    return (
+      <Box color="text.secondary" sx={{ padding: '20px' }}>
+        현재 영업이 종료되었습니다.
+      </Box>
+    );
+
+  if (isError || startError)
+    return (
+      <Box color="text.secondary" sx={{ padding: '20px' }}>
+        Fetching Error
+      </Box>
+    );
 
   return (
     <MainContainer>

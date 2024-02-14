@@ -85,7 +85,7 @@ const navMenuData = [
 ];
 
 export const NavAdmin = () => {
-  useIsLogin();
+  const { status: loginStatus } = useIsLogin();
 
   const { openPopup } = usePopup();
   const [show, setShow] = useState<Boolean>(false);
@@ -93,14 +93,14 @@ export const NavAdmin = () => {
 
   // 영업상태 초기설정
   const {
-    data: isStart,
+    data: { data: isStart } = { data: false },
     isError,
     refetch,
   } = useQueryInstance<{ data: boolean }>({
     queryKey: [QUERY_KEY.IS_START],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.START,
-    queryEnable: pathName !== '/admin/login',
+    queryEnable: pathName !== '/admin/login' && loginStatus === 'authenticated',
   });
 
   // 영업상태변경 요청
@@ -167,7 +167,7 @@ export const NavAdmin = () => {
           }}
           data={navMenuData}
           logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
-          switchChecked={isStart?.data}
+          switchChecked={isStart}
           switchOnChange={startSwitchHandler}
           showUseState={() => setShow((cur) => cur && false)}
         />

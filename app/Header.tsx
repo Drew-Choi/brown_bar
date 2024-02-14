@@ -141,14 +141,30 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
             {pathName === '/admin/login'
               ? '로그인'
               : pathName === '/admin/product/product_write'
-                ? '상품등록'
+                ? '상품 / 상품등록'
                 : pathName === '/admin/product/product_list'
-                  ? '상품목록'
+                  ? '상품 / 상품목록'
                   : pathName.includes('/admin/product/product_list/edit/')
-                    ? '상품수정'
+                    ? '상품 / 상품수정'
                     : pathName === '/admin/menu_write'
                       ? '메뉴판'
-                      : ''}
+                      : pathName === '/admin/start/sales'
+                        ? '영업 / 주문받기'
+                        : pathName === '/admin/start/order_history'
+                          ? '영업 / 주문내역'
+                          : pathName === '/admin/start/analysis'
+                            ? '영업 / 통계'
+                            : pathName === '/admin/finding/10'
+                              ? '내 취향 찾기 / 초심자'
+                              : pathName === '/admin/finding/20'
+                                ? '내 취향 찾기 / 탐험가'
+                                : pathName === '/admin/finding/30'
+                                  ? '내 취향 찾기 / 고인물'
+                                  : pathName === '/admin/tasting'
+                                    ? '시음회'
+                                    : pathName === '/admin/settings'
+                                      ? '관리자 설정'
+                                      : ''}
           </Typography>
         </Tag>
         <Box sx={{ width: '150px', height: 'fit-content' }}>

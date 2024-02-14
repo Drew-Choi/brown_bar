@@ -3,6 +3,7 @@ import { COLORS } from '@/asset/style';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import Cork from '@/components/svg/Cork';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
+import { useIsStart } from '@/hook/useIsStart/useIsStart';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { cartData, cartQuantity } from '@/recoil/cart';
@@ -22,6 +23,8 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const router = useRouter();
   const [tb, setTb] = useState<string | null>(null);
   const { openPopup } = usePopup();
+
+  const { isStart, isError: startError } = useIsStart({ enable: pathName === '/main/menu/order' });
 
   const quantity = useRecoilValue(cartQuantity);
   const [cartValue, setCartValue] = useRecoilState(cartData);
@@ -84,6 +87,13 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   if (pathName === '/not_tb') return;
 
   if (pathName.startsWith('/admin')) return;
+
+  if (startError)
+    return (
+      <Box color="text.secondary" sx={{ padding: '10px' }}>
+        Fetching Error
+      </Box>
+    );
 
   return (
     <Container
@@ -172,8 +182,19 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
         )}
 
         {pathName === '/main/menu/order' && (
-          <ButtonNomal sx={{ fontWeight: '700', fontSize: '5vw' }} onClickEvent={addOrderHandler}>
-            주문하기
+          <ButtonNomal
+            sx={{ fontWeight: '700', fontSize: '5vw' }}
+            onClickEvent={() =>
+              isStart
+                ? openPopup({
+                    title: '안내',
+                    content: '정말 주문하시겠습니까?',
+                    onConfirm: addOrderHandler,
+                  })
+                : null
+            }
+          >
+            {isStart ? '주문하기' : '영업종료'}
           </ButtonNomal>
         )}
 
