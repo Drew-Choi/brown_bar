@@ -1,4 +1,4 @@
-import NextAuth, { Profile } from 'next-auth';
+import NextAuth from 'next-auth';
 import Kakao from 'next-auth/providers/kakao';
 
 export const {
@@ -12,9 +12,9 @@ export const {
     maxAge: 60 * 24 * 60 * 60,
   },
   pages: {
-    signIn: '/admin/login',
-    signOut: '/admin/login',
-    error: '/admin/login',
+    signIn: 'https://brownbar.vercel.app/admin/login',
+    signOut: 'https://brownbar.vercel.app/admin/login',
+    error: 'https://brownbar.vercel.app/admin/login',
   },
   providers: [
     Kakao({ clientId: process.env.KAKAO_CLIENT_ID, clientSecret: process.env.KAKAO_CLIENT_SECRET }),
