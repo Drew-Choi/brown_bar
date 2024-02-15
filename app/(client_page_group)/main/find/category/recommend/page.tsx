@@ -90,6 +90,7 @@ const Recommend = () => {
           marginBottom="10px"
         >
           <Image
+            priority
             src={
               userClass === 'Beginner'
                 ? '/img/beginner_icon.png'

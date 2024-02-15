@@ -17,10 +17,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });
 
     // const redisClient = await getRedisClient();
-    const cacheFindingIntro: string | null = await kv.get(
-      `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
-    );
-    console.log('기존에 있음?', cacheFindingIntro);
+    const cacheFindingIntro = await kv.get(`${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`);
 
     if (!cacheFindingIntro) {
       await connectDB();
@@ -52,10 +49,7 @@ export async function GET(req: NextRequest) {
         if (!newFindingIntroResult)
           return NextResponse.json({ message: 'DB Error' }, { status: 500 });
 
-        await kv.set(
-          `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
-          JSON.stringify(newFinalData),
-        );
+        await kv.set(`${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`, newFinalData);
 
         return NextResponse.json(
           { message: '인트로 문구 불러오기 성공', data: newFinalData },
@@ -63,7 +57,7 @@ export async function GET(req: NextRequest) {
         );
       }
 
-      await kv.set(`${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`, JSON.stringify(result));
+      await kv.set(`${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`, result);
 
       return NextResponse.json(
         { message: '인트로 문구 불러오기 성공', data: result },
@@ -73,7 +67,7 @@ export async function GET(req: NextRequest) {
 
     // 캐시데이터 있음 캐싱데이터 res
     return NextResponse.json(
-      { message: '메뉴 리스트업 성공', data: JSON.parse(cacheFindingIntro) },
+      { message: '메뉴 리스트업 성공', data: cacheFindingIntro },
       { status: 200 },
     );
   } catch (error) {
@@ -109,7 +103,7 @@ export async function POST(req: NextRequest) {
 
     if (result.acknowledged && result.modifiedCount === 1) {
       // const redisClient = await getRedisClient();
-      const cacheFindingIntro: string | null = await kv.get(
+      const cacheFindingIntro: FindingIntroType | null = await kv.get(
         `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
       );
 
@@ -118,13 +112,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: '인트로 문구 변경 성공' }, { status: 200 });
 
       // 있다면 캐시 업데이트
-      const parseFindingIntro: FindingIntroType = JSON.parse(cacheFindingIntro);
+      const parseFindingIntro: FindingIntroType = cacheFindingIntro;
       const newFindingIntro = { ...parseFindingIntro, intro_text };
 
-      await kv.set(
-        `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
-        JSON.stringify(newFindingIntro),
-      );
+      await kv.set(`${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`, newFindingIntro);
 
       return NextResponse.json({ message: '인트로 문구 변경 성공' }, { status: 200 });
     }

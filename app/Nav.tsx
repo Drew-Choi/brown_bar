@@ -3,10 +3,10 @@ import { COLORS } from '@/asset/style';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import Cork from '@/components/svg/Cork';
 import { USE_MUTATE_POINT } from '@/constant/END_POINT';
-import { useIsStart } from '@/hook/useIsStart/useIsStart';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { cartData, cartQuantity } from '@/recoil/cart';
+import { isStartValue } from '@/recoil/isStartValue';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -24,7 +24,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const [tb, setTb] = useState<string | null>(null);
   const { openPopup } = usePopup();
 
-  const { isStart, isError: startError } = useIsStart({ enable: pathName === '/main/menu/order' });
+  const startValue = useRecoilValue(isStartValue);
 
   const quantity = useRecoilValue(cartQuantity);
   const [cartValue, setCartValue] = useRecoilState(cartData);
@@ -87,13 +87,6 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   if (pathName === '/not_tb') return;
 
   if (pathName.startsWith('/admin')) return;
-
-  if (startError)
-    return (
-      <Box color="text.secondary" sx={{ padding: '10px' }}>
-        Fetching Error
-      </Box>
-    );
 
   return (
     <Container
@@ -185,7 +178,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
           <ButtonNomal
             sx={{ fontWeight: '700', fontSize: '5vw' }}
             onClickEvent={() =>
-              isStart
+              startValue
                 ? openPopup({
                     title: '안내',
                     content: '정말 주문하시겠습니까?',
@@ -194,7 +187,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
                 : null
             }
           >
-            {isStart ? '주문하기' : '영업종료'}
+            {startValue ? '주문하기' : '영업종료'}
           </ButtonNomal>
         )}
 

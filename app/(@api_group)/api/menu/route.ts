@@ -23,15 +23,15 @@ export async function POST(req: NextRequest) {
 
     if (result) {
       // const redisClient = await getRedisClient();
-      const preCache: string | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
+      const preCache: MenuCategoryType[] | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
       // 캐싱데이터가 없음 그냥 진행
       if (!preCache) return NextResponse.json({ message: '저장성공' }, { status: 200 });
 
       // 있으면 배열에 추가하여 저장
-      let parseCache: MenuCategoryType[] = JSON.parse(preCache);
+      let parseCache: MenuCategoryType[] = preCache;
       parseCache.push(result);
-      await kv.set(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(parseCache));
+      await kv.set(REDIS_CACHE_KEY.MENU_LIST, parseCache);
       return NextResponse.json({ message: '저장성공' }, { status: 200 });
     }
     return NextResponse.json({ message: 'DB Error' }, { status: 500 });
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     // const redisClient = await getRedisClient();
-    const cacheMenuList: string | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
+    const cacheMenuList = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
     if (!cacheMenuList) {
       await connectDB();
@@ -58,7 +58,7 @@ export async function GET() {
       const result: MenuCategoryType[] = await Menu.find().select('-_id -__v');
 
       if (result) {
-        await kv.set(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(result));
+        await kv.set(REDIS_CACHE_KEY.MENU_LIST, result);
         return NextResponse.json({ message: '메뉴 리스트업 성공', data: result }, { status: 200 });
       }
       return NextResponse.json({ message: 'DB Error' }, { status: 500 });
@@ -66,7 +66,7 @@ export async function GET() {
 
     // 캐시데이터 있음 캐싱데이터 res
     return NextResponse.json(
-      { message: '메뉴 리스트업 성공', data: JSON.parse(cacheMenuList) },
+      { message: '메뉴 리스트업 성공', data: cacheMenuList },
       { status: 200 },
     );
   } catch (error) {

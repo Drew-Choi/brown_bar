@@ -2,7 +2,8 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { NextRequest, NextResponse } from 'next/server';
 import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
-import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
+// import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
+import { kv } from '@vercel/kv';
 
 // 메뉴 카테고리 변경
 export async function POST(req: NextRequest) {
@@ -23,20 +24,20 @@ export async function POST(req: NextRequest) {
     const result = await Menu.updateOne({ category_idx }, { $set: { label: new_label } });
 
     if (result.acknowledged && result.modifiedCount === 1) {
-      const redisClient = await getRedisClient();
-      const cacheMenuList = await redisClient.GET(REDIS_CACHE_KEY.MENU_LIST);
+      // const redisClient = await getRedisClient();
+      const cacheMenuList: MenuCategoryType[] | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
       // 캐싱 데이터 없음 그냥 진행
       if (!cacheMenuList)
         return NextResponse.json({ message: '업데이트 성공', category_idx }, { status: 200 });
 
       // 있으면 배열에서 같은 idx찾아 업데이트
-      const parseMenuList: MenuCategoryType[] = JSON.parse(cacheMenuList);
+      const parseMenuList: MenuCategoryType[] = cacheMenuList;
 
       const updateMenuList = parseMenuList.map((el) =>
         el.category_idx === category_idx ? { ...el, label: new_label } : el,
       );
-      await redisClient.SET(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(updateMenuList));
+      await kv.set(REDIS_CACHE_KEY.MENU_LIST, updateMenuList);
       return NextResponse.json({ message: '업데이트 성공', category_idx }, { status: 200 });
     } else {
       return NextResponse.json({ message: 'DB error' }, { status: 500 });

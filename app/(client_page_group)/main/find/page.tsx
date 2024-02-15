@@ -49,6 +49,7 @@ const Find = () => {
         >
           <ImageWrap>
             <Image
+              priority
               src="/img/beginner_icon.png"
               width={70}
               height={70}
@@ -88,6 +89,7 @@ const Find = () => {
         >
           <ImageWrap>
             <Image
+              priority
               src="/img/explorer_icon.png"
               width={70}
               height={70}
@@ -127,6 +129,7 @@ const Find = () => {
         >
           <ImageWrap>
             <Image
+              priority
               src="/img/old_water_icon.png"
               width={70}
               height={70}

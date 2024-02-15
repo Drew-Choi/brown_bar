@@ -3,7 +3,7 @@ import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import React from 'react';
 
-export const useIsStart = ({ enable }: { enable?: boolean }) => {
+export const useIsStart = () => {
   // 영업상태 초기설정
   const { data: { data: isStart } = { data: false }, isError } = useQueryInstance<{
     data: boolean;
@@ -15,7 +15,6 @@ export const useIsStart = ({ enable }: { enable?: boolean }) => {
     gcTime: 0,
     refetchOnMount: true,
     refetchOnReconnect: true,
-    queryEnable: enable ? enable : true,
   });
   return { isStart, isError };
 };

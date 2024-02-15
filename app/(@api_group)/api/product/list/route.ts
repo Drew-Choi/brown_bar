@@ -4,8 +4,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { Document } from 'mongoose';
 import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
-import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
+// import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 import mongoose from 'mongoose';
+import { kv } from '@vercel/kv';
 
 export const dynamic = 'force-dynamic';
 
@@ -88,9 +89,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: '상품 리스트업 성공', data: list }, { status: 200 });
     }
 
-    const redisClient = await getRedisClient();
+    // const redisClient = await getRedisClient();
     // 메뉴카테고리 캐싱 확인
-    const cacheMenuList: string | null = await redisClient.GET(REDIS_CACHE_KEY.MENU_LIST);
+    const cacheMenuList: MenuCategoryType[] | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
     //캐시 없을시
     if (!cacheMenuList) {
@@ -99,7 +100,7 @@ export async function GET(req: NextRequest) {
       if (menuList.length !== 0) {
         const newList = newListGenerate(list, menuList);
 
-        await redisClient.SET(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(menuList));
+        await kv.set(REDIS_CACHE_KEY.MENU_LIST, menuList);
 
         return NextResponse.json({ message: '상품 리스트업 성공', data: newList }, { status: 200 });
       } else {
@@ -114,7 +115,7 @@ export async function GET(req: NextRequest) {
     }
 
     // 캐시 있을 시
-    const newListCache = newListGenerate(list, JSON.parse(cacheMenuList));
+    const newListCache = newListGenerate(list, cacheMenuList);
 
     return NextResponse.json(
       { message: '상품 리스트업 성공', data: newListCache },

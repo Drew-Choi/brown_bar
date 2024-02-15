@@ -27,7 +27,7 @@ const MainContainer = styled('main')`
 `;
 
 const Menu = () => {
-  const { isStart, isError: startError } = useIsStart({});
+  const { isStart, isError: startError } = useIsStart();
 
   const [menuSelectorValue, setMenuSelectorValue] = useState<string | number | null>(null);
   // 상품디테일 팝업

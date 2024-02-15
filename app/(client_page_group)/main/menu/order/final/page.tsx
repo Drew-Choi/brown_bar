@@ -38,7 +38,7 @@ const totalPrice = (orderList: OrderCardProps[]) => {
 };
 
 const Fianl = () => {
-  const { isStart, isError: startError } = useIsStart({});
+  const { isStart, isError: startError } = useIsStart();
 
   const router = useRouter();
   const [tb, setTb] = useState<string | null>(null);

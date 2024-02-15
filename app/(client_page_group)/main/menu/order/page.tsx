@@ -4,9 +4,10 @@ import { styled } from '@mui/material';
 import Box from '@mui/material/Box';
 import MenuLineLayout from '@/components/layout/MenuLineLayout';
 import Container from '@mui/material/Container';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { cartData } from '@/recoil/cart';
 import { useIsStart } from '@/hook/useIsStart/useIsStart';
+import { isStartValue } from '@/recoil/isStartValue';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -15,10 +16,16 @@ const MainContainer = styled('main')`
 `;
 
 const Order = () => {
-  const { isStart, isError } = useIsStart({});
+  const { isStart, isError } = useIsStart();
+
+  const setIsStart = useSetRecoilState(isStartValue);
 
   const [cartValue, setCartValue] = useRecoilState(cartData);
   const [resetting, setResetting] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsStart(isStart);
+  }, [isStart]);
 
   useEffect(() => {
     const localCartValue = localStorage.getItem('cart');
