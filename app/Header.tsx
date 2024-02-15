@@ -90,7 +90,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
       }
 
       const tbParse: TbDataTpye = JSON.parse(tbData);
-      const now = new Date().toUTCString();
+      const now = new Date().toISOString();
 
       if (now < tbParse.expire) return setTb(tbParse.tb);
 

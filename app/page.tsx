@@ -12,7 +12,6 @@ const Screen = () => {
   const [intro, setIntro] = useState<boolean>(true);
   const router = useRouter();
   const tb = useSearchParams().get('tb');
-  const { openPopup } = usePopup();
 
   useEffect(() => {
     if (!tb) {
@@ -24,7 +23,7 @@ const Screen = () => {
     const nowTime = new Date().getTime();
     //5시간
     const expireInterval = 5 * 60 * 60 * 1000;
-    const expire = new Date(nowTime + expireInterval).toUTCString();
+    const expire = new Date(nowTime + expireInterval).toISOString();
     const tbDate = {
       tb,
       expire,

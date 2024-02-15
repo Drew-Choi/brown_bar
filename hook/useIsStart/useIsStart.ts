@@ -5,7 +5,11 @@ import React from 'react';
 
 export const useIsStart = () => {
   // 영업상태 초기설정
-  const { data: { data: isStart } = { data: false }, isError } = useQueryInstance<{
+  const {
+    data: { data: isStart } = { data: false },
+    isError,
+    isLoading,
+  } = useQueryInstance<{
     data: boolean;
   }>({
     queryKey: [QUERY_KEY.IS_START],
@@ -16,5 +20,5 @@ export const useIsStart = () => {
     refetchOnMount: true,
     refetchOnReconnect: true,
   });
-  return { isStart, isError };
+  return { isStart, isError, isLoading };
 };

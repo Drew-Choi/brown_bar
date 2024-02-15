@@ -6,7 +6,7 @@ import { FaPlus, FaMinus } from 'react-icons/fa6';
 import Selector from '../Selector';
 import OnTheRock from '../svg/OnTheRock';
 import ContentBox from './ContentBox';
-import { SelectChangeEvent } from '@mui/material';
+import { SelectChangeEvent, SxProps } from '@mui/material';
 
 interface MenuLineProps {
   data: {
@@ -23,6 +23,7 @@ interface MenuLineProps {
   onClickCartMinus?: () => void;
   onClickCartMenuRemove?: () => void;
   onClickProductName?: () => void;
+  conSx?: SxProps;
 }
 
 const MenuLineLayout = ({
@@ -33,6 +34,7 @@ const MenuLineLayout = ({
   onClickCartMinus,
   onClickCartMenuRemove,
   onClickProductName,
+  conSx,
 }: MenuLineProps) => {
   const [optionValue, setOptionValue] = useState<string | number>(0);
 
@@ -42,7 +44,7 @@ const MenuLineLayout = ({
   };
 
   return (
-    <ContentBox>
+    <ContentBox sx={{ ...conSx }}>
       <div style={{ marginBottom: '5px' }}>
         <Typography
           marginBottom={changeOrderList ? '8px' : '0'}

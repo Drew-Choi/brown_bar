@@ -4,6 +4,7 @@ import FianlLineLayout from '@/components/layout/FianlLineLayout';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import React, { useEffect, useState } from 'react';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
@@ -38,16 +39,16 @@ const totalPrice = (orderList: OrderCardProps[]) => {
 };
 
 const Fianl = () => {
-  const { isStart, isError: startError } = useIsStart();
+  const { isStart, isError: startError, isLoading: isLoadingStart } = useIsStart();
 
   const router = useRouter();
   const [tb, setTb] = useState<string | null>(null);
 
   useEffect(() => {
-    const localCartValue = sessionStorage.getItem('tb');
+    const tbValue = sessionStorage.getItem('tb');
 
-    if (localCartValue) {
-      const cartParseTb = JSON.parse(localCartValue)?.tb;
+    if (tbValue) {
+      const cartParseTb = JSON.parse(tbValue)?.tb;
       setTb(cartParseTb);
     } else {
       setTb(null);
@@ -73,7 +74,7 @@ const Fianl = () => {
     refetchOnReconnect: true,
   });
 
-  if (!isStart && !isLoading)
+  if (!isStart && !isLoading && !isLoadingStart)
     return (
       <Box color="text.secondary" sx={{ padding: '20px' }}>
         현재 영업이 종료되었습니다.
@@ -99,7 +100,9 @@ const Fianl = () => {
         color="text.secondary"
         sx={{ fontSize: { xs: '3.8vw', md: '32px' }, padding: '0 10px' }}
       >
-        총 주문금액: {totalPrice(tbOrderList)?.toLocaleString('ko-KR')} ₩
+        {isLoading || isLoadingStart
+          ? 'Loading...'
+          : `총 주문금액: ${totalPrice(tbOrderList)?.toLocaleString('ko-KR')} ₩`}
       </Typography>
 
       <Line height="2px" margin="10px 0px" />
@@ -117,7 +120,24 @@ const Fianl = () => {
             height: '46vh',
           }}
         >
-          {tbOrderList?.length === 0 ? (
+          {isLoading || isLoadingStart ? (
+            Array(5)
+              .fill(null)
+              .map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="rounded"
+                  animation="wave"
+                  width="100%"
+                  height="fit-content"
+                  sx={{ bgcolor: 'grey.900' }}
+                >
+                  <FianlLineLayout
+                    data={{ order_idx: '1', tb_idx: 1, menu: [], complete: false, pay: false }}
+                  />
+                </Skeleton>
+              ))
+          ) : tbOrderList?.length === 0 ? (
             <Empty title="주문내역이 없습니다." />
           ) : (
             tbOrderList?.map((el, index) => <FianlLineLayout key={el.order_idx} data={el} />)

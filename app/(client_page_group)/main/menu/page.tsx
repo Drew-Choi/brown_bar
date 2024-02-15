@@ -1,6 +1,7 @@
 'use client';
 import React, { useCallback, useEffect, useState } from 'react';
 import { SelectChangeEvent, styled } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import MenuLineLayout from '@/components/layout/MenuLineLayout';
 import Container from '@mui/material/Container';
@@ -14,7 +15,6 @@ import useScrollObserver from '@/hook/useObserver/useScrollObserver';
 import _ from 'lodash';
 import { useSetRecoilState } from 'recoil';
 import { cartData } from '@/recoil/cart';
-import { useRouter } from 'next/navigation';
 import DetailPopup from './_menuComponents/DetailPopup';
 import { COLORS } from '@/asset/style';
 import Empty from '@/components/Empty';
@@ -27,7 +27,7 @@ const MainContainer = styled('main')`
 `;
 
 const Menu = () => {
-  const { isStart, isError: startError } = useIsStart();
+  const { isStart, isError: startError, isLoading: isLoadingStart } = useIsStart();
 
   const [menuSelectorValue, setMenuSelectorValue] = useState<string | number | null>(null);
   // 상품디테일 팝업
@@ -94,6 +94,7 @@ const Menu = () => {
     hasNextPage,
     isFetching,
     isError,
+    isLoading: infinitLoading,
   } = useInfiniteQuery({
     queryKey: [QUERY_KEY.PRODUCT_LIST, menuSelectorValue],
     queryFn: fetch,
@@ -204,7 +205,7 @@ const Menu = () => {
     [],
   );
 
-  if (!isStart && !isLoading)
+  if (!isStart && !isLoading && !infinitLoading && !isLoadingStart)
     return (
       <Box color="text.secondary" sx={{ padding: '20px' }}>
         현재 영업이 종료되었습니다.
@@ -255,24 +256,68 @@ const Menu = () => {
           height: '60vh',
         }}
       >
-        <Selector
-          textAlign="center"
-          optionArr={menuList}
-          value={menuSelectorValue || 'loding'}
-          fontWeight="600"
-          width="100%"
-          xsFontSize="4vw"
-          mdFontSize="35px"
-          onChangeEvent={menuSelectorHandler}
-          subText="메뉴 카테고리 선택"
-          subSx={{ textAlign: 'center' }}
-        />
+        {isLoading || isLoadingStart || infinitLoading ? (
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            width="100%"
+            height="fit-content"
+            sx={{ bgcolor: 'grey.900' }}
+          >
+            <Selector
+              optionArr={[]}
+              value={'loding...'}
+              fontWeight="600"
+              width="100%"
+              xsFontSize="4vw"
+              mdFontSize="35px"
+              subText="메뉴 카테고리 선택"
+            />
+          </Skeleton>
+        ) : (
+          <Selector
+            textAlign="center"
+            optionArr={menuList}
+            value={menuSelectorValue || 'loding...'}
+            fontWeight="600"
+            width="100%"
+            xsFontSize="4vw"
+            mdFontSize="35px"
+            onChangeEvent={menuSelectorHandler}
+            subText="메뉴 카테고리 선택"
+            subSx={{ textAlign: 'center' }}
+          />
+        )}
+
         <Box sx={{ padding: '10px 10px', height: '60vh', overflowY: 'scroll' }}>
-          {productList?.length === 0 ? (
+          {isLoading || isLoadingStart || infinitLoading ? (
+            Array(5)
+              .fill(null)
+              .map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="rounded"
+                  animation="wave"
+                  width="100%"
+                  height="fit-content"
+                  sx={{ bgcolor: 'grey.900', marginBottom: '10px' }}
+                >
+                  <MenuLineLayout
+                    data={{
+                      pd_name: 'aa',
+                      desc: 'aa',
+                      price: 100,
+                      option_arr: [],
+                    }}
+                  />
+                </Skeleton>
+              ))
+          ) : productList?.length === 0 ? (
             <Empty title="등록된 상품이 없습니다." />
           ) : (
             productList?.map((el: ProductNewListType, index: number) => (
               <MenuLineLayout
+                conSx={{ marginBottom: '10px' }}
                 data={el}
                 key={index}
                 onClickMenuPlus={(optionValue) => addMenuHandler(el, optionValue)}

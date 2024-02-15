@@ -4,6 +4,7 @@ import ContentBox from '@/components/layout/ContentBox';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
@@ -50,20 +51,24 @@ const Recommend = () => {
               : SUB_CATEGORY_TYPE.TEQUILA;
 
   // 인트로문구 패칭
-  const { data: { data: introTextData } = { data: undefined }, isError: introIsError } =
-    useQueryInstance<{ data: FindingIntroType }>({
-      queryKey: [QUERY_KEY.FINDING_INTRO, String(finding_idx)],
-      apiMethod: 'get',
-      apiEndPoint: USE_QUERY_POINT.FINDING_INTRO,
-      apiQueryParams: {
-        finding_idx,
-      },
-    });
+  const {
+    data: { data: introTextData } = { data: undefined },
+    isError: introIsError,
+    isLoading: isIntroLoading,
+  } = useQueryInstance<{ data: FindingIntroType }>({
+    queryKey: [QUERY_KEY.FINDING_INTRO, String(finding_idx)],
+    apiMethod: 'get',
+    apiEndPoint: USE_QUERY_POINT.FINDING_INTRO,
+    apiQueryParams: {
+      finding_idx,
+    },
+  });
 
   // 주류별 하위메뉴 불러오기
   const {
     data: { data: { section_list: sectionListData } } = { data: { section_list: [] } },
     isError: sectionListError,
+    isLoading: sectionListLoading,
   } = useQueryInstance<{ data: FindingSectionType }>({
     queryKey: [QUERY_KEY.FINDING_SECTION_LIST, String(finding_idx), String(sub_category_idx)],
     apiMethod: 'get',
@@ -120,15 +125,45 @@ const Recommend = () => {
           >
             {userClass === 'Beginner' ? '초심자' : userClass === 'Explorer' ? '탐험가' : '고인물'}
           </Typography>
-          <ContentBox>
-            <Typography color="text.secondary" sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}>
-              {introTextData?.intro_text}
-            </Typography>
-          </ContentBox>
+
+          {isIntroLoading || sectionListLoading ? (
+            <Skeleton
+              variant="rounded"
+              animation="wave"
+              width="100%"
+              height="fit-content"
+              sx={{ bgcolor: 'grey.900' }}
+            >
+              <ContentBox>
+                <Typography color="text.secondary" sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}>
+                  로딩
+                </Typography>
+              </ContentBox>
+            </Skeleton>
+          ) : (
+            <ContentBox>
+              <Typography color="text.secondary" sx={{ fontSize: { xs: '3.5vw', md: '31px' } }}>
+                {introTextData?.intro_text}
+              </Typography>
+            </ContentBox>
+          )}
         </Box>
 
         <Box display="flex" flexDirection="column" maxHeight="26vh" overflow="scroll" gap="5px">
-          {sectionListData?.length === 0 ? (
+          {isIntroLoading || sectionListLoading ? (
+            Array(5)
+              .fill(null)
+              .map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="rounded"
+                  animation="wave"
+                  width="100%"
+                  height="50px"
+                  sx={{ bgcolor: 'grey.900' }}
+                />
+              ))
+          ) : sectionListData?.length === 0 ? (
             <Empty title="등록된 카테고리가 없습니다." />
           ) : (
             sectionListData?.map((el, index) => (

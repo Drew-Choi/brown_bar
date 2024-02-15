@@ -96,6 +96,7 @@ export const NavAdmin = () => {
     data: { data: isStart } = { data: false },
     isError,
     refetch,
+    isLoading,
   } = useQueryInstance<{ data: boolean }>({
     queryKey: [QUERY_KEY.IS_START],
     apiMethod: 'get',
@@ -262,12 +263,18 @@ const MenuListUp = React.memo(
             >
               영업시작
             </Typography>
-            <Switch
-              checked={switchChecked || false}
-              inputProps={{ 'aria-label': 'controlled' }}
-              onChange={switchOnChange}
-              color="secondary"
-            />
+            {!switchChecked ? (
+              <Typography textAlign="center" sx={{ width: '114px', height: '38px' }}>
+                'Loading...'
+              </Typography>
+            ) : (
+              <Switch
+                checked={switchChecked || false}
+                inputProps={{ 'aria-label': 'controlled' }}
+                onChange={switchOnChange}
+                color="secondary"
+              />
+            )}
           </Box>
         </Box>
         {data?.map((el, index) => (

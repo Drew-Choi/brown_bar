@@ -1,8 +1,6 @@
 'use client';
 import ContentBox from '@/components/layout/ContentBox';
-import ImageLayout from '@/components/layout/ImageLayout';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { SelectChangeEvent, styled } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
@@ -16,6 +14,9 @@ import { cartData } from '@/recoil/cart';
 import { useSetRecoilState } from 'recoil';
 import ButtonNomal from '@/components/buttons/ButtonNomal';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Skeleton from '@mui/material/Skeleton';
+import dynamic from 'next/dynamic';
+import Typography from '@mui/material/Typography';
 
 const MainContainer = styled('main')`
   position: relative;
@@ -23,6 +24,45 @@ const MainContainer = styled('main')`
   width: 100%;
   padding: 20px;
 `;
+
+const ImageLayout = dynamic(() => import('@/components/layout/ImageLayout'), {
+  loading: () => (
+    <Skeleton
+      variant="rounded"
+      animation="wave"
+      width="100%"
+      height="196px"
+      sx={{ bgcolor: 'grey.900', margin: 'auto' }}
+    />
+  ),
+
+  ssr: false,
+});
+
+const TitleText = dynamic(() => import('@mui/material/Typography'), {
+  loading: () => (
+    <Skeleton
+      variant="rounded"
+      animation="wave"
+      width="60%"
+      sx={{ position: 'relative', bgcolor: 'grey.900', margin: 'auto', marginBottom: '2px' }}
+    >
+      <Typography
+        marginBottom="5px"
+        textAlign="center"
+        sx={{ fontSize: { xs: '6vw', md: '54px' } }}
+      >
+        로딩중
+      </Typography>
+    </Skeleton>
+  ),
+  ssr: false,
+});
+
+const PriceText = dynamic(() => import('@mui/material/Typography'), {
+  loading: () => <p style={{ fontSize: '16px', opacity: '0' }}>로딩</p>,
+  ssr: false,
+});
 
 const Detail = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -58,7 +98,11 @@ const Detail = ({ params }: { params: { id: string } }) => {
     }
   }, [section]);
 
-  const { data: { data } = { data: undefined }, isError } = useQueryInstance<{
+  const {
+    data: { data } = { data: undefined },
+    isError,
+    isLoading,
+  } = useQueryInstance<{
     data: ProductNewListType;
   }>({
     queryKey: [QUERY_KEY.PRODUCT_DETAIL, id],
@@ -128,21 +172,49 @@ const Detail = ({ params }: { params: { id: string } }) => {
 
   return (
     <MainContainer>
-      <Typography
-        color="text.secondary"
-        marginBottom="5px"
-        textAlign="center"
-        sx={{ fontSize: { xs: '6vw', md: '54px' } }}
-      >
-        {data?.pd_name ? data.pd_name : cacheData?.pd_name}
-      </Typography>
+      {isLoading ? (
+        <Skeleton
+          variant="rounded"
+          animation="wave"
+          width="60%"
+          sx={{ position: 'relative', bgcolor: 'grey.900', margin: 'auto', marginBottom: '2px' }}
+        >
+          <Typography
+            marginBottom="5px"
+            textAlign="center"
+            sx={{ fontSize: { xs: '6vw', md: '54px' } }}
+          >
+            로딩중
+          </Typography>
+        </Skeleton>
+      ) : (
+        <TitleText
+          color="text.secondary"
+          marginBottom="5px"
+          textAlign="center"
+          sx={{ fontSize: { xs: '6vw', md: '54px' } }}
+        >
+          {data?.pd_name ? data.pd_name : cacheData?.pd_name}
+        </TitleText>
+      )}
+
       <Box width="50%" margin="auto">
-        <ImageLayout
-          priority={true}
-          src={data?.img_url ? data.img_url : cacheData?.img_url || '/'}
-          alt="제품사진"
-          marginBottom="10px"
-        />
+        {isLoading ? (
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            width="100%"
+            height="196px"
+            sx={{ bgcolor: 'grey.900', margin: 'auto' }}
+          />
+        ) : (
+          <ImageLayout
+            priority={true}
+            src={data?.img_url ? data.img_url : cacheData?.img_url || '/'}
+            alt="제품사진"
+            marginBottom="10px"
+          />
+        )}
       </Box>
       <Box
         sx={{
@@ -156,24 +228,29 @@ const Detail = ({ params }: { params: { id: string } }) => {
           marginBottom: '10px',
         }}
       >
-        <Typography color="text.secondary" fontSize="16px">
-          {data
-            ? (
-                data?.price +
-                (data.option_arr?.length !== 0
-                  ? Number(data.option_arr?.find((el) => el.value === optionValue)?.price)
-                  : 0)
-              ).toLocaleString('ko-KR')
-            : cacheData
+        {isLoading ? (
+          <p style={{ fontSize: '16px', opacity: '0' }}>로딩</p>
+        ) : (
+          <PriceText color="text.secondary" fontSize="16px">
+            {data
               ? (
-                  cacheData?.price +
-                  (cacheData.option_arr?.length !== 0
-                    ? Number(cacheData.option_arr?.find((el) => el.value === optionValue)?.price)
+                  data?.price +
+                  (data.option_arr?.length !== 0
+                    ? Number(data.option_arr?.find((el) => el.value === optionValue)?.price)
                     : 0)
                 ).toLocaleString('ko-KR')
-              : null}
-          ₩
-        </Typography>
+              : cacheData
+                ? (
+                    cacheData?.price +
+                    (cacheData.option_arr?.length !== 0
+                      ? Number(cacheData.option_arr?.find((el) => el.value === optionValue)?.price)
+                      : 0)
+                  ).toLocaleString('ko-KR')
+                : null}
+            ₩
+          </PriceText>
+        )}
+
         {(data && data.option_arr?.length !== 0) ||
         (cacheData && cacheData.option_arr?.length !== 0) ? (
           <Selector
@@ -199,13 +276,15 @@ const Detail = ({ params }: { params: { id: string } }) => {
       <Box sx={{ marginTop: '5px', marginBottom: '5px', textAlign: 'right' }}>
         <ButtonNomal
           sx={{ marginRight: '10px', padding: '5px 10px', fontSize: '12px', fontWeight: '600' }}
-          onClickEvent={() => router.push('/main/menu')}
+          onClickEvent={() => (isLoading ? null : router.push('/main/menu'))}
         >
           메뉴판
         </ButtonNomal>
         <ButtonNomal
           sx={{ padding: '5px 10px', fontSize: '12px', fontWeight: '600' }}
-          onClickEvent={() => addMenuHandler(data ? data : cacheData ? cacheData : null)}
+          onClickEvent={() =>
+            isLoading ? null : addMenuHandler(data ? data : cacheData ? cacheData : null)
+          }
         >
           카트담기
         </ButtonNomal>

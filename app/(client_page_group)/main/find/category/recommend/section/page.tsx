@@ -1,5 +1,6 @@
 'use client';
 import { styled } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -32,7 +33,11 @@ const Section = () => {
 
   const router = useRouter();
 
-  const { data: { data: subProductList } = { data: [] }, isError } = useQueryInstance<{
+  const {
+    data: { data: subProductList } = { data: [] },
+    isError,
+    isLoading,
+  } = useQueryInstance<{
     data: ProductNewListType[];
   }>({
     queryKey: [QUERY_KEY.PRODUCT_LIST, section, String(PRODUCT_LIST_TYPE.IS_SUB_CLIENT_VEIW_LIST)],
@@ -49,7 +54,21 @@ const Section = () => {
   return (
     <MainContainer>
       <Grid container spacing={2}>
-        {subProductList?.length === 0 ? (
+        {isLoading ? (
+          Array(6)
+            .fill(null)
+            .map((_, index) => (
+              <Grid xs={6} key={index}>
+                <Skeleton
+                  variant="rounded"
+                  animation="wave"
+                  width="100%"
+                  height="160px"
+                  sx={{ bgcolor: 'grey.900' }}
+                />
+              </Grid>
+            ))
+        ) : subProductList?.length === 0 ? (
           <Empty title="등록된 상품이 없습니다." />
         ) : (
           subProductList?.map((el, index) => (
