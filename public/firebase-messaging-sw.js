@@ -1,6 +1,8 @@
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
+const PROXY = window.location.hostname === 'localhost' ? 'http://localhost:3002' : 'https://brownbar.vercel.app';
+
 // Firebase 프로젝트 설정으로 초기화
 firebase.initializeApp({
   apiKey: "AIzaSyBYA85JiSd-kwn_4Wd9EZ9ybdUMqGsfW2c",
@@ -34,6 +36,6 @@ self.addEventListener('notificationclick', function(event) {
   event.notification.close(); // 알림 창 닫기
   // 페이지 이동
   event.waitUntil(
-    clients.openWindow('http://localhost:3002/admin/start/sales')
+    clients.openWindow(`${PROXY}/admin/start/sales`)
   );
 });
