@@ -19,7 +19,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { RiLogoutBoxLine } from 'react-icons/ri';
 import { IoSettings } from 'react-icons/io5';
-import { useIsLogin } from '@/hook/useIsLogin/useIsLogin';
+import { useIsAdmin } from '@/hook/useIsAdmin/useIsAdmin';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
@@ -85,7 +85,7 @@ const navMenuData = [
 ];
 
 export const NavAdmin = () => {
-  const { status: loginStatus } = useIsLogin();
+  const { status: loginStatus } = useIsAdmin();
 
   const { openPopup } = usePopup();
   const [show, setShow] = useState<Boolean>(false);

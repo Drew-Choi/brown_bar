@@ -1,28 +1,45 @@
 import NextAuth from 'next-auth';
-import Kakao from 'next-auth/providers/kakao';
+import KakaoProvider from 'next-auth/providers/kakao';
+import connectDB from '../../_lib/mongodb';
+import Member from '../../_models/Member';
 
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
+interface KakaoProfileType {
+  id: number;
+  connected_at: string;
+  properties: {
+    nickname: string;
+    profile_image: string;
+    thumbnail_image: string;
+  };
+  kakao_account: {
+    profile_nickname_needs_agreement: boolean;
+    profile_image_needs_agreement: boolean;
+    profile: {
+      nickname: string;
+      thumbnail_image_url: string;
+      profile_image_url: string;
+      is_default_image: boolean;
+    };
+  };
+}
+
+const handler = NextAuth({
   session: {
     strategy: 'jwt',
     maxAge: 60 * 24 * 60 * 60,
   },
-  pages: {
-    signIn: '/admin/login',
-    error: '/admin/login',
-  },
   providers: [
-    Kakao({ clientId: process.env.KAKAO_CLIENT_ID, clientSecret: process.env.KAKAO_CLIENT_SECRET }),
+    KakaoProvider({
+      clientId: String(process.env.KAKAO_CLIENT_ID),
+      clientSecret: String(process.env.KAKAO_CLIENT_SECRET),
+    }),
   ],
+  pages: { error: '/admin/login' },
   callbacks: {
     jwt: async ({ token, account, user }) => {
       // 초기 로그인 설정
       if (account && account.refresh_token && account.expires_in) {
-        token.access_expires_at = Date.now() + account.expires_in * 1000;
+        token.access_expires_at = Date.now() + (account.expires_in as number) * 1000;
         token.refresh_token = account.refresh_token;
       }
 
@@ -71,3 +88,5 @@ export const {
     },
   },
 });
+
+export { handler as GET, handler as POST };

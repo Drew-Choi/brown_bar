@@ -2,7 +2,7 @@ import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { signOut } from 'next-auth/react';
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, Messaging } from 'firebase/messaging';
@@ -41,7 +41,7 @@ export const useIsAdmin = () => {
     },
   });
 
-  const getTokenFunc = useCallback(async () => {
+  const getTokenFunc = async () => {
     try {
       const permission = await Notification.requestPermission();
 
@@ -61,7 +61,7 @@ export const useIsAdmin = () => {
     } catch (err) {
       console.error('An error occurred while retrieving token. ', err);
     }
-  }, [data]);
+  };
 
   const { mutate: idCheckAPI } = useMutationInstance<
     undefined,
@@ -80,22 +80,22 @@ export const useIsAdmin = () => {
   });
 
   useEffect(() => {
-    if (status !== 'loading') {
+    if (status !== 'loading' && status === 'authenticated') {
       if ((data as SessionAdd)?.error === 'RefreshAccessTokenError') {
         router.replace('/admin/login');
-      }
-
-      if ((data as SessionAdd)?.user_id) {
-        idCheckAPI({
-          apiBody: {
-            id: String((data as SessionAdd)?.user_id),
-            nick_name: String(data?.user?.name),
-            profile_img: String(data?.user?.image),
-          },
-        });
+      } else {
+        if ((data as SessionAdd)?.user_id) {
+          idCheckAPI({
+            apiBody: {
+              id: String((data as SessionAdd)?.user_id),
+              nick_name: String(data?.user?.name),
+              profile_img: String(data?.user?.image),
+            },
+          });
+        }
       }
     }
-  }, [data, status]);
+  }, [status]);
 
   return { data, status };
 };
