@@ -109,6 +109,7 @@ const FindCategory = () => {
             >
               <ImageWrap>
                 <Image
+                  priority
                   src={`/img/icon/${el.img}`}
                   width={70}
                   height={70}

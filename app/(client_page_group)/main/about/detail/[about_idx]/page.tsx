@@ -30,7 +30,7 @@ const AboutDetail = ({
     <>
       <MainContainer>
         <Box width="50%" margin="auto" marginBottom="10px">
-          <ImageLayout src="/img/test/test_image.jpeg" alt="주류대표사진" />
+          <ImageLayout priority={true} src="/img/test/test_image.jpeg" alt="주류대표사진" />
         </Box>
         <Box
           display="flex"

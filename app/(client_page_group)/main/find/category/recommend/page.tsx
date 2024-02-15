@@ -93,7 +93,7 @@ const Recommend = () => {
             priority
             src={
               userClass === 'Beginner'
-                ? '/img/beginner_icon.png'
+                ? '/img/begin_icon.png'
                 : userClass === 'Explorer'
                   ? '/img/explorer_icon.png'
                   : '/img/old_water_icon.png'

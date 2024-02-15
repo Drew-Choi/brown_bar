@@ -376,6 +376,7 @@ const ProductEdit = ({ params }: { params: { id: string } }) => {
       {/* // ------ 이미지 라인 ----- */}
       <Box sx={{ width: { xs: '70%', sm: '50%' }, cursor: 'pointer' }} onClick={inputClickHandler}>
         <ImageLayout
+          priority={true}
           src={!blobURL ? '/img/ready_file.png' : blobURL}
           innerWidth={!blobURL ? '50%' : '100%'}
           innerLeft={!blobURL ? '50%' : '0'}

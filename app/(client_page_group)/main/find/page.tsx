@@ -50,7 +50,7 @@ const Find = () => {
           <ImageWrap>
             <Image
               priority
-              src="/img/beginner_icon.png"
+              src="/img/begin_icon.png"
               width={70}
               height={70}
               alt="초심자아이콘"

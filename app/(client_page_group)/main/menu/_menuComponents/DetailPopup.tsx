@@ -90,7 +90,7 @@ const DetailPopup = ({ conSx, titleSx, onClickClose, data, onClickAddCart }: Det
         </Typography>
         <Box width="50%" margin="auto">
           <ImageLayout
-            priority
+            priority={true}
             src={data?.img_url ? data.img_url : '/'}
             alt="제품사진"
             marginBottom="10px"

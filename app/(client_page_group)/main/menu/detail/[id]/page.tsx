@@ -138,7 +138,7 @@ const Detail = ({ params }: { params: { id: string } }) => {
       </Typography>
       <Box width="50%" margin="auto">
         <ImageLayout
-          priority
+          priority={true}
           src={data?.img_url ? data.img_url : cacheData?.img_url || '/'}
           alt="제품사진"
           marginBottom="10px"

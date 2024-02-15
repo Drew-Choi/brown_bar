@@ -121,6 +121,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
 
       <Box sx={{ flex: '1', position: 'relative' }} onClick={() => router.push('/main')}>
         <Image
+          priority
           src="/img/bottom_icon.png"
           width={121}
           height={76}

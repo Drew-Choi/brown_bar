@@ -58,6 +58,7 @@ const Screen = () => {
       }}
     >
       <Image
+        priority
         style={{
           position: 'absolute',
           display: 'block',

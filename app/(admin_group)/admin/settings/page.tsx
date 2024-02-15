@@ -81,6 +81,7 @@ const Settings = () => {
               <React.Fragment key={el.id}>
                 <Grid xs={3} display="flex" alignItems="center" justifyContent="center">
                   <Image
+                    priority
                     style={{ borderRadius: '10px' }}
                     src={String(el?.profile_img)}
                     width={80}

@@ -9,10 +9,12 @@ if (!admin.apps.length) {
   try {
     admin.initializeApp({
       credential: admin.credential.cert({
-        // 여기에 Firebase 서비스 계정 키 정보를 넣습니다
         projectId: process.env.FIREBASE_PROJECT_ID,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        privateKey:
+          process.env.NODE_ENV === 'development'
+            ? process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+            : process.env.FIREBASE_PRIVATE_KEY,
       }),
     });
   } catch (error: any) {
