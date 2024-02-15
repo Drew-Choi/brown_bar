@@ -1,8 +1,9 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import FindingIntro from '@/app/(@api_group)/api/_models/FindingIntro';
-import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
+// import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 import { REDIS_CACHE_KEY } from '../../_constant/KEY';
+import { kv } from '@vercel/kv';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,10 +16,11 @@ export async function GET(req: NextRequest) {
     if (!finding_idx)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });
 
-    const redisClient = await getRedisClient();
-    const cacheFindingIntro = await redisClient.GET(
+    // const redisClient = await getRedisClient();
+    const cacheFindingIntro: string | null = await kv.get(
       `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
     );
+    console.log('기존에 있음?', cacheFindingIntro);
 
     if (!cacheFindingIntro) {
       await connectDB();
@@ -50,7 +52,7 @@ export async function GET(req: NextRequest) {
         if (!newFindingIntroResult)
           return NextResponse.json({ message: 'DB Error' }, { status: 500 });
 
-        await redisClient.SET(
+        await kv.set(
           `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
           JSON.stringify(newFinalData),
         );
@@ -61,10 +63,7 @@ export async function GET(req: NextRequest) {
         );
       }
 
-      await redisClient.SET(
-        `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
-        JSON.stringify(result),
-      );
+      await kv.set(`${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`, JSON.stringify(result));
 
       return NextResponse.json(
         { message: '인트로 문구 불러오기 성공', data: result },
@@ -109,8 +108,8 @@ export async function POST(req: NextRequest) {
     );
 
     if (result.acknowledged && result.modifiedCount === 1) {
-      const redisClient = await getRedisClient();
-      const cacheFindingIntro = await redisClient.GET(
+      // const redisClient = await getRedisClient();
+      const cacheFindingIntro: string | null = await kv.get(
         `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
       );
 
@@ -122,7 +121,7 @@ export async function POST(req: NextRequest) {
       const parseFindingIntro: FindingIntroType = JSON.parse(cacheFindingIntro);
       const newFindingIntro = { ...parseFindingIntro, intro_text };
 
-      await redisClient.SET(
+      await kv.set(
         `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
         JSON.stringify(newFindingIntro),
       );

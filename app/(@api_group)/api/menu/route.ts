@@ -2,7 +2,8 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { NextRequest, NextResponse } from 'next/server';
 import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
-import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
+// import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
+import { kv } from '@vercel/kv';
 
 // 메뉴 카테고리 추가
 export async function POST(req: NextRequest) {
@@ -21,8 +22,8 @@ export async function POST(req: NextRequest) {
     const result: MenuCategoryType = await newCategory.save();
 
     if (result) {
-      const redisClient = await getRedisClient();
-      const preCache = await redisClient.GET(REDIS_CACHE_KEY.MENU_LIST);
+      // const redisClient = await getRedisClient();
+      const preCache: string | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
       // 캐싱데이터가 없음 그냥 진행
       if (!preCache) return NextResponse.json({ message: '저장성공' }, { status: 200 });
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
       // 있으면 배열에 추가하여 저장
       let parseCache: MenuCategoryType[] = JSON.parse(preCache);
       parseCache.push(result);
-      await redisClient.SET(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(parseCache));
+      await kv.set(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(parseCache));
       return NextResponse.json({ message: '저장성공' }, { status: 200 });
     }
     return NextResponse.json({ message: 'DB Error' }, { status: 500 });
@@ -48,8 +49,8 @@ export async function POST(req: NextRequest) {
 // 메뉴 카테고리 리스트 불러오기
 export async function GET() {
   try {
-    const redisClient = await getRedisClient();
-    const cacheMenuList = await redisClient.GET(REDIS_CACHE_KEY.MENU_LIST);
+    // const redisClient = await getRedisClient();
+    const cacheMenuList: string | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
     if (!cacheMenuList) {
       await connectDB();
@@ -57,7 +58,7 @@ export async function GET() {
       const result: MenuCategoryType[] = await Menu.find().select('-_id -__v');
 
       if (result) {
-        await redisClient.SET(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(result));
+        await kv.set(REDIS_CACHE_KEY.MENU_LIST, JSON.stringify(result));
         return NextResponse.json({ message: '메뉴 리스트업 성공', data: result }, { status: 200 });
       }
       return NextResponse.json({ message: 'DB Error' }, { status: 500 });
