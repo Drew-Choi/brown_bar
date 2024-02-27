@@ -42,6 +42,8 @@ export async function POST(req: NextRequest) {
     const deviceToken = await Member.find({ is_admin: true }).select('+deviceToken');
     const newArr = deviceToken.map((el) => el.fcm).flat();
 
+    console.log(deviceToken);
+
     if (newArr?.length === 0) return NextResponse.json({ message: '주문 성공' }, { status: 200 });
 
     const message = {
@@ -69,8 +71,11 @@ export async function POST(req: NextRequest) {
 
     const response = await admin.messaging().sendMulticast(message);
 
-    if (response.responses.some((el) => el.success === true))
+    if (response.responses.some((el) => el.success === true)) {
       return NextResponse.json({ message: '주문 성공' }, { status: 200 });
+    }
+
+    return NextResponse.json({ message: 'Server Error' }, { status: 500 });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

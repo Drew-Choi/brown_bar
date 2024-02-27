@@ -2,7 +2,7 @@ import { USE_MUTATE_POINT } from '@/constant/END_POINT';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { signOut } from 'next-auth/react';
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, Messaging } from 'firebase/messaging';
@@ -49,6 +49,8 @@ export const useIsAdmin = () => {
         const currentToken = await getToken(messaging, {
           vapidKey: process.env.NEXT_PUBLIC_FCM_VAP,
         });
+        console.log('토큰?', currentToken);
+
         if (currentToken) {
           fcmDevieTokenAPI({
             apiBody: {

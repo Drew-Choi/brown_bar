@@ -33,13 +33,10 @@ orderSchema.pre('save', async function (next) {
   if (this?.isNew) {
     const nowDataKST = nowDayAndTimeOnlyNumber({ format: 'YYYYMMDD' });
 
-    const lastDocument = await mongoose.models.Order.findOne({
-      order_idx: new RegExp('^' + nowDataKST),
-    }).sort({ order_idx: -1 });
+    const lastDocument = await mongoose.models.Order.findOne().sort({ updated_at: -1 }).limit(1);
 
-    if (lastDocument) {
+    if (lastDocument && lastDocument.order_idx.includes(nowDataKST)) {
       const lastNumber = Number(lastDocument.order_idx?.split('_')[1]);
-
       this.order_idx = `${nowDataKST}_${lastNumber + 1}`;
     } else {
       this.order_idx = `${nowDataKST}_1`;
