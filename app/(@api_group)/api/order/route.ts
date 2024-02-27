@@ -42,8 +42,6 @@ export async function POST(req: NextRequest) {
     const deviceToken = await Member.find({ is_admin: true }).select('+deviceToken');
     const newArr = deviceToken.map((el) => el.fcm).flat();
 
-    console.log(deviceToken);
-
     if (newArr?.length === 0) return NextResponse.json({ message: '주문 성공' }, { status: 200 });
 
     const message = {
@@ -70,6 +68,35 @@ export async function POST(req: NextRequest) {
     };
 
     const response = await admin.messaging().sendMulticast(message);
+
+    // 만료토큰 찾아 삭제
+    const tokensToDelete: string[] = [];
+
+    response.responses.forEach((obj, index) => {
+      if (!obj.success) {
+        const errorCode = obj.error?.code;
+        if (
+          errorCode === 'messaging/registration-token-not-registered' ||
+          errorCode === 'messaging/invalid-registration-token'
+        ) {
+          tokensToDelete.push(newArr[index]);
+        }
+      }
+    });
+
+    // 만료 토큰이 있다면 db삭제 진행
+    if (tokensToDelete.length > 0) {
+      const deleteResponse = await Member.updateMany(
+        { fcm: { $in: tokensToDelete } },
+        { $pull: { fcm: { $in: tokensToDelete } } },
+      );
+
+      if (deleteResponse.acknowledged) {
+        return response.responses.some((el) => el.success === true)
+          ? NextResponse.json({ message: '주문 성공' }, { status: 200 })
+          : NextResponse.json({ message: 'Server Error' }, { status: 500 });
+      }
+    }
 
     if (response.responses.some((el) => el.success === true)) {
       return NextResponse.json({ message: '주문 성공' }, { status: 200 });

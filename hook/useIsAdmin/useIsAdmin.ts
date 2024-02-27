@@ -49,7 +49,6 @@ export const useIsAdmin = () => {
         const currentToken = await getToken(messaging, {
           vapidKey: process.env.NEXT_PUBLIC_FCM_VAP,
         });
-        console.log('토큰?', currentToken);
 
         if (currentToken) {
           fcmDevieTokenAPI({
