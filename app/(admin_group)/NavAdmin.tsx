@@ -169,6 +169,7 @@ export const NavAdmin = () => {
           data={navMenuData}
           logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
           switchChecked={isStart}
+          switchIsLoading={isLoading}
           switchOnChange={startSwitchHandler}
           showUseState={() => setShow((cur) => cur && false)}
         />
@@ -191,6 +192,7 @@ interface MenuListUpProps {
   logOutOnClick?: () => void;
   switchOnChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   switchChecked?: boolean;
+  switchIsLoading?: boolean;
   showUseState?: () => void;
 }
 
@@ -214,6 +216,7 @@ const MenuListUp = React.memo(
     switchOnChange,
     switchChecked,
     showUseState,
+    switchIsLoading = false,
   }: MenuListUpProps) => {
     const router = useRouter();
     const pathName = usePathname();
@@ -263,7 +266,7 @@ const MenuListUp = React.memo(
             >
               영업시작
             </Typography>
-            {!switchChecked ? (
+            {switchIsLoading ? (
               <Typography textAlign="center" sx={{ width: '114px', height: '38px' }}>
                 'Loading...'
               </Typography>
