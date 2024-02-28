@@ -22,52 +22,53 @@ export async function POST(req: NextRequest) {
     if (!img_file || !pd_name || !price || !category_idx || !desc)
       return NextResponse.json({ message: '상품정보가 누락되었습니다.' }, { status: 400 });
 
-    if (img_file instanceof File) {
-      const buffer = Buffer.from(await img_file.arrayBuffer());
-      const contentType = img_file.type;
-      // const contentName = img_file.name;
-      const contentName = `${pd_name}_${nowDayAndTimeOnlyNumber({})}`;
+    if (!(img_file instanceof Blob)) {
+      return NextResponse.json({ message: '이미지파일이 잘못된 형식입니다.' }, { status: 400 });
+    }
+    const buffer = Buffer.from(await img_file.arrayBuffer());
+    const contentType = img_file.type;
+    // const contentName = img_file.name;
+    const contentName = `${pd_name}_${nowDayAndTimeOnlyNumber({})}`;
 
-      const response = await saveS3({
-        buffer,
-        contentType,
-        contentName,
-        path: S3BUCKET_PATH.BROWN_PRODUCT,
-      });
+    const response = await saveS3({
+      buffer,
+      contentType,
+      contentName,
+      path: S3BUCKET_PATH.BROWN_PRODUCT,
+    });
 
-      if (response?.status === 200) {
-        const { img_url } = await response.json();
+    if (response?.status === 200) {
+      const { img_url } = await response.json();
 
-        if (img_url) {
-          await connectDB();
+      if (img_url) {
+        await connectDB();
 
-          // 이미지 처리 모두 완료 후에 옵션 한목 추가
-          // 옵션항목 있을 시 파싱, 없으면 [] 빈배열
-          const optionParse = typeof option === 'string' ? JSON.parse(option) : null;
-          const option_arr = optionParse
-            ? [{ label: '- 옵션선택 -', value: 0, price: 0 }, ...optionParse]
-            : [];
+        // 이미지 처리 모두 완료 후에 옵션 한목 추가
+        // 옵션항목 있을 시 파싱, 없으면 [] 빈배열
+        const optionParse = typeof option === 'string' ? JSON.parse(option) : null;
+        const option_arr = optionParse
+          ? [{ label: '- 옵션선택 -', value: 0, price: 0 }, ...optionParse]
+          : [];
 
-          const newProduct = new Product({
-            pd_name,
-            price,
-            desc,
-            img_url,
-            option_arr,
-            category_idx,
-          });
+        const newProduct = new Product({
+          pd_name,
+          price,
+          desc,
+          img_url,
+          option_arr,
+          category_idx,
+        });
 
-          const result = await newProduct.save();
+        const result = await newProduct.save();
 
-          if (result) {
-            return NextResponse.json({ message: '상품등록 성공' }, { status: 200 });
-          } else {
-            return NextResponse.json({ message: 'DB fail' }, { status: 500 });
-          }
+        if (result) {
+          return NextResponse.json({ message: '상품등록 성공' }, { status: 200 });
+        } else {
+          return NextResponse.json({ message: 'DB fail' }, { status: 500 });
         }
       }
-      if (response?.status === 500) throw new Error('image information Error in Server');
     }
+    if (response?.status === 500) throw new Error('image information Error in Server');
   } catch (error: any) {
     // Mongoose 유니크 인덱스 위반 에러 처리
     if (error.code === 11000) {
