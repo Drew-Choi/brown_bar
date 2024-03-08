@@ -78,6 +78,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
 
   useEffect(() => {
     if (
+      pathName === '/main' ||
       pathName === '/main/menu' ||
       pathName === '/main/menu/order' ||
       pathName === '/main/menu/order/final'
@@ -98,7 +99,6 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
       setTb(null);
       return router.push('/not_tb');
     }
-    return;
   }, [pathName]);
 
   if (pathName === '/' || pathName === '/not-found' || pathName === '/not_tb') return;

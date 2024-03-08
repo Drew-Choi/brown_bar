@@ -37,20 +37,6 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
     }
   }, [pathName]);
 
-  useEffect(() => {
-    if (pathName === '/main/menu/order' || pathName === '/main') {
-      const tbValue = sessionStorage.getItem('tb');
-
-      if (tbValue) {
-        const parseTb = JSON.parse(tbValue)?.tb;
-        setTb(parseTb);
-      } else {
-        setTb(null);
-        return router.push('/not_tb');
-      }
-    }
-  }, [pathName]);
-
   const { mutate: addOrderAPI } = useMutationInstance<
     undefined,
     undefined,
