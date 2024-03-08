@@ -164,7 +164,7 @@ const CollapseBarMap = ({
             <GiConfirmed
               size={30}
               color={COLORS.text.secondary}
-              style={{ cursor: 'pointer', zindex: '10' }}
+              style={{ cursor: 'pointer', zIndex: '10' }}
               onClick={onClickEditConfirm}
             />
           )}
