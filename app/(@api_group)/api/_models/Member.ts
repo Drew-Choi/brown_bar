@@ -6,6 +6,7 @@ const memberSchema = new Schema({
   profile_img: { type: String, unique: true, default: '' },
   is_admin: { type: Boolean, default: false },
   fcm: { type: [String], default: [] },
+  rt: { type: String, default: '' },
 });
 
 // 모델이 이미 존재하는지 확인

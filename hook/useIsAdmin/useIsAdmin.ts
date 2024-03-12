@@ -27,6 +27,7 @@ if (typeof window !== 'undefined' && typeof window.navigator !== 'undefined') {
 
 export const useIsAdmin = () => {
   const { data, status } = useSession();
+
   const router = useRouter();
 
   const { mutate: fcmDevieTokenAPI } = useMutationInstance<

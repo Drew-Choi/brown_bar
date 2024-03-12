@@ -17,7 +17,6 @@ declare global {
   }
 
   interface SessionAdd extends Session {
-    error?: string;
     user_id?: string;
   }
 
@@ -134,6 +133,8 @@ declare global {
     nick_name: string;
     profile_img?: string;
     is_admin: boolean;
+    fcm?: string[] | [];
+    rt: string;
   }
 }
 

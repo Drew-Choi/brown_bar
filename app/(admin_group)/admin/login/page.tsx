@@ -13,11 +13,15 @@ const Login = () => {
   const error = search.get('error');
 
   useEffect(() => {
-    if (error && error !== '403')
-      return openPopup({ title: '로그인 오류', content: '다시 시도해주세요.' });
-
-    if (error === '403')
-      return openPopup({ title: '권한 오류', content: '관리자 계정이 아닙니다.' });
+    if (error === 'AccessDenied')
+      return openPopup({
+        title: '로그인 오류',
+        content: (
+          <>
+            <span>관리자 권한이 없거나</span> <br /> <span>잘못된 로그인입니다.</span>
+          </>
+        ),
+      });
   }, [error]);
 
   const submitHandler = async () => {

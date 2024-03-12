@@ -16,10 +16,9 @@ import SavedSearchIcon from '@mui/icons-material/SavedSearch';
 import LocalBarIcon from '@mui/icons-material/LocalBar';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { usePathname, useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { RiLogoutBoxLine } from 'react-icons/ri';
 import { IoSettings } from 'react-icons/io5';
-import { useIsAdmin } from '@/hook/useIsAdmin/useIsAdmin';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { USE_MUTATE_POINT, USE_QUERY_POINT } from '@/constant/END_POINT';
 import { usePopup } from '@/hook/usePopup/usePopup';
@@ -85,11 +84,10 @@ const navMenuData = [
 ];
 
 export const NavAdmin = () => {
-  const { status: loginStatus } = useIsAdmin();
-
   const { openPopup } = usePopup();
   const [show, setShow] = useState<Boolean>(false);
   const pathName = usePathname();
+  const { data } = useSession();
 
   // 영업상태 초기설정
   const {
@@ -101,7 +99,7 @@ export const NavAdmin = () => {
     queryKey: [QUERY_KEY.IS_START],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.START,
-    queryEnable: pathName !== '/admin/login' && loginStatus === 'authenticated',
+    queryEnable: pathName !== '/admin/login',
   });
 
   // 영업상태변경 요청
@@ -119,6 +117,26 @@ export const NavAdmin = () => {
   const startSwitchHandler = async (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.checked;
     isStartAPI({ apiBody: { is_start: value } });
+  };
+
+  // 로그아웃 요청
+  const { mutate: rtDeleteAPI } = useMutationInstance<undefined, undefined, { id: string }>({
+    apiMethod: 'post',
+    apiEndPoint: USE_MUTATE_POINT.LOGOUT,
+    onErrorFn: (err: any) => {
+      if (err.response.status === 400) {
+        openPopup({ title: '오류', content: err.response.data.message });
+      } else {
+        openPopup({ title: '오류', content: '다시 시도해주세요.' });
+      }
+    },
+    onSuccessFn: () => {
+      signOut();
+    },
+  });
+
+  const logoutHandler = () => {
+    rtDeleteAPI({ apiBody: { id: String((data as SessionAdd)?.user_id) } });
   };
 
   if (pathName === '/admin/login') return;
@@ -167,7 +185,7 @@ export const NavAdmin = () => {
             transition: '1s opacity ease',
           }}
           data={navMenuData}
-          logOutOnClick={() => signOut({ redirect: true, callbackUrl: '/admin/login' })}
+          logOutOnClick={() => logoutHandler()}
           switchChecked={isStart}
           switchIsLoading={isLoading}
           switchOnChange={startSwitchHandler}

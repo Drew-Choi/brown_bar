@@ -15,6 +15,8 @@ export const USE_QUERY_POINT = {
 export const USE_MUTATE_POINT = {
   FCM_SAVE: 'fcm/save',
   LOGIN: 'login',
+  LOGOUT: 'logout',
+  RTAUTH: 'rt_auth',
   PRODUCT_WRITE: 'product/write',
   PRODUCT_EDIT: 'product/edit',
   PRODUCT_DELETE: 'product/list/delete',
