@@ -9,3 +9,13 @@ export const GC_TIME = {
 export const STALE_TIME = {
   DEFAULT: 0,
 };
+
+export const COOKIE_TIME = {
+  ACCESS: 5,
+  REFRESH: 60 * 60 * 24 * 60,
+};
+
+export const TOKEN_TIME = {
+  ACCESS: '5s',
+  REFRESH: '60d',
+};

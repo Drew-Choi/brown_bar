@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Member from '@/app/(@api_group)/api/_models/Member';
 import JWT, { JwtPayload } from 'jsonwebtoken';
 import { generateSignJWT } from '@/utils/generateJWT';
+import { TOKEN_TIME } from '@/constant/NUMBER';
 
 interface TokenPayloadCustom extends JwtPayload {
   id: string;
@@ -24,8 +25,14 @@ export async function POST(req: NextRequest) {
       const findToken: MemberType | null = await Member.findOne({ rt, id: result.id });
 
       if (findToken && findToken?.rt) {
-        const newAccessToken = generateSignJWT({ value: { id: findToken.id }, expiresIn: '1h' });
-        const newRefreshToken = generateSignJWT({ value: { id: findToken.id }, expiresIn: '60d' });
+        const newAccessToken = generateSignJWT({
+          value: { id: findToken.id },
+          expiresIn: TOKEN_TIME.ACCESS,
+        });
+        const newRefreshToken = generateSignJWT({
+          value: { id: findToken.id },
+          expiresIn: TOKEN_TIME.REFRESH,
+        });
 
         console.log('db토큰', findToken);
 

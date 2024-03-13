@@ -4,11 +4,12 @@ import connectDB from '../../_lib/mongodb';
 import Member from '../../_models/Member';
 import { generateCookie } from '@/utils/generateCookie';
 import { generateSignJWT } from '@/utils/generateJWT';
+import { COOKIE_TIME, TOKEN_TIME } from '@/constant/NUMBER';
 
 const handler = NextAuth({
   session: {
     strategy: 'jwt',
-    maxAge: 60 * 60 * 24 * 60,
+    maxAge: COOKIE_TIME.REFRESH,
   },
   providers: [
     KakaoProvider({
@@ -36,8 +37,14 @@ const handler = NextAuth({
 
         // 커스텀 에세스토큰과 리프레쉬토큰 전략
         if (findUser && findUser.is_admin) {
-          const accessToken = generateSignJWT({ value: { id: findUser.id }, expiresIn: '30s' });
-          const refreshToken = generateSignJWT({ value: { id: findUser.id }, expiresIn: '60d' });
+          const accessToken = generateSignJWT({
+            value: { id: findUser.id },
+            expiresIn: TOKEN_TIME.ACCESS,
+          });
+          const refreshToken = generateSignJWT({
+            value: { id: findUser.id },
+            expiresIn: TOKEN_TIME.REFRESH,
+          });
 
           const updateResult: MemberType | null = await Member.findOneAndUpdate(
             { id: findUser.id },
@@ -48,13 +55,13 @@ const handler = NextAuth({
           generateCookie({
             name: 'at',
             value: accessToken,
-            maxAge: 60 * 60,
+            maxAge: COOKIE_TIME.ACCESS,
           });
 
           generateCookie({
             name: 'rt',
             value: refreshToken,
-            maxAge: 60 * 60 * 24 * 60,
+            maxAge: COOKIE_TIME.REFRESH,
           });
 
           return updateResult?.rt ? true : false;

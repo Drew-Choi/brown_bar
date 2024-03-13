@@ -50,6 +50,7 @@ const Login = () => {
       </Typography>
       <Box sx={{ width: '300px', cursor: 'pointer', margin: 'auto' }} onClick={submitHandler}>
         <Image
+          priority
           style={{ width: '100%', height: 'auto' }}
           src="/img/kakao_login_img.png"
           alt="카카오로그인아이콘"

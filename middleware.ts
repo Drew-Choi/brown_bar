@@ -1,5 +1,6 @@
 import { USE_MUTATE_POINT } from './constant/END_POINT';
 import { NextRequest, NextResponse } from 'next/server';
+import { COOKIE_TIME } from './constant/NUMBER';
 
 // redirectResponse객체
 const redirectResponse = () => {
@@ -41,19 +42,22 @@ export default async function middleware(req: NextRequest) {
           } = await response.json();
 
           const res = NextResponse.next();
+          const domainURL = process.env.COOKIE_DOMAIN;
           res.cookies.set('at', accessToken, {
             httpOnly: true,
             path: '/',
             secure: process.env.NODE_ENV !== 'development',
             sameSite: 'lax',
-            maxAge: 60 * 60,
+            maxAge: COOKIE_TIME.ACCESS,
+            domain: domainURL,
           });
           res.cookies.set('rt', refreshToken, {
             httpOnly: true,
             path: '/',
             secure: process.env.NODE_ENV !== 'development',
             sameSite: 'lax',
-            maxAge: 60 * 60 * 24 * 60,
+            maxAge: COOKIE_TIME.REFRESH,
+            domain: domainURL,
           });
 
           return res;

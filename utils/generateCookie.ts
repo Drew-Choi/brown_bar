@@ -6,6 +6,8 @@ type GenerateTokenProps = {
   maxAge: number;
 };
 
+const domainURL = process.env.COOKIE_DOMAIN;
+
 export const generateCookie = async ({ name, value, maxAge }: GenerateTokenProps) => {
   cookies().set({
     name,
@@ -15,5 +17,6 @@ export const generateCookie = async ({ name, value, maxAge }: GenerateTokenProps
     path: '/',
     secure: process.env.NODE_ENV !== 'development',
     sameSite: 'lax',
+    domain: domainURL,
   });
 };
