@@ -7,7 +7,7 @@ const redirectResponse = () => {
 
   redirectRes.cookies.delete('at');
   redirectRes.cookies.delete('rt');
-  redirectRes.cookies.delete('next-auth.session-token');
+  redirectRes.cookies.delete(String(process.env.SESSION_TOKEN_NAME));
 
   return redirectRes;
 };
@@ -16,6 +16,8 @@ export default async function middleware(req: NextRequest) {
   const at = req.cookies.get('at')?.value;
   const rt = req.cookies.get('rt')?.value;
   const url = req.nextUrl.pathname;
+
+  console.log('미들');
 
   if (url === '/admin/login') {
     return NextResponse.next();
