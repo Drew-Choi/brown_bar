@@ -15,8 +15,6 @@ export async function POST(req: NextRequest) {
 
     if (!rt) return NextResponse.json({ message: 'empty rt' }, { status: 400 });
 
-    console.log('rt?', rt);
-
     const result = JWT.verify(rt, process.env.JWT_SECRET as string) as TokenPayloadCustom;
 
     if (result.id) {
@@ -34,7 +32,7 @@ export async function POST(req: NextRequest) {
           expiresIn: TOKEN_TIME.REFRESH,
         });
 
-        console.log('db토큰', findToken);
+        console.log('db토큰');
 
         const updateResult = await Member.updateOne(
           { id: findToken.id },

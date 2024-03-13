@@ -41,7 +41,7 @@ export default async function middleware(req: NextRequest) {
             data: { accessToken, refreshToken },
           } = await response.json();
 
-          const res = NextResponse.next();
+          const res = NextResponse.redirect(req.nextUrl.clone());
           const domainURL = process.env.COOKIE_DOMAIN;
           res.cookies.set('at', accessToken, {
             httpOnly: true,
