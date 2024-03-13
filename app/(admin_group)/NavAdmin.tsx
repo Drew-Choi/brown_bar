@@ -25,6 +25,7 @@ import { usePopup } from '@/hook/usePopup/usePopup';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { FINDING_IDX } from '@/constant/FINDING_MY_TASTE_LIST';
+import { useFCMToken } from '@/hook/useFCMToken/useFCMToken';
 
 const navMenuData = [
   {
@@ -87,7 +88,7 @@ export const NavAdmin = () => {
   const { openPopup } = usePopup();
   const [show, setShow] = useState<Boolean>(false);
   const pathName = usePathname();
-  const { data } = useSession();
+  const { data: loginData, status: loginStatus } = useFCMToken();
 
   // 영업상태 초기설정
   const {
@@ -99,7 +100,7 @@ export const NavAdmin = () => {
     queryKey: [QUERY_KEY.IS_START],
     apiMethod: 'get',
     apiEndPoint: USE_QUERY_POINT.START,
-    queryEnable: pathName !== '/admin/login',
+    queryEnable: pathName !== '/admin/login' && loginStatus === 'authenticated',
   });
 
   // 영업상태변경 요청
@@ -136,7 +137,7 @@ export const NavAdmin = () => {
   });
 
   const logoutHandler = () => {
-    rtDeleteAPI({ apiBody: { id: String((data as SessionAdd)?.user_id) } });
+    rtDeleteAPI({ apiBody: { id: String((loginData as SessionAdd)?.user_id) } });
   };
 
   if (pathName === '/admin/login') return;

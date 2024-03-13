@@ -1,6 +1,7 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import Member from '@/app/(@api_group)/api/_models/Member';
+import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +18,9 @@ export async function POST(req: NextRequest) {
     );
 
     if (!deleteToken?.rt) {
+      cookies().delete('at');
+      cookies().delete('rt');
+
       return NextResponse.json({ message: 'rt삭제완료' }, { status: 200 });
     }
     return NextResponse.json({ message: '서버 삭제 오류' }, { status: 500 });
