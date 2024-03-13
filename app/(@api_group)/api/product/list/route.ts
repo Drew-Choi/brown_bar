@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { Document } from 'mongoose';
 import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
-// import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 import mongoose from 'mongoose';
 import { kv } from '@vercel/kv';
 
@@ -89,7 +88,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: '상품 리스트업 성공', data: list }, { status: 200 });
     }
 
-    // const redisClient = await getRedisClient();
     // 메뉴카테고리 캐싱 확인
     const cacheMenuList: MenuCategoryType[] | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 

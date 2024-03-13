@@ -2,7 +2,6 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { NextRequest, NextResponse } from 'next/server';
 import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
-// import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 import { kv } from '@vercel/kv';
 
 // 메뉴 카테고리 추가
@@ -22,7 +21,6 @@ export async function POST(req: NextRequest) {
     const result: MenuCategoryType = await newCategory.save();
 
     if (result) {
-      // const redisClient = await getRedisClient();
       const preCache: MenuCategoryType[] | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
       // 캐싱데이터가 없음 그냥 진행
@@ -49,7 +47,6 @@ export async function POST(req: NextRequest) {
 // 메뉴 카테고리 리스트 불러오기
 export async function GET() {
   try {
-    // const redisClient = await getRedisClient();
     const cacheMenuList = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
     if (!cacheMenuList) {

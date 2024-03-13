@@ -3,7 +3,6 @@ import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { NextRequest, NextResponse } from 'next/server';
 import Product from '@/app/(@api_group)/api/_models/Product';
 import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
-// import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 import { kv } from '@vercel/kv';
 
 // 메뉴 카테고리 삭제
@@ -27,7 +26,6 @@ export async function DELETE(req: NextRequest, { params }: { params: { category_
     const result = await Menu.deleteOne({ category_idx });
 
     if (result.acknowledged && result.deletedCount === 1) {
-      // const redisClient = await getRedisClient();
       const cacheMenuList: MenuCategoryType[] | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
       // 캐싱 데이터 없음 그냥 진행

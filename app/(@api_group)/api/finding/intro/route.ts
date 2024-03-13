@@ -1,7 +1,6 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import FindingIntro from '@/app/(@api_group)/api/_models/FindingIntro';
-// import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 import { REDIS_CACHE_KEY } from '../../_constant/KEY';
 import { kv } from '@vercel/kv';
 
@@ -16,7 +15,6 @@ export async function GET(req: NextRequest) {
     if (!finding_idx)
       return NextResponse.json({ message: '새로고침 후 다시 시도해주세요.' }, { status: 400 });
 
-    // const redisClient = await getRedisClient();
     const cacheFindingIntro = await kv.get(`${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`);
 
     if (!cacheFindingIntro) {
@@ -102,7 +100,6 @@ export async function POST(req: NextRequest) {
     );
 
     if (result.acknowledged && result.modifiedCount === 1) {
-      // const redisClient = await getRedisClient();
       const cacheFindingIntro: FindingIntroType | null = await kv.get(
         `${REDIS_CACHE_KEY.FINDING_INTRO}${finding_idx}`,
       );

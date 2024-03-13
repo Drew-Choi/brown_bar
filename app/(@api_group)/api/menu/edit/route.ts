@@ -2,7 +2,6 @@ import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import Menu from '@/app/(@api_group)/api/_models/Menu';
 import { NextRequest, NextResponse } from 'next/server';
 import { REDIS_CACHE_KEY } from '@/app/(@api_group)/api/_constant/KEY';
-// import { getRedisClient } from '@/app/(@api_group)/api/_lib/redis';
 import { kv } from '@vercel/kv';
 
 // 메뉴 카테고리 변경
@@ -24,7 +23,6 @@ export async function POST(req: NextRequest) {
     const result = await Menu.updateOne({ category_idx }, { $set: { label: new_label } });
 
     if (result.acknowledged && result.modifiedCount === 1) {
-      // const redisClient = await getRedisClient();
       const cacheMenuList: MenuCategoryType[] | null = await kv.get(REDIS_CACHE_KEY.MENU_LIST);
 
       // 캐싱 데이터 없음 그냥 진행
