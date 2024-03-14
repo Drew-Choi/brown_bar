@@ -32,8 +32,6 @@ export async function POST(req: NextRequest) {
           expiresIn: TOKEN_TIME.REFRESH,
         });
 
-        console.log('db토큰');
-
         const updateResult = await Member.updateOne(
           { id: findToken.id },
           {

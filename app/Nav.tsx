@@ -18,6 +18,11 @@ import { BsCartPlusFill } from 'react-icons/bs';
 import { RiHome4Fill } from 'react-icons/ri';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+type TbDataTpye = {
+  tb: string;
+  expire: string;
+};
+
 const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const pathName = usePathname();
   const router = useRouter();
@@ -30,6 +35,24 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
   const [cartValue, setCartValue] = useRecoilState(cartData);
 
   useEffect(() => {
+    if (pathName === '/main/menu/order') {
+      const tbData = sessionStorage.getItem('tb');
+
+      if (!tbData) {
+        setTb(null);
+        return router.push('/not_tb');
+      }
+
+      const tbParse: TbDataTpye = JSON.parse(tbData);
+      const now = new Date().toISOString();
+
+      if (now < tbParse.expire) return setTb(tbParse.tb);
+
+      sessionStorage.removeItem('tb');
+      setTb(null);
+      return router.push('/not_tb');
+    }
+
     if (pathName === '/main/menu' || pathName.startsWith('/main/menu/detail')) {
       const localCartValue = localStorage.getItem('cart');
 

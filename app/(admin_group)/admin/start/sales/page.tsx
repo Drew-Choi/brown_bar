@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import ContentBox from '@/components/layout/ContentBox';
@@ -15,9 +15,16 @@ import { usePopup } from '@/hook/usePopup/usePopup';
 import OrderCard from './_salesComponents/OrderCard';
 import CompleteCard from './_salesComponents/CompleteCard';
 import { tableData } from './_salesConstant/TABLE_DATA';
+import { NotificationPayload, getMessaging, onMessage } from 'firebase/messaging';
+import { OrderPupup } from './_salesComponents/OrderPupup';
 
 const Sales = () => {
   const { openPopup } = usePopup();
+  // 주문 알러트용
+  const [orderAlert, setOrderAlert] = useState<NotificationPayload | null>(null);
+  // 오디오 세팅
+  const soundRef = useRef<HTMLAudioElement>(null);
+  const soundBtnRef = useRef<HTMLButtonElement>(null);
 
   // 영업상태 초기설정
   const {
@@ -121,6 +128,25 @@ const Sales = () => {
     },
   });
 
+  // 실시간 주문 인식
+  useEffect(() => {
+    const messaging = getMessaging();
+    onMessage(messaging, (payload) => {
+      const { notification } = payload;
+
+      if (notification?.title && notification?.body && soundBtnRef.current) {
+        refetch();
+        soundBtnRef.current?.click();
+        setOrderAlert(notification);
+        return;
+      }
+    });
+  }, []);
+
+  const soundHandler = () => {
+    soundRef.current?.play();
+  };
+
   //메뉴 탑으로 이동용
   const navTopRef = useRef<HTMLDivElement>(null);
 
@@ -142,125 +168,132 @@ const Sales = () => {
     );
 
   return (
-    <Grid
-      container
-      sx={{
-        width: '100%',
-        boxSizing: 'border-box',
-        padding: '30px',
-        minHeight: '1650px',
-      }}
-    >
-      <div ref={navTopRef} />
-      <Grid xs={12} md={6}>
-        <ContentBox
-          sx={{
-            borderRadius: { xs: '10px', md: '10px 0 0 0' },
-            padding: 0,
-            bgcolor: '#cba77950',
-            border: '1px solid' + COLORS.info,
-            marginBottom: { xs: '50px', md: '0' },
-            height: '100%',
-          }}
-        >
-          <Typography
-            color="text.primary"
-            fontWeight={700}
+    <>
+      <button ref={soundBtnRef} onClick={soundHandler} style={{ display: 'none' }} />
+      <audio ref={soundRef} src="/ping.mp3" style={{ display: 'none' }} />
+      {orderAlert && (
+        <OrderPupup orderMessage={orderAlert} onCloseEvent={() => setOrderAlert(null)} />
+      )}
+      <Grid
+        container
+        sx={{
+          width: '100%',
+          boxSizing: 'border-box',
+          padding: '30px',
+          minHeight: '1650px',
+        }}
+      >
+        <div ref={navTopRef} />
+        <Grid xs={12} md={6}>
+          <ContentBox
             sx={{
-              textAlign: 'center',
-              fontSize: '24px',
-              bgcolor: COLORS.info,
-              borderRadius: { xs: '10px 10px 0 0', md: '10px 0 0 0' },
+              borderRadius: { xs: '10px', md: '10px 0 0 0' },
+              padding: 0,
+              bgcolor: '#cba77950',
+              border: '1px solid' + COLORS.info,
+              marginBottom: { xs: '50px', md: '0' },
+              height: '100%',
             }}
           >
-            Order
-          </Typography>
+            <Typography
+              color="text.primary"
+              fontWeight={700}
+              sx={{
+                textAlign: 'center',
+                fontSize: '24px',
+                bgcolor: COLORS.info,
+                borderRadius: { xs: '10px 10px 0 0', md: '10px 0 0 0' },
+              }}
+            >
+              Order
+            </Typography>
 
-          <Box
-            sx={{ height: { xs: '1000px', md: '100%' }, overflowY: { xs: 'scroll', md: 'auto' } }}
-          >
-            {orderListData?.map(
-              (el: OrderCardProps) =>
-                !el.complete && (
-                  <OrderCard
-                    key={el.order_idx}
-                    orderInfo={el}
-                    completeOnClick={() => completeAPI({ apiBody: { order_idx: el.order_idx } })}
-                    deleteOnClick={() =>
-                      openPopup({
-                        title: '안내',
-                        content: (
-                          <>
-                            <span style={{ fontSize: '16px' }}>주문번호: {el.order_idx}</span>
-                            <br />
-                            <span style={{ fontSize: '16px' }}>테이블번호: {el.tb_idx}</span>
-                            <br />
-                            <span>정말 주문을 취소하시겠습니까?</span>
-                          </>
-                        ),
-                        onConfirm: () => {
-                          orderDeleteAPI({ apiPathParams: el.order_idx });
-                        },
-                      })
-                    }
-                  />
-                ),
-            )}
-          </Box>
-        </ContentBox>
-      </Grid>
-      <Grid xs={12} md={6}>
-        <ContentBox
-          sx={{
-            borderRadius: { xs: '10px', md: '0 10px 0 0' },
-            padding: '0',
-            height: '100%',
-          }}
-        >
-          <Typography
-            fontWeight={700}
-            color="text.secondary"
+            <Box
+              sx={{ height: { xs: '1000px', md: '100%' }, overflowY: { xs: 'scroll', md: 'auto' } }}
+            >
+              {orderListData?.map(
+                (el: OrderCardProps) =>
+                  !el.complete && (
+                    <OrderCard
+                      key={el.order_idx}
+                      orderInfo={el}
+                      completeOnClick={() => completeAPI({ apiBody: { order_idx: el.order_idx } })}
+                      deleteOnClick={() =>
+                        openPopup({
+                          title: '안내',
+                          content: (
+                            <>
+                              <span style={{ fontSize: '16px' }}>주문번호: {el.order_idx}</span>
+                              <br />
+                              <span style={{ fontSize: '16px' }}>테이블번호: {el.tb_idx}</span>
+                              <br />
+                              <span>정말 주문을 취소하시겠습니까?</span>
+                            </>
+                          ),
+                          onConfirm: () => {
+                            orderDeleteAPI({ apiPathParams: el.order_idx });
+                          },
+                        })
+                      }
+                    />
+                  ),
+              )}
+            </Box>
+          </ContentBox>
+        </Grid>
+        <Grid xs={12} md={6}>
+          <ContentBox
             sx={{
-              textAlign: 'center',
-              fontSize: '24px',
-              borderRadius: { xs: '10px 10px 0 0', md: '0 10px 0 0' },
-              bgcolor: COLORS.primary,
+              borderRadius: { xs: '10px', md: '0 10px 0 0' },
+              padding: '0',
+              height: '100%',
             }}
           >
-            Complete
-          </Typography>
-          {tableData?.map((el) => (
-            <CompleteCard
-              key={el.tb_idx}
-              tableData={el}
-              orderData={orderListData}
-              onClickReset={() =>
-                rollbackAPI({
-                  apiBody: {
-                    tb_idx: el.tb_idx,
-                  },
-                })
-              }
-              onClickPay={(menuList) =>
-                openPopup({
-                  title: `${el.tb_idx}번 테이블`,
-                  content: '정말 결제하시겠습니까?',
-                  onConfirm: () => {
-                    payAPI({
-                      apiBody: {
-                        tb_idx: el.tb_idx,
-                        menu: menuList,
-                      },
-                    });
-                  },
-                })
-              }
-            />
-          ))}
-        </ContentBox>
+            <Typography
+              fontWeight={700}
+              color="text.secondary"
+              sx={{
+                textAlign: 'center',
+                fontSize: '24px',
+                borderRadius: { xs: '10px 10px 0 0', md: '0 10px 0 0' },
+                bgcolor: COLORS.primary,
+              }}
+            >
+              Complete
+            </Typography>
+            {tableData?.map((el) => (
+              <CompleteCard
+                key={el.tb_idx}
+                tableData={el}
+                orderData={orderListData}
+                onClickReset={() =>
+                  rollbackAPI({
+                    apiBody: {
+                      tb_idx: el.tb_idx,
+                    },
+                  })
+                }
+                onClickPay={(menuList) =>
+                  openPopup({
+                    title: `${el.tb_idx}번 테이블`,
+                    content: '정말 결제하시겠습니까?',
+                    onConfirm: () => {
+                      payAPI({
+                        apiBody: {
+                          tb_idx: el.tb_idx,
+                          menu: menuList,
+                        },
+                      });
+                    },
+                  })
+                }
+              />
+            ))}
+          </ContentBox>
+        </Grid>
+        <ToTopButton onClickEvent={scrollToTarget} />
       </Grid>
-      <ToTopButton onClickEvent={scrollToTarget} />
-    </Grid>
+    </>
   );
 };
 export default Sales;

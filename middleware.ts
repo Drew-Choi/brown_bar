@@ -18,8 +18,6 @@ export default async function middleware(req: NextRequest) {
   const rt = req.cookies.get('rt')?.value;
   const url = req.nextUrl.pathname;
 
-  console.log('미들');
-
   if (url === '/admin/login') {
     return NextResponse.next();
   }

@@ -201,8 +201,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
         {pathName === '/main/find' ||
         pathName === '/main' ||
         pathName === '/' ||
-        pathName === '/main/about' ||
-        (!sectionName && !useClass && !choice && !eng && !kor) ? (
+        pathName === '/main/about' ? (
           <Tag skeleton={true}>
             <Box fontSize="inherit">tag</Box>
           </Tag>

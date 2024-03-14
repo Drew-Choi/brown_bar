@@ -11,11 +11,11 @@ export const STALE_TIME = {
 };
 
 export const COOKIE_TIME = {
-  ACCESS: 5,
+  ACCESS: 60 * 60,
   REFRESH: 60 * 60 * 24 * 60,
 };
 
 export const TOKEN_TIME = {
-  ACCESS: '5s',
+  ACCESS: '1h',
   REFRESH: '60d',
 };
