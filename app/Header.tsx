@@ -85,7 +85,7 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
     ) {
       const tbData = sessionStorage.getItem('tb');
 
-      if (!tbData) {
+      if (tbData === null) {
         setTb(null);
         return router.push('/not_tb');
       }

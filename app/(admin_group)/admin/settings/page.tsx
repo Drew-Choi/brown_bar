@@ -79,7 +79,13 @@ const Settings = () => {
           ) : (
             memberList.map((el) => (
               <React.Fragment key={el.id}>
-                <Grid xs={3} display="flex" alignItems="center" justifyContent="center">
+                <Grid
+                  xs={3}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  marginBottom={3}
+                >
                   <Image
                     priority
                     style={{ borderRadius: '10px' }}

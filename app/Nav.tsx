@@ -38,7 +38,7 @@ const BottomNav = ({ flex = '1' }: { flex?: string }) => {
     if (pathName === '/main/menu/order') {
       const tbData = sessionStorage.getItem('tb');
 
-      if (!tbData) {
+      if (tbData === null) {
         setTb(null);
         return router.push('/not_tb');
       }

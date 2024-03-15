@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
     await connectDB();
 
     const members = await Member.find({}).select('-_id -__v -fcm');
+    console.log(members);
 
     if (!members) return NextResponse.json({ message: 'server error' }, { status: 500 });
 
