@@ -47,7 +47,7 @@ const Fianl = () => {
   useEffect(() => {
     const tbValue = sessionStorage.getItem('tb');
 
-    if (tbValue) {
+    if (tbValue !== null) {
       const cartParseTb = JSON.parse(tbValue)?.tb;
       setTb(cartParseTb);
     } else {

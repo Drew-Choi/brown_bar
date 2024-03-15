@@ -6,7 +6,6 @@ import React from 'react';
 const NotFound = () => {
   return (
     <Box style={{ color: 'white', padding: '50px' }}>
-      <ButtonBack sx={{ padding: '0', marginBottom: '10px' }} />
       <Typography color="text.secondary">Not-Found</Typography>
     </Box>
   );

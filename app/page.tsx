@@ -6,7 +6,6 @@ import Image from 'next/image';
 import Light from '@/components/svg/Light';
 import { useRouter, useSearchParams } from 'next/navigation';
 import SectionContainer from '@/components/layout/SectionContainer';
-import { usePopup } from '@/hook/usePopup/usePopup';
 
 const Screen = () => {
   const [intro, setIntro] = useState<boolean>(true);
@@ -14,7 +13,7 @@ const Screen = () => {
   const tb = useSearchParams().get('tb');
 
   useEffect(() => {
-    if (!tb) {
+    if (tb === null) {
       sessionStorage.removeItem('tb');
       router.push('/not_tb');
       return;

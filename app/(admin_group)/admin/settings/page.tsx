@@ -8,10 +8,11 @@ import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { usePopup } from '@/hook/usePopup/usePopup';
 import { useMutationInstance } from '@/react-query/useMutationInstance';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
-import { Grid, Typography } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
 import Image from 'next/image';
 import React from 'react';
+import Typography from '@mui/material/Typography';
 
 const Settings = () => {
   const { openPopup } = usePopup();
@@ -56,7 +57,7 @@ const Settings = () => {
           color={COLORS.info}
           sx={{ fontSize: { xs: '14px', sm: '15px' }, marginBottom: '10px' }}
         >
-          <Grid xs={3} display="flex" alignItems="center" justifyContent="center" sx={{}}>
+          <Grid xs={3} display="flex" alignItems="center" justifyContent="center">
             프로필사진
           </Grid>
           <Grid xs={3} display="flex" alignItems="center" justifyContent="center">
@@ -77,7 +78,7 @@ const Settings = () => {
           {memberList?.length === 0 ? (
             <Empty title="맴버가 없습니다." />
           ) : (
-            memberList.map((el) => (
+            memberList?.map((el) => (
               <React.Fragment key={el.id}>
                 <Grid
                   xs={3}
@@ -97,7 +98,7 @@ const Settings = () => {
                 </Grid>
                 <Grid xs={3} display="flex" alignItems="center" justifyContent="center">
                   <Typography sx={{ fontSize: 'inherit', wordBreak: 'break-all' }}>
-                    {el.nick_name}
+                    {el?.nick_name}
                   </Typography>
                 </Grid>
                 <Grid
@@ -107,7 +108,7 @@ const Settings = () => {
                   justifyContent="center"
                   sx={{ fontSize: '18px', fontWeight: '600' }}
                 >
-                  {!el.is_admin ? 'X' : 'O'}
+                  <Typography>{!el?.is_admin ? 'X' : 'O'}</Typography>
                 </Grid>
                 <Grid xs={3} display="flex" alignItems="center" justifyContent="center">
                   <ButtonNomal
