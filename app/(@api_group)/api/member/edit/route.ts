@@ -10,11 +10,7 @@ export async function POST(req: NextRequest) {
 
     await connectDB();
 
-    const result = await Member.findOneAndUpdate(
-      { id },
-      { $set: { is_admin: is_admin ? Boolean(is_admin) : false } },
-      { new: true },
-    );
+    const result = await Member.findOneAndUpdate({ id }, { $set: { is_admin } }, { new: true });
 
     if (!result) return NextResponse.json({ message: 'server error' }, { status: 500 });
 
