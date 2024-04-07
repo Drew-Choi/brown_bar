@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       cookies().delete('at');
       cookies().delete('rt');
 
-      return NextResponse.json({ message: 'rt삭제완료' }, { status: 200 });
+      return NextResponse.json({ message: 'rt삭제완료', status: 200 }, { status: 200 });
     }
     return NextResponse.json({ message: '서버 삭제 오류' }, { status: 500 });
   } catch (error) {

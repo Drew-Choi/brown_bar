@@ -131,8 +131,10 @@ export const NavAdmin = () => {
         openPopup({ title: '오류', content: '다시 시도해주세요.' });
       }
     },
-    onSuccessFn: async () => {
-      await signOut();
+    onSuccessFn: (response: { message: string; status: number } | undefined) => {
+      // if (response?.status === 200) {
+      //   signOut();
+      // }
     },
   });
 
