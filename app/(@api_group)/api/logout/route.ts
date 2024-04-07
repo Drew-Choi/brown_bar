@@ -1,7 +1,8 @@
 import connectDB from '@/app/(@api_group)/api/_lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 import Member from '@/app/(@api_group)/api/_models/Member';
-import { cookies } from 'next/headers';
+import { generateCookie } from '@/utils/generateCookie';
+import { COOKIE_TIME } from '@/constant/NUMBER';
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,11 +18,21 @@ export async function POST(req: NextRequest) {
       { new: true },
     );
 
+    // API라우트는 set으로만 삭제 가능
     if (!deleteToken?.rt) {
-      cookies().delete('at');
-      cookies().delete('rt');
+      generateCookie({
+        name: 'at',
+        value: '',
+        maxAge: COOKIE_TIME.DELETE,
+      });
 
-      return NextResponse.json({ message: 'rt삭제완료', status: 200 }, { status: 200 });
+      generateCookie({
+        name: 'rt',
+        value: '',
+        maxAge: COOKIE_TIME.DELETE,
+      });
+
+      return NextResponse.json({ message: 'rt삭제완료' }, { status: 200 });
     }
     return NextResponse.json({ message: '서버 삭제 오류' }, { status: 500 });
   } catch (error) {

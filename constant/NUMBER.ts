@@ -13,6 +13,7 @@ export const STALE_TIME = {
 export const COOKIE_TIME = {
   ACCESS: 60 * 60,
   REFRESH: 60 * 60 * 24 * 60,
+  DELETE: 0,
 };
 
 export const TOKEN_TIME = {
