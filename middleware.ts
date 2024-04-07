@@ -6,9 +6,16 @@ import { COOKIE_TIME } from './constant/NUMBER';
 const redirectResponse = () => {
   const redirectRes = NextResponse.redirect(`${process.env.NEXT_PUBLIC_AUTH_URL}/admin/login`);
 
-  redirectRes.cookies.delete('at');
-  redirectRes.cookies.delete('rt');
-  redirectRes.cookies.delete(String(process.env.SESSION_TOKEN_NAME));
+  // 주의 set으로 만료해서 삭제함
+  ['at', 'rt', String(process.env.SESSION_TOKEN_NAME)].forEach((name) => {
+    redirectRes.cookies.set(name, '', {
+      path: '/',
+      maxAge: 0,
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      sameSite: 'lax',
+    });
+  });
 
   return redirectRes;
 };
