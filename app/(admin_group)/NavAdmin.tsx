@@ -131,8 +131,8 @@ export const NavAdmin = () => {
         openPopup({ title: '오류', content: '다시 시도해주세요.' });
       }
     },
-    onSuccessFn: () => {
-      signOut();
+    onSuccessFn: async () => {
+      await signOut();
     },
   });
 

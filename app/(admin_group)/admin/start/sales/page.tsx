@@ -131,13 +131,14 @@ const Sales = () => {
   // 실시간 주문 인식
   useEffect(() => {
     const messaging = getMessaging();
+    // 수신 받을 리스너 등록
     onMessage(messaging, (payload) => {
       const { notification } = payload;
 
       if (notification?.title && notification?.body && soundBtnRef.current) {
-        refetch();
-        soundBtnRef.current?.click();
-        setOrderAlert(notification);
+        refetch(); // 주문리스트 리패칭
+        soundBtnRef.current?.click(); // 주문알림음 플레이
+        setOrderAlert(notification); // 주문팝업 On
         return;
       }
     });
