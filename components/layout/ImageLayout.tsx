@@ -11,6 +11,7 @@ interface ImageLayoutProps {
   imgWidth?: number;
   imgHeight?: number;
   innerWidth?: string;
+  innerHeight?: string;
   innerLeft?: string;
   innerTranslate?: string;
   alt: string;
@@ -25,6 +26,7 @@ const ImageLayout = ({
   imgHeight = 500,
   alt,
   innerWidth = '100%',
+  innerHeight = 'auto',
   innerLeft = '0',
   innerTranslate = 'translate(0, -50%)',
 }: ImageLayoutProps) => {
@@ -50,7 +52,7 @@ const ImageLayout = ({
           position: 'absolute',
           display: 'block',
           width: innerWidth,
-          height: 'auto',
+          height: innerHeight,
           top: '50%',
           left: innerLeft,
           transform: innerTranslate,

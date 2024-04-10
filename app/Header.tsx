@@ -281,6 +281,19 @@ export const Header = ({ flex = '1' }: { flex?: string }) => {
                   </>
                 )}
               </Box>
+            ) : pathName === '/main/party' ? (
+              <Box
+                fontWeight={700}
+                sx={{
+                  width: '100%',
+                  display: 'block',
+                  color: 'text.primary',
+                  padding: '0 10px',
+                  fontSize: { xs: '6vw', md: '54px' },
+                }}
+              >
+                A Tasting Party
+              </Box>
             ) : (
               <Box fontSize="inherit" color="text.primary" fontWeight={700} padding="0 10px">
                 | <SubText>{``}</SubText>
