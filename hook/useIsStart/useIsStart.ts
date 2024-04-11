@@ -1,7 +1,6 @@
 import { USE_QUERY_POINT } from '@/constant/END_POINT';
 import { QUERY_KEY } from '@/constant/QUERY_KEY';
 import { useQueryInstance } from '@/react-query/useQueryInstance';
-import React from 'react';
 
 export const useIsStart = () => {
   // 영업상태 초기설정

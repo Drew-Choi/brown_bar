@@ -5,7 +5,6 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material';
 import ImageLayout from '@/components/layout/ImageLayout';
-import ContentBox from '@/components/layout/ContentBox';
 import { COLORS } from '@/asset/style';
 
 const MainContainer = styled('main')`
@@ -42,13 +41,13 @@ const Party = () => {
         </Box>
 
         {/* 시음회 간략 소개 */}
-        <ContentBox sx={{ color: COLORS.text.secondary, padding: '20px 15px' }}>
+        <Box sx={{ color: COLORS.text.secondary, padding: '20px 15px' }}>
           {/* 타이틀 */}
           <Typography
             sx={{
               textAlign: 'center',
               fontWeight: '600',
-              marginBottom: '20px',
+              marginBottom: '5px',
               fontSize: { xs: '3.5vw', md: '32px' },
             }}
           >
@@ -56,14 +55,14 @@ const Party = () => {
           </Typography>
           <Typography
             sx={{
-              textAlign: 'justify',
+              textAlign: 'center',
               fontWeight: '400',
               fontSize: { xs: '3.4vw', md: '30.5px' },
             }}
           >
-            {'시음회는 어쩌구 저쩌구'}
+            {'다양한 와인을 마셔보며 취향을 찾아보세요.'}
           </Typography>
-        </ContentBox>
+        </Box>
       </Container>
     </MainContainer>
   );
